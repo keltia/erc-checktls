@@ -38,7 +38,8 @@ func insertResults(reports *[]LabsReport) (err error) {
 	rep := *reports
 	for _, report := range rep {
 		host := report.Host
-		log.Printf("Looking at %s…", host)
+		grade := report.Endpoints[0].Grade
+		log.Printf("Looking at %s… — grade %s", host, grade)
 	}
 	return
 }
