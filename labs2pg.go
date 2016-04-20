@@ -7,14 +7,10 @@ into our Pg database.
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"io/ioutil"
-	"os"
 
 //	"github.com/astaxie/beego/orm"
     _ "github.com/lib/pq" // import your used driver
-	"log"
 )
 
 var (
