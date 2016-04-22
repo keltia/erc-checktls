@@ -5,7 +5,7 @@ This file have func for computing the TLS scores
  */
 package main
 
-const (
+var (
 	protocolTable = map[string]float32{
 		"SSL2.0": 0.0,
 		"SSL3.0": 80.0,
@@ -16,14 +16,14 @@ const (
 )
 
 // getProtoScore merge proto + version and retrieve the score
-func getProtoScore(p *LabsProtocol) (score float32) {
+func getProtoScore(p LabsProtocol) (score float32) {
 	proto := p.Name + p.Version
 	score = protocolTable[proto]
 	return
 }
 
 // protocolScore compute the relative ProcotolScore KPI
-func protocolScore(r *LabsReport) (score int) {
+func protocolScore(r *LabsReport) (score float32) {
 	var (
 		lowest, highest float32
 	)
