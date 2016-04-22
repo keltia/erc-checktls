@@ -48,7 +48,7 @@ func insertResults(reports *[]LabsReport) (err error) {
 }
 
 // displayReport displays one report
-func displayReport(report *LabsReport) {
+func displayReport(report LabsReport) {
 	host := report.Host
 	grade := report.Endpoints[0].Grade
 	details := report.Endpoints[0].Details
