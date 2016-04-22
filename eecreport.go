@@ -5,6 +5,11 @@ This file contains our EEC-specific data/func
  */
 package main
 
+import (
+	"os"
+	"encoding/csv"
+)
+
 // EECReport is the data we want to extract
 type EECReport struct {
 	Site          string
