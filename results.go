@@ -37,11 +37,28 @@ func parseResults(content []byte) (rep *[]LabsReport, err error) {
 func insertResults(reports *[]LabsReport) (err error) {
 	rep := *reports
 	for _, report := range rep {
-		host := report.Host
-		grade := report.Endpoints[0].Grade
-		log.Printf("Looking at %s… — grade %s", host, grade)
+		if fSiteName != "" {
+			if report.Host != fSiteName {
+				continue
+			}
+		}
+		displayReport(report)
 	}
 	return
 }
 
+// displayReport displays one report
+func displayReport(report *LabsReport) {
+	host := report.Host
+	grade := report.Endpoints[0].Grade
+	details := report.Endpoints[0].Details
+	log.Printf("Looking at %s… — grade %s", host, grade)
+	if fVerbose {
+		log.Printf("  Ciphers: %d", details.Suites.len())
+	} else if fReallyVerbose {
+		for _, cipher := range details.Suites.List {
+			log.Printf("  %s: %d bits", cipher.Name, cipher.CipherStrength)
+		}
+	}
+}
 
