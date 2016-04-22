@@ -5,7 +5,7 @@
 
 GOBIN=   ${GOPATH}/bin
 
-all: main.go types.go results.go cli.go
+all: labs2pg.go types.go results.go cli.go
 	go build -v ./...
 	go test -v ./...
 
