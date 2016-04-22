@@ -1,7 +1,7 @@
 // types.go
 
 /*
-  These are the types used by SSLLabs/Qualys
+These are the types used by SSLLabs/Qualys
 */
 package main
 
