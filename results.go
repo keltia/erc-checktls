@@ -16,10 +16,6 @@ func getResults(file string) (res []byte, err error) {
 	}
 
 	res, err = ioutil.ReadAll(fh)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
