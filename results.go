@@ -3,7 +3,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"io/ioutil"
 	"encoding/json"
@@ -42,23 +41,8 @@ func insertResults(reports *[]LabsReport) (err error) {
 				continue
 			}
 		}
-		displayReport(report)
+		report.Display()
 	}
 	return
-}
-
-// displayReport displays one report
-func displayReport(report LabsReport) {
-	host := report.Host
-	grade := report.Endpoints[0].Grade
-	details := report.Endpoints[0].Details
-	log.Printf("Looking at %s… — grade %s", host, grade)
-	if fVerbose {
-		log.Printf("  Ciphers: %d", details.Suites.len())
-	} else if fReallyVerbose {
-		for _, cipher := range details.Suites.List {
-			log.Printf("  %s: %d bits", cipher.Name, cipher.CipherStrength)
-		}
-	}
 }
 
