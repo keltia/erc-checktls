@@ -135,6 +135,10 @@ type LabsSuites struct {
 	Preference bool
 }
 
+func (ls *LabsSuites) len() int {
+	return len(ls.List)
+}
+
 // LabsHstsPolicy describes the HSTS policy
 type LabsHstsPolicy struct {
 	LONG_MAX_AGE      int64
