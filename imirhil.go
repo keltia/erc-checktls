@@ -23,6 +23,7 @@ type Cipher struct {
 	DH       Key `json:"dh"`
 }
 
+// Source describes the details for the crypto
 type Source struct {
 	Key       Key
 	DH        []Key `json:"dh"`
@@ -33,6 +34,7 @@ type Source struct {
 	Date      time.Time `json:"date"`
 }
 
+// Score of the site
 type Score struct {
 	Rank    string
 	Details struct {
@@ -47,6 +49,7 @@ type Score struct {
 	Success []string
 }
 
+// Report is a single report
 type Report struct {
 	Index   string `json:"_index"`
 	Type    string `json:"_type"`
