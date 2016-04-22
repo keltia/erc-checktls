@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	contracts map[string]string
 	reports   *[]LabsReport
 )
 
@@ -38,5 +39,6 @@ func main() {
 		panic("Can't parse " + string(raw) + ":" + err.Error())
 	}
 
+	contracts, err = readContractFile("sites-list.csv")
 	err = insertResults(reports)
 }
