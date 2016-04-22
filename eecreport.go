@@ -17,7 +17,7 @@ type EECReport struct {
 	Grade         string
 	CertScore     int
 	ProtocolScore int
-	KeyScore      int
+	KeyExchScore  int
 	StrengthScore int
 	Key           string
 	Sign          string
