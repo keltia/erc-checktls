@@ -34,9 +34,12 @@ type EECReport struct {
 	ImirhilScore  string
 }
 
+// EECLine is used to hold a CSV-tobe line
+type EECLine []interface{}
+
 // NewEECReport is
 func NewEECReport(r LabsReport) (e *EECReport, err error) {
-	contract, err := getContract(r.Host)
+	contract := contracts[r.Host]
 	e = &EECReport{
 		Site: r.Host,
 		Contract: contract,
@@ -57,6 +60,26 @@ func (r *EECReport) ToCSV() {
 }
 
 // getContract retrieve the site's contract from the DB
-func getContract(name string) (contract string, err error) {
+func readContractFile(file string) (contracts map[string]string, err error) {
+	var (
+		fh *os.File
+	)
+
+	_, err = os.Stat(file)
+	if err != nil {
+		return
+	}
+
+	if fh, err = os.Open(file); err != nil {
+		return
+	}
+
+	all := csv.NewReader(fh)
+	allSites, err := all.ReadAll()
+
+	for _, site := range allSites {
+		contracts[site[0]] = site[1]
+	}
 	return
 }
+
