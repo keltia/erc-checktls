@@ -14,6 +14,7 @@ func getResults(file string) (res []byte, err error) {
 	if err != nil {
 		return
 	}
+	defer fh.Close()
 
 	res, err = ioutil.ReadAll(fh)
 	return
