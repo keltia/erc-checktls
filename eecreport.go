@@ -73,6 +73,7 @@ func readContractFile(file string) (contracts map[string]string, err error) {
 	if fh, err = os.Open(file); err != nil {
 		return
 	}
+	defer fh.Close()
 
 	all := csv.NewReader(fh)
 	allSites, err := all.ReadAll()
