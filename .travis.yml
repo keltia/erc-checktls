@@ -1,0 +1,12 @@
+language: go
+go:
+- 1.4
+- 1.5.3
+- 1.6.1
+branches:
+  only:
+  - develop
+  - master
+script:
+  - go build
+  - go test
