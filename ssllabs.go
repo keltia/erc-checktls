@@ -2,7 +2,7 @@
 
 /*
 SSLLabs-related functions.
- */
+*/
 package main
 
 import "log"
@@ -21,4 +21,3 @@ func (rep *LabsReport) Display() {
 		}
 	}
 }
-
