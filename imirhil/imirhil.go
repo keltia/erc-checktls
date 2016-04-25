@@ -60,11 +60,11 @@ type Report struct {
 }
 
 const (
-	BaseURL = "https://tls.imirhil.fr/https/"
-	Ext = ".json"
+	baseURL = "https://tls.imirhil.fr/https/"
+	ext = ".json"
 )
 
-// Score retrieves the current score for tls.imirhil.fr
-func Score(site string) (score string) {
+// GetScore retrieves the current score for tls.imirhil.fr
+func GetScore(site string) (score string) {
 	return
 }
