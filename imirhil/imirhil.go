@@ -6,7 +6,14 @@
 
 package imirhil
 
-import "time"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
+)
 
 // Key describes a single key
 type Key struct {
@@ -24,7 +31,7 @@ type Cipher struct {
 }
 
 // Source describes the details for the crypto
-type Source struct {
+type Report struct {
 	Key       Key
 	DH        []Key `json:"dh"`
 	Protocols []string
@@ -43,28 +50,83 @@ type Score struct {
 		KeyExchange     int     `json:"key_exchange"`
 		CipherStrengths int     `json:"cipher_strengths"`
 	} `json:"details"`
-	Error   []interface{}
-	Danger  []interface{}
-	Warning []interface{}
+	Error   []string
+	Danger  []string
+	Warning []string
 	Success []string
 }
 
-// Report is a single report
-type Report struct {
-	Index   string `json:"_index"`
-	Type    string `json:"_type"`
-	ID      string `json:"_id"`
-	Version int    `json:"_version"`
-	Found   bool
-	Source  Source `json:"_source"`
+const (
+	baseURL   = "https://tls.imirhil.fr/https/"
+	ext       = ".json"
+	aDay      = time.Duration(24) * time.Hour
+	threshold = time.Duration(30) * aDay
+)
+
+// Private area
+
+// callAPI makes the actual call, probably "Pending" as 1st answer
+func callAPI(url string) (resp *http.Response, err error) {
+	resp, err = http.Get(url)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var body []byte
+
+		body, err = ioutil.ReadAll(resp.Body)
+		if string(body) == "pending" {
+			resp, err = http.Get(url)
+			if err != nil {
+				return
+			}
+		}
+	}
+	return
 }
 
-const (
-	baseURL = "https://tls.imirhil.fr/https/"
-	ext = ".json"
-)
+// Public functions
 
 // GetScore retrieves the current score for tls.imirhil.fr
 func GetScore(site string) (score string) {
+	full, err := GetDetailedReport(site)
+	if err != nil {
+		score = "Z"
+		log.Printf("Error: can not get imirhil rating: %v", err)
+		return
+	}
+	score = full.Score.Rank
+	return
+}
+
+// GetDetailedReport retrieve the full data
+func GetDetailedReport(site string) (report Report, err error) {
+	var body []byte
+
+	resp, err := http.Get(baseURL + site + ext)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode == http.StatusOK {
+
+		body, err = ioutil.ReadAll(resp.Body)
+		if string(body) == "pending" {
+			resp, err = http.Get(baseURL + site + ext)
+			if err != nil {
+				return
+			}
+		}
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = fmt.Errorf("did not get acceptable status code: %v body: %q", resp.Status, body)
+		return
+	}
+
+	err = json.Unmarshal(body, &report)
 	return
 }
