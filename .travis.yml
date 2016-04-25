@@ -9,6 +9,7 @@ branches:
   - master
 install:
   - go get github.com/lib/pq
+  - go get github.com/keltia/erc-checktls/imirhil
 script:
   - go build
   - go test
