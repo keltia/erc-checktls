@@ -4,7 +4,7 @@
   This file contains the datatypes used by tls.imirhil.fr
 */
 
-package main
+package imirhil
 
 import "time"
 
@@ -57,4 +57,14 @@ type Report struct {
 	Version int    `json:"_version"`
 	Found   bool
 	Source  Source `json:"_source"`
+}
+
+const (
+	BaseURL = "https://tls.imirhil.fr/https/"
+	Ext = ".json"
+)
+
+// getImirhilScore retrieves the current score for tls.imirhil.fr
+func getImirhilScore(site string) (score string) {
+	return
 }
