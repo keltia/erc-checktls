@@ -64,7 +64,7 @@ const (
 	Ext = ".json"
 )
 
-// getImirhilScore retrieves the current score for tls.imirhil.fr
-func getImirhilScore(site string) (score string) {
+// Score retrieves the current score for tls.imirhil.fr
+func Score(site string) (score string) {
 	return
 }
