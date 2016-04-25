@@ -78,6 +78,7 @@ func readContractFile(file string) (contracts map[string]string, err error) {
 	all := csv.NewReader(fh)
 	allSites, err := all.ReadAll()
 
+	contracts = make(map[string]string)
 	for _, site := range allSites {
 		contracts[site[0]] = site[1]
 	}
