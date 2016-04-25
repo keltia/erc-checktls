@@ -7,7 +7,7 @@ package main
 
 import (
 	"log"
-	"erc-checktls/imirhil"
+	"github.com/keltia/erc-checktls/imirhil"
 )
 
 // Display for one report
