@@ -12,7 +12,7 @@ func (rep *LabsReport) Display() {
 	host := rep.Host
 	grade := rep.Endpoints[0].Grade
 	details := rep.Endpoints[0].Details
-	log.Printf("Looking at %s… — grade %s", host, grade)
+	log.Printf("Looking at %s/%s… — grade %s", host, contracts[host], grade)
 	if fVerbose {
 		log.Printf("  Ciphers: %d", details.Suites.len())
 	} else if fReallyVerbose {
