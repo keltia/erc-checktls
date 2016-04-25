@@ -20,8 +20,8 @@ clean:
 
 push:
 	git push --all
-	git push --all upstream
-	git push --all backup
 	git push --tags
-	git push --tags upstream
+	git push --all backup
 	git push --tags backup
+	git push --all upstream
+	git push --tags upstream
