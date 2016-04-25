@@ -15,8 +15,12 @@ func (rep *LabsReport) Display() {
 	host := rep.Host
 	grade := rep.Endpoints[0].Grade
 	details := rep.Endpoints[0].Details
-	imirhil := imirhil.GetScore(host)
-	log.Printf("Looking at %s/%s — grade %s/%s", host, contracts[host], grade, imirhil)
+	if fIgnoreImirhil {
+		imirhil := imirhil.GetScore(host)
+		log.Printf("Looking at %s/%s — grade %s/%s", host, contracts[host], grade, imirhil)
+	} else {
+		log.Printf("Looking at %s/%s — grade %s", host, contracts[host], grade)
+	}
 	if fVerbose {
 		log.Printf("  Ciphers: %d", details.Suites.len())
 	} else if fReallyVerbose {
