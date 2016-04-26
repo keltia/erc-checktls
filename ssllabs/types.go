@@ -3,7 +3,7 @@
 /*
 These are the types used by SSLLabs/Qualys
 */
-package main
+package ssllabs
 
 import (
 	"encoding/json"

@@ -3,10 +3,12 @@
 /*
 SSLLabs-related functions.
 */
-package main
+package ssllabs
 
 import (
 	"log"
+	"encoding/json"
+
 	"github.com/keltia/erc-checktls/imirhil"
 )
 
@@ -28,4 +30,27 @@ func (rep *LabsReport) Display() {
 			log.Printf("  %s: %d bits", cipher.Name, cipher.CipherStrength)
 		}
 	}
+}
+
+// parseResults unmarshals the json payload
+func parseResults(content []byte) (rep *[]LabsReport, err error) {
+	var data []LabsReport
+
+	err = json.Unmarshal(content, &data)
+	rep = &data
+	return
+}
+
+// insertResults saves all reports
+func insertResults(reports *[]LabsReport) (err error) {
+	rep := *reports
+	for _, report := range rep {
+		if fSiteName != "" {
+			if report.Host != fSiteName {
+				continue
+			}
+		}
+		report.Display()
+	}
+	return
 }
