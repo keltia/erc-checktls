@@ -3,12 +3,16 @@
 # Copyright 2015 © by Ollivier Robert for the EEC
 #
 
-.PATH= imirhil
+.PATH= imirhil:ssllabs
 GOBIN=   ${GOPATH}/bin
+
+SRCS= labs2pg.go results.go cli.go eecreport.go \
+    imirhil/imirhil.go \
+    ssllabs/ssllabs.go ssllabs/types.go
 
 all: erc-checktls
 
-erc-checktls: labs2pg.go types.go results.go cli.go ssllabs.go imirhil/imirhil.go
+erc-checktls:
 	go build -v
 	go test -v
 
