@@ -32,8 +32,8 @@ func (rep *LabsReport) Display() {
 	}
 }
 
-// parseResults unmarshals the json payload
-func parseResults(content []byte) (rep *[]LabsReport, err error) {
+// ParseResults unmarshals the json payload
+func ParseResults(content []byte) (rep *[]LabsReport, err error) {
 	var data []LabsReport
 
 	err = json.Unmarshal(content, &data)
@@ -41,14 +41,21 @@ func parseResults(content []byte) (rep *[]LabsReport, err error) {
 	return
 }
 
-// insertResults saves all reports
-func insertResults(reports *[]LabsReport) (err error) {
+// InsertResults saves all reports
+func (reports * LabsReports) InsertResults() (err error) {
 	rep := *reports
 	for _, report := range rep {
-		if fSiteName != "" {
-			if report.Host != fSiteName {
-				continue
-			}
+		report.Display()
+	}
+	return
+}
+
+// InsertOneResult imports only one site report
+func (reports * LabsReports) InsertOneResult(site string) (err error) {
+	rep := *reports
+	for _, report := range rep {
+		if report.Host != site {
+			continue
 		}
 		report.Display()
 	}
