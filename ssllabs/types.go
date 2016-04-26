@@ -276,9 +276,6 @@ type LabsResults struct {
 	responses []string
 }
 
-// LabsReports is a shortcut to all reports
-type LabsReports []LabsReport
-
 // LabsInfo describes the current SSLLabs engine used
 type LabsInfo struct {
 	EngineVersion        string `json:"engineVersion"`
