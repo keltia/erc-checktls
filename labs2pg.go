@@ -9,13 +9,14 @@ package main
 import (
 	"flag"
 
+	"github.com/keltia/erc-checktls/ssllabs"
 //	"github.com/astaxie/beego/orm"
     _ "github.com/lib/pq" // import your used driver
 )
 
 var (
 	contracts map[string]string
-	reports   *[]LabsReport
+	reports   *[]ssllabs.LabsReport
 )
 
 // init is for pg connection and stuff
@@ -34,11 +35,11 @@ func main() {
 		panic("Can't read " + file)
 	}
 
-	reports, err := parseResults(raw)
+	reports, err := ssllabs.parseResults(raw)
 	if err != nil {
 		panic("Can't parse " + string(raw) + ":" + err.Error())
 	}
 
 	contracts, err = readContractFile("sites-list.csv")
-	err = insertResults(reports)
+	err = ssllabs.insertResults(reports)
 }
