@@ -2,12 +2,17 @@
 
 /*
 This file contains our EEC-specific data/func
- */
+*/
 package main
 
 import (
-	"os"
 	"encoding/csv"
+	"io/ioutil"
+	"log"
+	"os"
+
+	"erc-checktls/imirhil"
+	"erc-checktls/ssllabs"
 )
 
 // EECReport is the data we want to extract
@@ -36,6 +41,22 @@ type EECReport struct {
 
 // EECLine is used to hold a CSV-tobe line
 type EECLine []interface{}
+
+// Private functions
+
+// getResults read the JSON array generated and gone through jq
+func getResults(file string) (res []byte, err error) {
+	fh, err := os.Open(file)
+	if err != nil {
+		return
+	}
+	defer fh.Close()
+
+	res, err = ioutil.ReadAll(fh)
+	return
+}
+
+// Public functions
 
 // NewEECReport is
 func NewEECReport(r LabsReport) (e *EECReport, err error) {
