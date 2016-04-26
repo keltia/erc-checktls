@@ -270,6 +270,9 @@ type LabsReport struct {
 	rawJSON         string   `json:"rawJson"`
 }
 
+// LabsReports is a shortcut to all reports
+type LabsReports []LabsReport
+
 // LabsResults are all the result of a run w/ 1 or more sites
 type LabsResults struct {
 	reports   []LabsReport
