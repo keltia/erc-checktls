@@ -3,7 +3,7 @@
 /*
 SSLLabs-related functions.
 */
-package main
+package ssllabs
 
 import (
 	"log"
