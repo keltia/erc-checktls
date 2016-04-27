@@ -4,33 +4,37 @@ package main
 
 import "time"
 
-type EECSite struct {
+// TLSSite is for one site checked
+type TLSSite struct {
+	Site          string
 	Contract      string
 	Grade         string
-	CertScore     int
-	ProtocolScore int
-	KeyExchScore  int
-	StrengthScore int
+	//CertScore     string		DEPRECATED
+	//ProtocolScore string
+	//KeyExchScore  string
+	//StrengthScore string
 	Key           string
 	Sign          string
 	Issuer        string
-	Validity      int
-	Path          int
+	Validity      string
+	Path          string
 	ChainIssues   string
-	Protocols     []string
-	RC4           bool
-	Pfs           bool
-	OcspStapling  bool
-	Hsts          bool
-	Alpn          bool
+	Protocols     string
+	RC4           string
+	Pfs           string
+	OcspStapling  string
+	Hsts          string
+	Alpn          string
+	Drown         string
 	ImirhilScore  string
 }
 
-type EECReport struct {
+// TLSReport is one single run for all sites
+type TLSReport struct {
 	Date time.Time
-	Sites map[string]EECSite
+	Sites []TLSSite
 }
 
 // EECLine is used to hold a CSV-tobe line
-type EECLine []interface{}
+type EECLine []string
 
