@@ -16,7 +16,6 @@ import (
 
 var (
 	contracts map[string]string
-	reports   *[]ssllabs.LabsReport
 )
 
 // init is for pg connection and stuff
@@ -30,16 +29,21 @@ func main() {
 	flag.Parse()
 
 	file := flag.Arg(0)
+
 	raw, err := getResults(file)
 	if err != nil {
 		panic("Can't read " + file)
 	}
 
-	reports, err := ssllabs.parseResults(raw)
+	// raw is the []byte array to be deserialized into LabsReports
+	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
 		panic("Can't parse " + string(raw) + ":" + err.Error())
 	}
 
-	contracts, err = readContractFile("sites-list.csv")
-	err = ssllabs.insertResults(reports)
+	// generate the final report
+	final, err := NewTLSReport(allSites)
+
+	contracts, err := readContractFile("sites-list.csv")
+
 }
