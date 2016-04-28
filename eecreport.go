@@ -135,6 +135,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		} else {
 			siteData = append(siteData, "")
 		}
+		e.Sites[i] = siteData
 	}
 	return
 }
