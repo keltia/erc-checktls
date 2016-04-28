@@ -40,11 +40,17 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 	e = &TLSReport{Date:time.Now(), Sites:nil}
 	e.Sites = make([]TLSSite, len(*reports))
 
-	for _, site := range *reports {
+	if fVerbose {
+		log.Printf("%d sites found.", len(*reports))
+	}
+	for i, site := range *reports {
 		endp := site.Endpoints[0]
 		det := endp.Details
 		cert := endp.Details.Cert
 
+		if fVerbose {
+			log.Printf("  Host: %s", site.Host)
+		}
 		// make space
 		siteData := EECLine{}
 
