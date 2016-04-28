@@ -62,7 +62,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		siteData = append(siteData, contracts[site.Host])
 
 		// [2] = grade
-		siteData = append(siteData, fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored)
+		siteData = append(siteData, fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored))
 
 		// [3] = key
 		siteData = append(siteData, fmt.Sprintf("%s %d bits",
