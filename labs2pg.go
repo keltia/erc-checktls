@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"os"
 	"encoding/csv"
+	"log"
 )
 
 var (
@@ -81,4 +82,10 @@ func main() {
 	// XXX Early debugging
 	fmt.Printf("%#v\n", final)
 
+	if fCSV {
+		err := final.ToCSV(os.Stdout)
+		if err != nil {
+			log.Fatalf("Error can not generate CSV: %v", err)
+		}
+	}
 }
