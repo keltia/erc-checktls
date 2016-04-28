@@ -57,7 +57,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 			log.Printf("  Host: %s", site.Host)
 		}
 		// make space
-		siteData := make([]string, 16)
+		var siteData []string
 
 		// [0] = site
 		siteData = append(siteData, site.Host)
