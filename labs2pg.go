@@ -12,6 +12,7 @@ import (
 	"github.com/keltia/erc-checktls/ssllabs"
 //	"github.com/astaxie/beego/orm"
     _ "github.com/lib/pq" // import your used driver
+	"fmt"
 )
 
 var (
@@ -41,9 +42,13 @@ func main() {
 		panic("Can't parse " + string(raw) + ":" + err.Error())
 	}
 
+	// We need that for the reports
+	contracts, err = readContractFile("sites-list.csv")
+
 	// generate the final report
 	final, err := NewTLSReport(allSites)
 
-	contracts, err := readContractFile("sites-list.csv")
+	// XXX Early debugging
+	fmt.Printf("%v\n", final)
 
 }
