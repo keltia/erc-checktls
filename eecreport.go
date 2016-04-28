@@ -46,7 +46,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		cert := endp.Details.Cert
 
 		// make space
-		siteData := make(EECLine, 17)
+		siteData := EECLine{}
 
 		// [0] = site
 		siteData = append(siteData, site.Host)
@@ -75,7 +75,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		siteData = append(siteData, fmt.Sprintf("%d", det.Chain.Issues))
 
 		// [8] = protocols
-		protos := make([]string, 10)
+		protos := []string{}
 		for _, p := range det.Protocols {
 			protos = append(protos, fmt.Sprintf("%sv%s", p.Name, p.Version))
 		}
