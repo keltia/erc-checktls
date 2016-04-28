@@ -34,6 +34,10 @@ func getResults(file string) (res []byte, err error) {
 	return
 }
 
+func fixTimestamp(ts int64) (int64, int64) {
+	return ts / 1000, ts % 1000
+}
+
 // Public functions
 
 // NewTLSReport generates everything we need for display/export
@@ -53,7 +57,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 			log.Printf("  Host: %s", site.Host)
 		}
 		// make space
-		siteData := make([]string, 16)
+		var siteData []string
 
 		// [0] = site
 		siteData = append(siteData, site.Host)
@@ -76,7 +80,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		siteData = append(siteData, det.Cert.IssuerLabel)
 
 		// [6] = validity
-		siteData = append(siteData, time.Unix(cert.NotAfter, 0).String())
+		siteData = append(siteData, time.Unix(fixTimestamp(cert.NotAfter)).String())
 
 		// [7] = path
 		siteData = append(siteData, fmt.Sprintf("%d", len(det.Chain.Certs)))
