@@ -191,7 +191,7 @@ type LabsDrownHost struct {
 	Export bool
 	Port int
 	Special bool
-	SSLv2 bool `json: "sslv2"`
+	SSLv2 bool `json:"sslv2"`
 	Status string
 }
 
