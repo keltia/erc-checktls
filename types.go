@@ -32,9 +32,9 @@ type TLSSite struct {
 // TLSReport is one single run for all sites
 type TLSReport struct {
 	Date time.Time
-	Sites []EECLine
+	Sites []ReportLine
 }
 
 // EECLine is used to hold a CSV-tobe line
-type EECLine []string
+type ReportLine []string
 

@@ -38,7 +38,7 @@ func getResults(file string) (res []byte, err error) {
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 	e = &TLSReport{Date:time.Now(), Sites:nil}
-	e.Sites = make([]EECLine, len(*reports))
+	e.Sites = make([]ReportLine, len(*reports))
 
 	if fVerbose {
 		log.Printf("%d sites found.", len(*reports))
@@ -52,7 +52,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 			log.Printf("  Host: %s", site.Host)
 		}
 		// make space
-		siteData := EECLine{}
+		siteData := ReportLine{}
 
 		// [0] = site
 		siteData = append(siteData, site.Host)
