@@ -1,3 +1,4 @@
+
 # Main Makefile for labs2pg
 #
 # Copyright 2015 © by Ollivier Robert for the EEC
@@ -12,7 +13,7 @@ SRCS= labs2pg.go cli.go eecreport.go \
 
 all: erc-checktls
 
-erc-checktls:
+erc-checktls: ${SRCS}
 	go build -v
 	go test -v
 
