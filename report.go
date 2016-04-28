@@ -146,14 +146,12 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 
 // ToCSV output a CSV file from a report
 func (r * TLSReport) ToCSV(w io.Writer) (err error) {
-	csv := csv.NewWriter(w)
-	for _, site := range r.Sites {
-		err = csv.Write(site)
-		if err != nil {
-			return
-		}
+	wh := csv.NewWriter(w)
+	if fVerbose {
+		fmt.Printf("%v\n", r.Sites)
 	}
-	return nil
+	err = wh.WriteAll(r.Sites)
+	return
 }
 
 /* Display for one report
