@@ -13,11 +13,39 @@ import (
 //	"github.com/astaxie/beego/orm"
     _ "github.com/lib/pq" // import your used driver
 	"fmt"
+	"os"
+	"encoding/csv"
 )
 
 var (
 	contracts map[string]string
 )
+
+// getContract retrieve the site's contract from the DB
+func readContractFile(file string) (contracts map[string]string, err error) {
+	var (
+		fh *os.File
+	)
+
+	_, err = os.Stat(file)
+	if err != nil {
+		return
+	}
+
+	if fh, err = os.Open(file); err != nil {
+		return
+	}
+	defer fh.Close()
+
+	all := csv.NewReader(fh)
+	allSites, err := all.ReadAll()
+
+	contracts = make(map[string]string)
+	for _, site := range allSites {
+		contracts[site[0]] = site[1]
+	}
+	return
+}
 
 // init is for pg connection and stuff
 func init() {
