@@ -74,7 +74,7 @@ func main() {
 	// We need that for the reports
 	contracts, err = readContractFile("sites-list.csv")
 
-	fmt.Printf("all=%#v\n", allSites)
+	//fmt.Printf("all=%#v\n", allSites)
 
 	// generate the final report
 	final, err := NewTLSReport(allSites)
