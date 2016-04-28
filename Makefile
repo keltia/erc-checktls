@@ -7,8 +7,8 @@
 .PATH= imirhil:ssllabs
 GOBIN=   ${GOPATH}/bin
 
-SRCS= labs2pg.go cli.go eecreport.go \
-    imirhil/imirhil.go \
+SRCS= labs2pg.go cli.go kpi.go report.go \
+    imirhil/imirhil.go imirhil/types.go \
     ssllabs/ssllabs.go ssllabs/types.go
 
 all: erc-checktls
