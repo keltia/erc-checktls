@@ -68,7 +68,7 @@ func main() {
 	// raw is the []byte array to be deserialized into LabsReports
 	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
-		panic("Can't parse " + string(raw) + ":" + err.Error())
+		log.Fatalf("Can't parse %s: %v", file, err.Error())
 	}
 
 	// We need that for the reports
