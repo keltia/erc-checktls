@@ -36,8 +36,8 @@ func getResults(file string) (res []byte, err error) {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	e = TLSReport{Date:time.Now()}
-	e.Sites = make(map[string]TLSSite, len(*reports))
+	e = &TLSReport{Date:time.Now(), Sites:nil}
+	e.Sites = make([]TLSSite, len(*reports))
 
 	for _, site := range *reports {
 		endp := site.Endpoints[0]
@@ -48,10 +48,10 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		siteData := make(EECLine, 17)
 
 		// [0] = site
-		siteData = append(siteData, site)
+		siteData = append(siteData, site.Host)
 
 		// [1] = contract
-		siteData = append(siteData, contracts[site])
+		siteData = append(siteData, contracts[site.Host])
 
 		// [2] = grade
 		siteData = append(siteData, fmt.Sprintf("%s %d bits",
@@ -131,7 +131,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 
 		// [16] = imirhil score unless ignored
 		if !fIgnoreImirhil {
-			siteData = append(siteData, imirhil.GetScore(site))
+			siteData = append(siteData, imirhil.GetScore(site.Host))
 		} else {
 			siteData = append(siteData, "")
 		}
