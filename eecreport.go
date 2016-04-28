@@ -13,8 +13,9 @@ import (
 	"time"
 	"strings"
 
-	"erc-checktls/imirhil"
-	"erc-checktls/ssllabs"
+	"github.com/keltia/erc-checktls/imirhil"
+	"github.com/keltia/erc-checktls/ssllabs"
+	"log"
 )
 
 // EECReport is the data we want to extract
