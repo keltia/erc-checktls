@@ -16,6 +16,7 @@ import (
 	"github.com/keltia/erc-checktls/imirhil"
 	"github.com/keltia/erc-checktls/ssllabs"
 	"log"
+	"io"
 )
 
 // EECReport is the data we want to extract
@@ -61,75 +62,78 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		siteData = append(siteData, contracts[site.Host])
 
 		// [2] = grade
+		siteData = append(siteData, fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored)
+
+		// [3] = key
 		siteData = append(siteData, fmt.Sprintf("%s %d bits",
 			det.Key.Alg,
 			det.Key.Size))
 
-		// [3] = signature
+		// [4] = signature
 		siteData = append(siteData, det.Cert.SigAlg)
 
-		// [4] = issuer
+		// [5] = issuer
 		siteData = append(siteData, det.Cert.IssuerLabel)
 
-		// [5] = validity
+		// [6] = validity
 		siteData = append(siteData, time.Unix(cert.NotAfter, 0).String())
 
-		// [6] = path
+		// [7] = path
 		siteData = append(siteData, fmt.Sprintf("%d", len(det.Chain.Certs)))
 
-		// [7] = issues
+		// [8] = issues
 		siteData = append(siteData, fmt.Sprintf("%d", det.Chain.Issues))
 
-		// [8] = protocols
+		// [9] = protocols
 		protos := []string{}
 		for _, p := range det.Protocols {
 			protos = append(protos, fmt.Sprintf("%sv%s", p.Name, p.Version))
 		}
 		siteData = append(siteData, strings.Join(protos, ","))
 
-		// [9] = RC4
+		// [10] = RC4
 		if det.SupportsRC4 {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [10] = PFS
+		// [11] = PFS
 		if det.SupportsRC4 {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [11] = OCSP Stapling
+		// [12] = OCSP Stapling
 		if det.OcspStapling {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [12] = HSTS
+		// [13] = HSTS
 		if det.HstsPolicy.Status == "present" {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [13] = ALPN
+		// [14] = ALPN
 		if det.SupportsAlpn {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [14] = Drown vuln
+		// [15] = Drown vuln
 		if det.DrownVulnerable {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [15] = imirhil score unless ignored
+		// [16] = imirhil score unless ignored
 		if !fIgnoreImirhil {
 			siteData = append(siteData, imirhil.GetScore(site.Host))
 		} else {
@@ -138,6 +142,18 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		e.Sites[i] = siteData
 	}
 	return
+}
+
+// ToCSV output a CSV file from a report
+func (r * TLSReport) ToCSV(w io.Writer) (err error) {
+	csv := csv.NewWriter(w)
+	for _, site := range r.Sites {
+		err = csv.Write(site)
+		if err != nil {
+			return
+		}
+	}
+	return nil
 }
 
 /* Display for one report
