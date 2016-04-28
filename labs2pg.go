@@ -79,13 +79,13 @@ func main() {
 	// generate the final report
 	final, err := NewTLSReport(allSites)
 
-	// XXX Early debugging
-	fmt.Printf("%#v\n", final)
-
-	if fCSV {
+	if fType == "csv" {
 		err := final.ToCSV(os.Stdout)
 		if err != nil {
 			log.Fatalf("Error can not generate CSV: %v", err)
 		}
+	} else {
+		// XXX Early debugging
+		fmt.Printf("%#v\n", final)
 	}
 }
