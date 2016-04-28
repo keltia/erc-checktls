@@ -4,7 +4,7 @@
 This file have func for computing the TLS scores
  */
 package main
-
+/*
 var (
 	protocolTable = map[string]float32{
 		"SSL2.0": 0.0,
@@ -48,3 +48,4 @@ func protocolScore(r *LabsReport) (score float32) {
 	score = (lowest + highest) / 2
 	return
 }
+*/

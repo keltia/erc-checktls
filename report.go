@@ -13,8 +13,10 @@ import (
 	"time"
 	"strings"
 
-	"erc-checktls/imirhil"
-	"erc-checktls/ssllabs"
+	"github.com/keltia/erc-checktls/imirhil"
+	"github.com/keltia/erc-checktls/ssllabs"
+	"log"
+	"io"
 )
 
 // EECReport is the data we want to extract
@@ -36,72 +38,74 @@ func getResults(file string) (res []byte, err error) {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	e = TLSReport{Date:time.Now()}
-	e.Sites = make(map[string]TLSSite, len(*reports))
+	e = &TLSReport{Date:time.Now(), Sites:nil}
+	e.Sites = make([][]string, len(*reports))
 
-	for _, site := range *reports {
+	if fVerbose {
+		log.Printf("%d sites found.", len(*reports))
+	}
+	for i, site := range *reports {
 		endp := site.Endpoints[0]
 		det := endp.Details
 		cert := endp.Details.Cert
 
+		if fVerbose {
+			log.Printf("  Host: %s", site.Host)
+		}
 		// make space
-		siteData := make(EECLine, 17)
+		siteData := make([]string, 16)
 
 		// [0] = site
-		siteData = append(siteData, site)
+		siteData = append(siteData, site.Host)
 
 		// [1] = contract
-		siteData = append(siteData, contracts[site])
+		siteData = append(siteData, contracts[site.Host])
 
 		// [2] = grade
+		siteData = append(siteData, fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored))
+
+		// [3] = key
 		siteData = append(siteData, fmt.Sprintf("%s %d bits",
 			det.Key.Alg,
 			det.Key.Size))
 
-		// [3] = signature
+		// [4] = signature
 		siteData = append(siteData, det.Cert.SigAlg)
 
-		// [4] = issuer
+		// [5] = issuer
 		siteData = append(siteData, det.Cert.IssuerLabel)
 
-		// [5] = validity
+		// [6] = validity
 		siteData = append(siteData, time.Unix(cert.NotAfter, 0).String())
 
-		// [6] = path
+		// [7] = path
 		siteData = append(siteData, fmt.Sprintf("%d", len(det.Chain.Certs)))
 
-		// [7] = issues
+		// [8] = issues
 		siteData = append(siteData, fmt.Sprintf("%d", det.Chain.Issues))
 
-		// [8] = protocols
-		protos := make([]string, 10)
+		// [9] = protocols
+		protos := []string{}
 		for _, p := range det.Protocols {
 			protos = append(protos, fmt.Sprintf("%sv%s", p.Name, p.Version))
 		}
 		siteData = append(siteData, strings.Join(protos, ","))
 
-		// [9] = RC4
+		// [10] = RC4
 		if det.SupportsRC4 {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [10] = PFS
+		// [11] = PFS
 		if det.SupportsRC4 {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [11] = OCSP Stapling
-		if det.OcspStapling {
-			siteData = append(siteData, "YES")
-		} else {
-			siteData = append(siteData, "NO")
-		}
-
-		// [12] = HSTS
+		// [12] = OCSP Stapling
 		if det.OcspStapling {
 			siteData = append(siteData, "YES")
 		} else {
@@ -131,11 +135,22 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 
 		// [16] = imirhil score unless ignored
 		if !fIgnoreImirhil {
-			siteData = append(siteData, imirhil.GetScore(site))
+			siteData = append(siteData, imirhil.GetScore(site.Host))
 		} else {
 			siteData = append(siteData, "")
 		}
+		e.Sites[i] = siteData
 	}
+	return
+}
+
+// ToCSV output a CSV file from a report
+func (r * TLSReport) ToCSV(w io.Writer) (err error) {
+	wh := csv.NewWriter(w)
+	if fVerbose {
+		fmt.Printf("%v\n", r.Sites)
+	}
+	err = wh.WriteAll(r.Sites)
 	return
 }
 
@@ -154,38 +169,3 @@ func (rep *ssllabs.LabsReport) String() {
 	}
 }*/
 
-// toLine groups part of the data into a single array
-func (r *TLSSite) toLine() {
-
-}
-
-// ToCSV generate a CSV file from a given report
-func (r *TLSSite) ToCSV() {
-
-}
-
-// getContract retrieve the site's contract from the DB
-func readContractFile(file string) (contracts map[string]string, err error) {
-	var (
-		fh *os.File
-	)
-
-	_, err = os.Stat(file)
-	if err != nil {
-		return
-	}
-
-	if fh, err = os.Open(file); err != nil {
-		return
-	}
-	defer fh.Close()
-
-	all := csv.NewReader(fh)
-	allSites, err := all.ReadAll()
-
-	contracts = make(map[string]string)
-	for _, site := range allSites {
-		contracts[site[0]] = site[1]
-	}
-	return
-}

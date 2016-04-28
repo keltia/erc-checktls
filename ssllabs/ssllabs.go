@@ -31,12 +31,11 @@ func (rep *LabsReport) Insert() {
 }
 
 // ParseResults unmarshals the json payload
-func ParseResults(content []byte) (rep *LabsReports, err error) {
+func ParseResults(content []byte) (*LabsReports, error) {
 	var data LabsReports
 
-	err = json.Unmarshal(content, &data)
-	rep = &data
-	return
+	err := json.Unmarshal(content, &data)
+	return &data, err
 }
 
 // InsertResults saves all reports

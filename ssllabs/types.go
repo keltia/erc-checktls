@@ -185,6 +185,16 @@ type LabsHpkpPolicy struct {
 	Directives        map[string]string
 }
 
+// LabsDrownHost describes a potentially Drown-weak site
+type LabsDrownHost struct {
+	IP string `json:"ip"`
+	Export bool
+	Port int
+	Special bool
+	SSLv2 bool `json: "sslv2"`
+	Status string
+}
+
 // LabsEndpointDetails gives the details of a given Endpoint
 type LabsEndpointDetails struct {
 	HostStartTime            int64 `json:"hostStartTime"`
@@ -235,7 +245,7 @@ type LabsEndpointDetails struct {
 	HstsPreloads             []LabsHstsPreload `json:"hstsPreloads"`
 	HpkpPolicy               LabsHpkpPolicy    `json:"hpkpPolicy"`
 	HpkpRoPolicy             LabsHpkpPolicy    `json:"hpkpRoPolicy"`
-	DrownHosts               []string          `json:"drownHosts"`
+	DrownHosts               []LabsDrownHost   `json:"drownHosts"`
 	DrownErrors              bool              `json:"drownErrors"`
 	DrownVulnerable          bool              `json:"drownVulnerable"`
 }
