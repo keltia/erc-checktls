@@ -103,13 +103,6 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		}
 
 		// [12] = HSTS
-		if det.OcspStapling {
-			siteData = append(siteData, "YES")
-		} else {
-			siteData = append(siteData, "NO")
-		}
-
-		// [13] = HSTS
 		if det.HstsPolicy.Status == "present" {
 			siteData = append(siteData, "YES")
 		} else {
