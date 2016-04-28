@@ -155,16 +155,6 @@ func (rep *ssllabs.LabsReport) String() {
 	}
 }*/
 
-// toLine groups part of the data into a single array
-func (r *TLSSite) toLine() {
-
-}
-
-// ToCSV generate a CSV file from a given report
-func (r *TLSSite) ToCSV() {
-
-}
-
 // getContract retrieve the site's contract from the DB
 func readContractFile(file string) (contracts map[string]string, err error) {
 	var (
