@@ -191,7 +191,7 @@ type LabsDrownHost struct {
 	Export bool
 	Port int
 	Special bool
-	SSLv2 bool `json: "sslv2"`
+	SSLv2 bool `json:"sslv2"`
 	Status string
 }
 
@@ -245,7 +245,7 @@ type LabsEndpointDetails struct {
 	HstsPreloads             []LabsHstsPreload `json:"hstsPreloads"`
 	HpkpPolicy               LabsHpkpPolicy    `json:"hpkpPolicy"`
 	HpkpRoPolicy             LabsHpkpPolicy    `json:"hpkpRoPolicy"`
-	DrownHosts               []LabsDrownHost   `json:"drownHosts"`
+	DrownHosts               []interface{}     `json:"drownHosts"`
 	DrownErrors              bool              `json:"drownErrors"`
 	DrownVulnerable          bool              `json:"drownVulnerable"`
 }
