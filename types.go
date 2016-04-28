@@ -7,9 +7,5 @@ import "time"
 // TLSReport is one single run for all sites
 type TLSReport struct {
 	Date time.Time
-	Sites []ReportLine
+	Sites [][]string
 }
-
-// EECLine is used to hold a CSV-tobe line
-type ReportLine []string
-
