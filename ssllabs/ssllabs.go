@@ -14,7 +14,7 @@ import (
 func (rep *LabsReport) String() {
 	host := rep.Host
 	grade := rep.Endpoints[0].Grade
-	details := rep.Endpoints[0].Details
+	//details := rep.Endpoints[0].Details
 	log.Printf("Looking at %s — grade %s", host, grade)
 /*	if fVerbose {
 		log.Printf("  Ciphers: %d", details.Suites.len())
