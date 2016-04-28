@@ -206,6 +206,8 @@ type LabsEndpointDetails struct {
 	SessionResumption        int    `json:"sessionResumption"`
 	CompressionMethods       int    `json:"compressionMethods"`
 	SupportsNpn              bool   `json:"supportsNpn"`
+	NpnProcotols             string `json:"npnProtocols"`
+	SupportsAlpn             bool   `json:"supportsAlpn"`
 	SessionTickets           int    `json:"sessionTickets"`
 	OcspStapling             bool   `json:"ocspStapling"`
 	StaplingRevocationStatus int    `json:"staplingRevocationStatus"`
@@ -233,6 +235,9 @@ type LabsEndpointDetails struct {
 	HstsPreloads             []LabsHstsPreload `json:"hstsPreloads"`
 	HpkpPolicy               LabsHpkpPolicy    `json:"hpkpPolicy"`
 	HpkpRoPolicy             LabsHpkpPolicy    `json:"hpkpRoPolicy"`
+	DrownHosts               []string          `json:"drownHosts"`
+	DrownErrors              bool              `json:"drownErrors"`
+	DrownVulnerable          bool              `json:"drownVulnerable"`
 }
 
 // LabsEndpoint is an Endpoint

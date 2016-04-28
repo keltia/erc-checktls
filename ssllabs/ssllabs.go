@@ -8,33 +8,31 @@ package ssllabs
 import (
 	"log"
 	"encoding/json"
-
-	"github.com/keltia/erc-checktls/imirhil"
 )
 
 // Display for one report
-func (rep *LabsReport) Display() {
+func (rep *LabsReport) String() {
 	host := rep.Host
 	grade := rep.Endpoints[0].Grade
-	details := rep.Endpoints[0].Details
-	if fIgnoreImirhil {
-		imirhil := imirhil.GetScore(host)
-		log.Printf("Looking at %s/%s — grade %s/%s", host, contracts[host], grade, imirhil)
-	} else {
-		log.Printf("Looking at %s/%s — grade %s", host, contracts[host], grade)
-	}
-	if fVerbose {
+	//details := rep.Endpoints[0].Details
+	log.Printf("Looking at %s — grade %s", host, grade)
+/*	if fVerbose {
 		log.Printf("  Ciphers: %d", details.Suites.len())
 	} else if fReallyVerbose {
 		for _, cipher := range details.Suites.List {
 			log.Printf("  %s: %d bits", cipher.Name, cipher.CipherStrength)
 		}
-	}
+	} */
+}
+
+// Insert for one report
+func (rep *LabsReport) Insert() {
+
 }
 
 // ParseResults unmarshals the json payload
-func ParseResults(content []byte) (rep *[]LabsReport, err error) {
-	var data []LabsReport
+func ParseResults(content []byte) (rep *LabsReports, err error) {
+	var data LabsReports
 
 	err = json.Unmarshal(content, &data)
 	rep = &data
@@ -42,22 +40,22 @@ func ParseResults(content []byte) (rep *[]LabsReport, err error) {
 }
 
 // InsertResults saves all reports
-func (reports * LabsReports) InsertResults() (err error) {
+func (reports *LabsReports) InsertResults() (err error) {
 	rep := *reports
 	for _, report := range rep {
-		report.Display()
+		report.Insert()
 	}
 	return
 }
 
 // InsertOneResult imports only one site report
-func (reports * LabsReports) InsertOneResult(site string) (err error) {
+func (reports *LabsReports) InsertOneResult(site string) (err error) {
 	rep := *reports
 	for _, report := range rep {
 		if report.Host != site {
 			continue
 		}
-		report.Display()
+		report.Insert()
 	}
 	return
 }
