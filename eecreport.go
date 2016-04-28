@@ -115,21 +115,21 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 			siteData = append(siteData, "NO")
 		}
 
-		// [14] = ALPN
+		// [13] = ALPN
 		if det.SupportsAlpn {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [15] = Drown vuln
+		// [14] = Drown vuln
 		if det.DrownVulnerable {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
 		}
 
-		// [16] = imirhil score unless ignored
+		// [15] = imirhil score unless ignored
 		if !fIgnoreImirhil {
 			siteData = append(siteData, imirhil.GetScore(site.Host))
 		} else {
