@@ -107,7 +107,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		// 1 = with some browsers but not the reference ones
 		// 2 = with modern browsers
 		// 4 = with most browsers (ROBUST)
-		if det.ForwardSecrecy != 0 && det.ForwardSecrecy != 1 {
+		if det.ForwardSecrecy >= 2 {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
