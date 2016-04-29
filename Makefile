@@ -11,10 +11,12 @@ SRCS= labs2pg.go cli.go kpi.go report.go \
     imirhil/imirhil.go imirhil/types.go \
     ssllabs/ssllabs.go ssllabs/types.go
 
+OPTS=	-ldflags="-s -w" -v
+
 all: erc-checktls
 
 erc-checktls: ${SRCS}
-	go build -v
+	go build ${OPTS}
 	go test -v
 
 install:
