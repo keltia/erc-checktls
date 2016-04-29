@@ -103,7 +103,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		}
 
 		// [11] = PFS
-		if det.SupportsRC4 {
+		if det.ForwardSecrecy != 0 {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
