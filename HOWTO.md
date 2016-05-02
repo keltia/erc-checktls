@@ -1,4 +1,4 @@
-ssllabs-scan -hostlist erc-list | jq -j -c . >erc-list-raw.json
+ssllabs-scan -hostfile erc-list | jq -j -c . >erc-list-raw.json
 
 
 v = `SITE-raw.json`
