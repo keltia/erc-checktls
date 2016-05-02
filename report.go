@@ -19,9 +19,6 @@ import (
 	"io"
 )
 
-// EECReport is the data we want to extract
-// Private functions
-
 var (
 	headersLine = []string{
 		"Site",
@@ -44,6 +41,8 @@ var (
 		"Imirhil",
 	}
 )
+
+// Private functions
 
 // getResults read the JSON array generated and gone through jq
 func getResults(file string) (res []byte, err error) {
