@@ -40,6 +40,7 @@ var (
 		"HSTS?",
 		"ALPN?",
 		"Drown?",
+		"Ciphers",
 		"Imirhil",
 	}
 )
@@ -167,7 +168,10 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 			siteData = append(siteData, "NO")
 		}
 
-		// [16] = imirhil score unless ignored
+		// [16] = # of ciphers
+		siteData = append(siteData, fmt.Sprintf("%d", len(det.Suites.List)))
+
+		// [17] = imirhil score unless ignored
 		if !fIgnoreImirhil {
 			siteData = append(siteData, imirhil.GetScore(site.Host))
 		} else {
