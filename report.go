@@ -19,7 +19,29 @@ import (
 	"io"
 )
 
-// EECReport is the data we want to extract
+var (
+	headersLine = []string{
+		"Site",
+		"Contract",
+		"Grade",
+		"Key",
+		"Signature",
+		"Issuer",
+		"Validity",
+		"Path",
+		"Issues",
+		"Protocols",
+		"RC4?",
+		"PFS?",
+		"OCSP?",
+		"HSTS?",
+		"ALPN?",
+		"Drown?",
+		"Ciphers",
+		"Imirhil",
+	}
+)
+
 // Private functions
 
 // getResults read the JSON array generated and gone through jq
@@ -43,11 +65,15 @@ func fixTimestamp(ts int64) (int64, int64) {
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 	e = &TLSReport{Date:time.Now(), Sites:nil}
-	e.Sites = make([][]string, len(*reports))
+	e.Sites = make([][]string, len(*reports) + 1)
 
 	if fVerbose {
 		log.Printf("%d sites found.", len(*reports))
 	}
+	// First add the headers line
+	e.Sites[0] = headersLine
+
+	// Now analyze each site
 	for i, site := range *reports {
 		endp := site.Endpoints[0]
 		det := endp.Details
@@ -107,7 +133,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		// 1 = with some browsers but not the reference ones
 		// 2 = with modern browsers
 		// 4 = with most browsers (ROBUST)
-		if det.ForwardSecrecy != 0 && det.ForwardSecrecy != 1 {
+		if det.ForwardSecrecy >= 2 {
 			siteData = append(siteData, "YES")
 		} else {
 			siteData = append(siteData, "NO")
@@ -141,13 +167,16 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 			siteData = append(siteData, "NO")
 		}
 
-		// [16] = imirhil score unless ignored
+		// [16] = # of ciphers
+		siteData = append(siteData, fmt.Sprintf("%d", len(det.Suites.List)))
+
+		// [17] = imirhil score unless ignored
 		if !fIgnoreImirhil {
 			siteData = append(siteData, imirhil.GetScore(site.Host))
 		} else {
 			siteData = append(siteData, "")
 		}
-		e.Sites[i] = siteData
+		e.Sites[i + 1] = siteData
 	}
 	return
 }
