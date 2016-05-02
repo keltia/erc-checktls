@@ -62,7 +62,7 @@ func main() {
 
 	raw, err := getResults(file)
 	if err != nil {
-		panic("Can't read " + file)
+		log.Fatalf("Can't read %s: %v", file, err.Error())
 	}
 
 	// raw is the []byte array to be deserialized into LabsReports
