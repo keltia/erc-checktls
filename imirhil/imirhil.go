@@ -12,14 +12,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 )
 
 const (
 	baseURL   = "https://tls.imirhil.fr/https/"
 	ext       = ".json"
-	aDay      = time.Duration(24) * time.Hour
-	threshold = time.Duration(30) * aDay
 )
 
 // Private area
