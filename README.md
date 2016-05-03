@@ -39,9 +39,10 @@ OPTIONS
 | Option  | Default | Description|
 | ------- |---------|------------|
 | -I      | false   | Do not fetch tls.imirhil.fr grade |
+| -S      | none    | Displays that site info only |
+| -t      | text    | Output plain text or csv |
 | -v      | false   | Be verbose |
 | -V      | false   | More verbose: displays ciphers info |
-| -S      | none    | Displays that site info only |
 
 ## Using behind a web Proxy
 
