@@ -88,4 +88,12 @@ func main() {
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
 	}
+	if fVerbose {
+		categoryCounts(allSites)
+		if fType == "csv" {
+			categoriesCSV(cntrs, os.Stdout)
+		} else {
+			log.Printf("%s\n", displayCategories(cntrs))
+		}
+	}
 }
