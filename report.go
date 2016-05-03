@@ -8,15 +8,15 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"time"
 	"strings"
 
 	"github.com/keltia/erc-checktls/imirhil"
 	"github.com/keltia/erc-checktls/ssllabs"
-	"log"
-	"io"
 )
 
 var (
