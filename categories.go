@@ -6,7 +6,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"log"
 	"github.com/keltia/erc-checktls/ssllabs"
 )
 
