@@ -22,6 +22,10 @@ var (
 	contracts map[string]string
 )
 
+const (
+	ContractFile = "sites-list.csv"
+)
+
 // getContract retrieve the site's contract from the DB
 func readContractFile(file string) (contracts map[string]string, err error) {
 	var (
@@ -72,7 +76,10 @@ func main() {
 	}
 
 	// We need that for the reports
-	contracts, err = readContractFile("sites-list.csv")
+	contracts, err = readContractFile(ContractFile)
+	if err != nil {
+		log.Fatalf("Error: can not read contract file %s: %v", ContractFile, err)
+	}
 
 	//fmt.Printf("all=%#v\n", allSites)
 
