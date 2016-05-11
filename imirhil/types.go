@@ -1,5 +1,8 @@
 // types.go
 
+// XXX Versioning of the API is nonexistent, we have to cope
+// 20160510 "old" API
+
 package imirhil
 
 import "time"
