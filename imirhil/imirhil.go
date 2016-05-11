@@ -52,7 +52,7 @@ func GetScore(site string) (score string) {
 		log.Printf("Error: can not get imirhil rating: %v", err)
 		return
 	}
-	score = full.Score.Rank
+	score = full.Hosts[0].Grade.Rank
 	return
 }
 
