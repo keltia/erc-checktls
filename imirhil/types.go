@@ -2,6 +2,7 @@
 
 // XXX Versioning of the API is nonexistent, we have to cope
 // 20160510 "old" API
+// 20160511 "new" API
 
 package imirhil
 
@@ -22,19 +23,8 @@ type Cipher struct {
 	DH       Key `json:"dh"`
 }
 
-// Source describes the details for the crypto
-type Report struct {
-	Key       Key
-	DH        []Key `json:"dh"`
-	Protocols []string
-	Ciphers   []Cipher
-	Score     Score
-	HSTS      int       `json:"hsts"`
-	Date      time.Time `json:"date"`
-}
-
-// Score of the site
-type Score struct {
+// Grade aka score of the site
+type Grade struct {
 	Rank    string
 	Details struct {
 		Score           float64 `json:"score"`
@@ -46,4 +36,33 @@ type Score struct {
 	Danger  []string
 	Warning []string
 	Success []string
+}
+
+// Site contains DNS site data
+type Site struct {
+	Name string
+	IP   string `json:"ip"`
+	Port int
+}
+
+// Handshake contains crypto parameters
+type Handshake struct {
+	Key       Key
+	DH        []Key `json:"dh"`
+	Protocols []string
+	Ciphers   []Cipher
+	HSTS      int `json:"hsts"`
+}
+
+// Host describe a single host
+type Host struct {
+	Host      Site      `json:"host"`
+	Handshake Handshake `json:"handshake"`
+	Grade     Grade
+}
+
+// Source describes the details for the crypto
+type Report struct {
+	Hosts []Host
+	Date  time.Time `json:"date"`
 }
