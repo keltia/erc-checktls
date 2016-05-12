@@ -61,7 +61,7 @@ type Host struct {
 	Grade     Grade
 }
 
-// Source describes the details for the crypto
+// Report describes the details for the crypto
 type Report struct {
 	Hosts []Host
 	Date  time.Time `json:"date"`
