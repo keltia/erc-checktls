@@ -1,7 +1,7 @@
-// eecreport.go
+// report.go
 
 /*
-This file contains our EEC-specific data/func
+This file contains func for generating the report
 */
 package main
 
