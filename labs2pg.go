@@ -54,6 +54,28 @@ func readContractFile(file string) (contracts map[string]string, err error) {
 	return
 }
 
+// checkOutput checks whether we want to specify an output file
+func checkOutput(fOutput string) (fOutputFH *os.File) {
+	var err error
+
+	fOutputFH = os.Stdout
+
+	// Open output file
+	if (fOutput != "") {
+		if (fVerbose) {
+			log.Printf("Output file is %s\n", fOutput)
+		}
+
+		if fOutput != "-" {
+			fOutputFH, err = os.Create(fOutput);
+			if err != nil {
+				log.Fatalf("Error creating %s\n", fOutput)
+			}
+		}
+	}
+	return
+}
+
 // init is for pg connection and stuff
 func init() {
     // set default database
@@ -96,27 +118,11 @@ func main() {
 
 	//fmt.Printf("all=%#v\n", allSites)
 
-	var fOutputFH *os.File
-
 	// generate the final report
 	final, err := NewTLSReport(allSites)
 
 	// Open output file
-	if (fOutput != "") {
-		if (fVerbose) {
-			log.Printf("Output file is %s\n", fOutput)
-		}
-
-		if fOutput != "-" {
-			if fOutputFH, err = os.Create(fOutput); err != nil {
-				fmt.Fprintf(os.Stderr, "Error creating %s\n", fOutput)
-				panic(err)
-			}
-		} else {
-			// stdout
-			fOutputFH = os.Stdout
-		}
-	}
+	fOutputFH := checkOutput(fOutput)
 
 	if fType == "csv" {
 		err := final.ToCSV(fOutputFH)
