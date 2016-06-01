@@ -11,6 +11,7 @@ import (
 
 var (
 	fType          string
+	fOutput        string
 	fSiteName      string
 	fIgnoreImirhil bool
 	fVerbose       bool
@@ -19,7 +20,7 @@ var (
 
 const (
 	cliUsage = `%s version %s
-Usage: %s [-hvVI] [-t text|csv] file[.json]
+Usage: %s [-hvVI] [-t text|csv] [-o file] file[.json]
 
 `
 )
@@ -32,6 +33,7 @@ var Usage = func() {
 }
 
 func init() {
+	flag.StringVar(&fOutput, "o", "-", "Save into file (default stdout)")
 	flag.StringVar(&fType, "t", "text", "Type of report")
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")

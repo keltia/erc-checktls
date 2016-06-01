@@ -96,11 +96,30 @@ func main() {
 
 	//fmt.Printf("all=%#v\n", allSites)
 
+	var fOutputFH *os.File
+
 	// generate the final report
 	final, err := NewTLSReport(allSites)
 
+	// Open output file
+	if (fOutput != "") {
+		if (fVerbose) {
+			log.Printf("Output file is %s\n", fOutput)
+		}
+
+		if fOutput != "-" {
+			if fOutputFH, err = os.Create(fOutput); err != nil {
+				fmt.Fprintf(os.Stderr, "Error creating %s\n", fOutput)
+				panic(err)
+			}
+		} else {
+			// stdout
+			fOutputFH = os.Stdout
+		}
+	}
+
 	if fType == "csv" {
-		err := final.ToCSV(os.Stdout)
+		err := final.ToCSV(fOutputFH)
 		if err != nil {
 			log.Fatalf("Error can not generate CSV: %v", err)
 		}
