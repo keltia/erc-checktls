@@ -62,6 +62,11 @@ func init() {
 func main() {
 	flag.Parse()
 
+	// Basic argument check
+	if len(flag.Args() != 1) {
+		log.Fatalf("Error: you must specify an input file!")
+	}
+
 	file := flag.Arg(0)
 
 	raw, err := getResults(file)
