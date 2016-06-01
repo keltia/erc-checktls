@@ -16,6 +16,7 @@ import (
 	"os"
 	"encoding/csv"
 	"log"
+	"path/filepath"
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
+	tlsVersion = "0.7.1"
 )
 
 // getContract retrieve the site's contract from the DB
@@ -60,7 +62,13 @@ func init() {
 
 // main is the the starting point
 func main() {
+	flag.Usage = Usage
 	flag.Parse()
+
+	// Announce ourselves
+	if fVerbose {
+		fmt.Printf("%s version %s\n\n", filepath.Base(os.Args[0]), tlsVersion)
+	}
 
 	// Basic argument check
 	if len(flag.Args()) != 1 {

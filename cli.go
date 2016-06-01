@@ -2,7 +2,12 @@
 
 package main
 
-import "flag"
+import (
+	"flag"
+	"fmt"
+	"os"
+	"path/filepath"
+)
 
 var (
 	fType          string
@@ -11,6 +16,20 @@ var (
 	fVerbose       bool
 	fReallyVerbose bool
 )
+
+const (
+	cliUsage = `%s version %s
+Usage: %s [-hvVI] [-t text|csv] file[.json]
+
+`
+)
+
+// Usage string override.
+var Usage = func() {
+	myName := filepath.Base(os.Args[0])
+	fmt.Fprintf(os.Stderr, cliUsage, myName, tlsVersion, myName)
+	flag.PrintDefaults()
+}
 
 func init() {
 	flag.StringVar(&fType, "t", "text", "Type of report")
