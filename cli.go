@@ -5,10 +5,10 @@ package main
 import "flag"
 
 var (
-	fType string
-	fSiteName string
+	fType          string
+	fSiteName      string
 	fIgnoreImirhil bool
-	fVerbose bool
+	fVerbose       bool
 	fReallyVerbose bool
 )
 
