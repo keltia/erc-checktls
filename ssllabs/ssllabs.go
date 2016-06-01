@@ -1,7 +1,7 @@
 // ssllabs.go
 
 /*
-SSLLabs-related functions.
+Package ssllabs contains SSLLabs-related functions.
 */
 package ssllabs
 

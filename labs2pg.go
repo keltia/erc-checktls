@@ -23,7 +23,7 @@ var (
 )
 
 const (
-	ContractFile = "sites-list.csv"
+	contractFile = "sites-list.csv"
 )
 
 // getContract retrieve the site's contract from the DB
@@ -62,6 +62,11 @@ func init() {
 func main() {
 	flag.Parse()
 
+	// Basic argument check
+	if len(flag.Args() != 1) {
+		log.Fatalf("Error: you must specify an input file!")
+	}
+
 	file := flag.Arg(0)
 
 	raw, err := getResults(file)
@@ -76,9 +81,9 @@ func main() {
 	}
 
 	// We need that for the reports
-	contracts, err = readContractFile(ContractFile)
+	contracts, err = readContractFile(contractFile)
 	if err != nil {
-		log.Fatalf("Error: can not read contract file %s: %v", ContractFile, err)
+		log.Fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
 
 	//fmt.Printf("all=%#v\n", allSites)
