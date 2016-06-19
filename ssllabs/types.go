@@ -187,12 +187,12 @@ type LabsHpkpPolicy struct {
 
 // LabsDrownHost describes a potentially Drown-weak site
 type LabsDrownHost struct {
-	IP string `json:"ip"`
-	Export bool
-	Port int
+	IP      string `json:"ip"`
+	Export  bool
+	Port    int
 	Special bool
-	SSLv2 bool `json:"sslv2"`
-	Status string
+	SSLv2   bool `json:"sslv2"`
+	Status  string
 }
 
 // LabsEndpointDetails gives the details of a given Endpoint
