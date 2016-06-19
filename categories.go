@@ -5,8 +5,8 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
-	"io"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"io"
 )
 
 var (

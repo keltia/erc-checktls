@@ -3,19 +3,19 @@
 /*
 This package implements reading the json from ssllabs-scan output
 into our Pg database.
- */
+*/
 package main
 
 import (
 	"flag"
 
 	"github.com/keltia/erc-checktls/ssllabs"
-//	"github.com/astaxie/beego/orm"
-    _ "github.com/lib/pq" // import your used driver
-	"fmt"
-	"os"
+	//	"github.com/astaxie/beego/orm"
 	"encoding/csv"
+	"fmt"
+	_ "github.com/lib/pq" // import your used driver
 	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -25,7 +25,7 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
-	tlsVersion = "0.7.1"
+	tlsVersion   = "0.7.1"
 )
 
 // getContract retrieve the site's contract from the DB
@@ -61,13 +61,13 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 	fOutputFH = os.Stdout
 
 	// Open output file
-	if (fOutput != "") {
-		if (fVerbose) {
+	if fOutput != "" {
+		if fVerbose {
 			log.Printf("Output file is %s\n", fOutput)
 		}
 
 		if fOutput != "-" {
-			fOutputFH, err = os.Create(fOutput);
+			fOutputFH, err = os.Create(fOutput)
 			if err != nil {
 				log.Fatalf("Error creating %s\n", fOutput)
 			}
@@ -78,8 +78,8 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 
 // init is for pg connection and stuff
 func init() {
-    // set default database
-    //orm.RegisterDataBase("default", "postgres", "roberto", 30)
+	// set default database
+	//orm.RegisterDataBase("default", "postgres", "roberto", 30)
 }
 
 // main is the the starting point
