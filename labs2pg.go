@@ -13,7 +13,7 @@ import (
 	//	"github.com/astaxie/beego/orm"
 	"encoding/csv"
 	"fmt"
-	_ "github.com/lib/pq" // import your used driver
+	//_ "github.com/lib/pq" // import your used driver
 	"log"
 	"os"
 	"path/filepath"
