@@ -2,8 +2,9 @@
 
 /*
 This file have func for computing the TLS scores
- */
+*/
 package main
+
 /*
 var (
 	protocolTable = map[string]float32{

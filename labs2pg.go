@@ -3,19 +3,20 @@
 /*
 This package implements reading the json from ssllabs-scan output
 into our Pg database.
- */
+*/
 package main
 
 import (
 	"flag"
 
 	"github.com/keltia/erc-checktls/ssllabs"
-//	"github.com/astaxie/beego/orm"
-    _ "github.com/lib/pq" // import your used driver
-	"fmt"
-	"os"
+	//	"github.com/astaxie/beego/orm"
 	"encoding/csv"
+	"fmt"
+	_ "github.com/lib/pq" // import your used driver
 	"log"
+	"os"
+	"path/filepath"
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
+	tlsVersion   = "0.7.1"
 )
 
 // getContract retrieve the site's contract from the DB
@@ -52,15 +54,43 @@ func readContractFile(file string) (contracts map[string]string, err error) {
 	return
 }
 
+// checkOutput checks whether we want to specify an output file
+func checkOutput(fOutput string) (fOutputFH *os.File) {
+	var err error
+
+	fOutputFH = os.Stdout
+
+	// Open output file
+	if fOutput != "" {
+		if fVerbose {
+			log.Printf("Output file is %s\n", fOutput)
+		}
+
+		if fOutput != "-" {
+			fOutputFH, err = os.Create(fOutput)
+			if err != nil {
+				log.Fatalf("Error creating %s\n", fOutput)
+			}
+		}
+	}
+	return
+}
+
 // init is for pg connection and stuff
 func init() {
-    // set default database
-    //orm.RegisterDataBase("default", "postgres", "roberto", 30)
+	// set default database
+	//orm.RegisterDataBase("default", "postgres", "roberto", 30)
 }
 
 // main is the the starting point
 func main() {
+	flag.Usage = Usage
 	flag.Parse()
+
+	// Announce ourselves
+	if fVerbose {
+		fmt.Printf("%s version %s\n\n", filepath.Base(os.Args[0]), tlsVersion)
+	}
 
 	// Basic argument check
 	if len(flag.Args()) != 1 {
@@ -91,8 +121,11 @@ func main() {
 	// generate the final report
 	final, err := NewTLSReport(allSites)
 
+	// Open output file
+	fOutputFH := checkOutput(fOutput)
+
 	if fType == "csv" {
-		err := final.ToCSV(os.Stdout)
+		err := final.ToCSV(fOutputFH)
 		if err != nil {
 			log.Fatalf("Error can not generate CSV: %v", err)
 		}

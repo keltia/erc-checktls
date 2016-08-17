@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	baseURL   = "https://tls.imirhil.fr/https/"
-	ext       = ".json"
+	baseURL = "https://tls.imirhil.fr/https/"
+	ext     = ".json"
 )
 
 // Private area

@@ -12,8 +12,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/keltia/erc-checktls/imirhil"
 	"github.com/keltia/erc-checktls/ssllabs"
@@ -64,8 +64,8 @@ func fixTimestamp(ts int64) (int64, int64) {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	e = &TLSReport{Date:time.Now(), Sites:nil}
-	e.Sites = make([][]string, len(*reports) + 1)
+	e = &TLSReport{Date: time.Now(), Sites: nil}
+	e.Sites = make([][]string, len(*reports)+1)
 
 	if fVerbose {
 		log.Printf("%d sites found.", len(*reports))
@@ -176,13 +176,13 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 		} else {
 			siteData = append(siteData, "")
 		}
-		e.Sites[i + 1] = siteData
+		e.Sites[i+1] = siteData
 	}
 	return
 }
 
 // ToCSV output a CSV file from a report
-func (r * TLSReport) ToCSV(w io.Writer) (err error) {
+func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)
 	if fVerbose {
 		fmt.Printf("%v\n", r.Sites)
@@ -205,4 +205,3 @@ func (rep *ssllabs.LabsReport) String() {
 		}
 	}
 }*/
-
