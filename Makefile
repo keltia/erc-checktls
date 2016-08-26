@@ -20,7 +20,7 @@ erc-checktls: ${SRCS}
 	go test -v
 
 install:
-	go install -v
+	go install ${OPTS}
 
 clean:
 	go clean -v
