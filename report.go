@@ -39,6 +39,7 @@ var (
 		"Drown?",
 		"Ciphers",
 		"Imirhil",
+		"Sweet32",
 	}
 )
 
@@ -58,6 +59,16 @@ func getResults(file string) (res []byte, err error) {
 
 func fixTimestamp(ts int64) (int64, int64) {
 	return ts / 1000, ts % 1000
+}
+
+func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
+	ciphers := det.Suites.List
+	for _, cipher := range ciphers {
+		if strings.Contains(cipher.Name, "DES") {
+			return true
+		}
+	}
+	return false
 }
 
 // Public functions
@@ -175,6 +186,13 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 			siteData = append(siteData, imirhil.GetScore(site.Host))
 		} else {
 			siteData = append(siteData, "")
+		}
+
+		// [18] = include 64-bytes ciphers?
+		if checkSweet32(det) {
+			siteData = append(siteData, "YES")
+		} else {
+			siteData = append(siteData, "NO")
 		}
 		e.Sites[i+1] = siteData
 	}
