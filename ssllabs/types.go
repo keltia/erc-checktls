@@ -115,6 +115,7 @@ type LabsSimulation struct {
 	Attempts   int
 	ProtocolID int `json:"protocolId"`
 	SuiteID    int `json:"suiteId"`
+	KxInfo     string `json:"kxInfo"`
 }
 
 // LabsSimDetails are the result of simulation
@@ -182,7 +183,7 @@ type LabsHpkpPolicy struct {
 	ReportURI         string
 	Pins              []LabsHpkpPin
 	MatchedPins       []LabsHpkpPin `json:"matchedPins"`
-	Directives        map[string]string
+	Directives        []string
 }
 
 // LabsDrownHost describes a potentially Drown-weak site
