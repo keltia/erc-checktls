@@ -12,11 +12,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 const (
 	baseURL = "https://tls.imirhil.fr/https/"
 	ext     = ".json"
+
+	DefaultWait = 10 * time.Second
 )
 
 // Private area
@@ -60,7 +63,8 @@ func GetScore(site string) (score string) {
 func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
-	resp, err := http.Get(baseURL + site + ext)
+	// We force the refresh, URL is ugly there but who cares?
+	resp, err := http.Get(baseURL + site + ext + "/refresh")
 	if err != nil {
 		return
 	}
@@ -69,6 +73,7 @@ func GetDetailedReport(site string) (report Report, err error) {
 
 		body, err = ioutil.ReadAll(resp.Body)
 		if string(body) == "pending" {
+			time.Sleep(10 * time.Second)
 			resp, err = http.Get(baseURL + site + ext)
 			if err != nil {
 				return
