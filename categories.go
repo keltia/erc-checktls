@@ -28,7 +28,9 @@ var (
 func categoryCounts(reports *ssllabs.LabsReports) {
 	cntrs = make(map[string]int)
 	for _, r := range *reports {
-		cntrs[r.Endpoints[0].Grade]++
+		if r.Endpoints != nil {
+			cntrs[r.Endpoints[0].Grade]++
+		}
 	}
 }
 
