@@ -64,7 +64,7 @@ func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
 	// We force the refresh, URL is ugly there but who cares?
-	resp, err := http.Get(baseURL + site + ext + "/refresh")
+	resp, err := http.Get(baseURL + site + ext)
 	if err != nil {
 		return
 	}
