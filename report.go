@@ -86,6 +86,10 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 
 	// Now analyze each site
 	for i, site := range *reports {
+		if site.Endpoints == nil {
+			log.Printf("Site %s has no endpoint", site.Host)
+			continue
+		}
 		endp := site.Endpoints[0]
 		det := endp.Details
 		cert := endp.Details.Cert

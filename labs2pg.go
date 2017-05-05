@@ -25,7 +25,7 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
-	tlsVersion   = "0.8.2"
+	tlsVersion   = "0.8.3"
 )
 
 // getContract retrieve the site's contract from the DB
