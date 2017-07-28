@@ -35,6 +35,7 @@ func Init(proxyauth string) {
 	if proxyauth != "" {
 		ctx.proxyauth = proxyauth
 	}
+	log.Printf("imirhil: ctx=%#v", ctx)
 }
 
 // GetScore retrieves the current score for tls.imirhil.fr
@@ -67,13 +68,11 @@ func GetDetailedReport(site string) (report Report, err error) {
 	}
 
 	resp, err := ctx.Client.Do(req)
-	if err != nil {
-		return
-	}
+	defer resp.Body.Close()
 
+	body, err = ioutil.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
 
-		body, err = ioutil.ReadAll(resp.Body)
 		if string(body) == "pending" {
 			time.Sleep(10 * time.Second)
 			resp, err = ctx.Client.Do(req)
@@ -81,11 +80,7 @@ func GetDetailedReport(site string) (report Report, err error) {
 				return
 			}
 		}
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+	} else {
 		err = fmt.Errorf("did not get acceptable status code: %v body: %q", resp.Status, body)
 		return
 	}
