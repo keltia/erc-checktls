@@ -113,8 +113,8 @@ type LabsSimulation struct {
 	Client     LabsSimClient
 	ErrorCode  int `json:"errorCode"`
 	Attempts   int
-	ProtocolID int `json:"protocolId"`
-	SuiteID    int `json:"suiteId"`
+	ProtocolID int    `json:"protocolId"`
+	SuiteID    int    `json:"suiteId"`
 	KxInfo     string `json:"kxInfo"`
 }
 
@@ -198,57 +198,59 @@ type LabsDrownHost struct {
 
 // LabsEndpointDetails gives the details of a given Endpoint
 type LabsEndpointDetails struct {
-	HostStartTime            int64 `json:"hostStartTime"`
-	Key                      LabsKey
-	Cert                     LabsCert
-	Chain                    LabsChain
-	Protocols                []LabsProtocol
-	Suites                   LabsSuites
-	ServerSignature          string `json:"serverSignature"`
-	PrefixDelegation         bool   `json:"prefixDelegation"`
-	NonPrefixDelegation      bool   `json:"nonPrefixDelegation"`
-	VulnBeast                bool   `json:"vulnBeast"`
-	RenegSupport             int    `json:"renegSupport"`
-	StsStatus                string `json:"stsStatus"`
-	StsResponseHeader        string `json:"stsResponseHeader"`
-	StsMaxAge                int    `json:"stsMaxAge"`
-	StsSubdomains            bool   `json:"stsSubdomains"`
-	StsPreload               bool   `json:"stsPreload"`
-	SessionResumption        int    `json:"sessionResumption"`
-	CompressionMethods       int    `json:"compressionMethods"`
-	SupportsNpn              bool   `json:"supportsNpn"`
-	NpnProcotols             string `json:"npnProtocols"`
-	SupportsAlpn             bool   `json:"supportsAlpn"`
-	SessionTickets           int    `json:"sessionTickets"`
-	OcspStapling             bool   `json:"ocspStapling"`
-	StaplingRevocationStatus int    `json:"staplingRevocationStatus"`
-	SniRequired              bool   `json:"sniRequired"`
-	HTTPStatusCode           int    `json:"httpStatusCode"`
-	SupportsRC4              bool   `json:"supportsRc4"`
-	RC4WithModern            bool   `json:"rc4WithModern"`
-	RC4Only                  bool   `json:"rc4Only"`
-	ForwardSecrecy           int    `json:"forwardSecrecy"`
-	Sims                     LabsSimDetails
-	Heartbleed               bool
-	Heartbeat                bool
-	OpenSSLCcs               int `json:"openSslCcs"`
-	Poodle                   bool
-	PoodleTLS                int  `json:"poodleTLS"`
-	FallbackScsv             bool `json:"fallbackScsv"`
-	Freak                    bool
-	HasSct                   int      `json:"hasSct"`
-	DhPrimes                 []string `json:"dhPrimes"`
-	DhUsesKnownPrimes        int      `json:"dhUsesKnownPrimes"`
-	DhYsReuse                bool     `json:"dhYsReuse"`
-	Logjam                   bool
-	ChaCha20Preference       bool
-	HstsPolicy               LabsHstsPolicy    `json:"hstsPolicy"`
-	HstsPreloads             []LabsHstsPreload `json:"hstsPreloads"`
-	HpkpPolicy               LabsHpkpPolicy    `json:"hpkpPolicy"`
-	HpkpRoPolicy             LabsHpkpPolicy    `json:"hpkpRoPolicy"`
-	DrownHosts               []interface{}     `json:"drownHosts"`
-	DrownErrors              bool              `json:"drownErrors"`
-	DrownVulnerable          bool              `json:"drownVulnerable"`
+	HostStartTime                  int64 `json:"hostStartTime"`
+	Key                            LabsKey
+	Cert                           LabsCert
+	Chain                          LabsChain
+	Protocols                      []LabsProtocol
+	Suites                         LabsSuites
+	ServerSignature                string `json:"serverSignature"`
+	PrefixDelegation               bool   `json:"prefixDelegation"`
+	NonPrefixDelegation            bool   `json:"nonPrefixDelegation"`
+	VulnBeast                      bool   `json:"vulnBeast"`
+	RenegSupport                   int    `json:"renegSupport"`
+	StsStatus                      string `json:"stsStatus"`
+	StsResponseHeader              string `json:"stsResponseHeader"`
+	StsMaxAge                      int    `json:"stsMaxAge"`
+	StsSubdomains                  bool   `json:"stsSubdomains"`
+	StsPreload                     bool   `json:"stsPreload"`
+	SessionResumption              int    `json:"sessionResumption"`
+	CompressionMethods             int    `json:"compressionMethods"`
+	SupportsNpn                    bool   `json:"supportsNpn"`
+	NpnProcotols                   string `json:"npnProtocols"`
+	SupportsAlpn                   bool   `json:"supportsAlpn"`
+	SessionTickets                 int    `json:"sessionTickets"`
+	OcspStapling                   bool   `json:"ocspStapling"`
+	StaplingRevocationStatus       int    `json:"staplingRevocationStatus"`
+	StaplingRevocationErrorMessage string `json:"staplingRevocationErrorMessage"`
+	SniRequired                    bool   `json:"sniRequired"`
+	HTTPStatusCode                 int    `json:"httpStatusCode"`
+	HTTPForwarding                 string `json:"httpForwarding"`
+	ForwardSecrecy                 int    `json:"forwardSecrecy"`
+	SupportsRC4                    bool   `json:"supportsRc4"`
+	RC4WithModern                  bool   `json:"rc4WithModern"`
+	RC4Only                        bool   `json:"rc4Only"`
+	Sims                           LabsSimDetails
+	Heartbleed                     bool
+	Heartbeat                      bool
+	OpenSSLCcs                     int `json:"openSslCcs"`
+	Poodle                         bool
+	PoodleTLS                      int  `json:"poodleTLS"`
+	FallbackScsv                   bool `json:"fallbackScsv"`
+	Freak                          bool
+	HasSct                         int      `json:"hasSct"`
+	DhPrimes                       []string `json:"dhPrimes"`
+	DhUsesKnownPrimes              int      `json:"dhUsesKnownPrimes"`
+	DhYsReuse                      bool     `json:"dhYsReuse"`
+	Logjam                         bool
+	ChaCha20Preference             bool
+	HstsPolicy                     LabsHstsPolicy    `json:"hstsPolicy"`
+	HstsPreloads                   []LabsHstsPreload `json:"hstsPreloads"`
+	HpkpPolicy                     LabsHpkpPolicy    `json:"hpkpPolicy"`
+	HpkpRoPolicy                   LabsHpkpPolicy    `json:"hpkpRoPolicy"`
+	DrownHosts                     []interface{}     `json:"drownHosts"`
+	DrownErrors                    bool              `json:"drownErrors"`
+	DrownVulnerable                bool              `json:"drownVulnerable"`
 }
 
 // LabsEndpoint is an Endpoint
