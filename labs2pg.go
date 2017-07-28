@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	MyName       = filepath.Base(os.Args[0])
+	MyName = filepath.Base(os.Args[0])
 
 	contracts map[string]string
 )

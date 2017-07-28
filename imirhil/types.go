@@ -7,8 +7,8 @@
 package imirhil
 
 import (
-	"time"
 	"net/http"
+	"time"
 )
 
 // Key describes a single key

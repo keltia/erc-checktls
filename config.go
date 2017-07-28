@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
-    "path/filepath"
 )
 
 var (
-    dbrcFile = filepath.Join(os.Getenv("HOME"), ".dbrc")
+	dbrcFile = filepath.Join(os.Getenv("HOME"), ".dbrc")
 
-    user, password string
+	user, password string
 )
 
 func setupProxyAuth(ctx *Context) (err error) {

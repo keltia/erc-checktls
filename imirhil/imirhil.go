@@ -55,7 +55,7 @@ func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
 	str := baseURL + site + ext
-	req, trsp  := setupTransport(str)
+	req, trsp := setupTransport(str)
 
 	if req == nil || trsp == nil {
 		err = fmt.Errorf("Can not setup connection")
