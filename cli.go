@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 )
 
 var (
@@ -27,8 +26,7 @@ Usage: %s [-hvVI] [-t text|csv] [-o file] file[.json]
 
 // Usage string override.
 var Usage = func() {
-	myName := filepath.Base(os.Args[0])
-	fmt.Fprintf(os.Stderr, cliUsage, myName, tlsVersion, myName)
+	fmt.Fprintf(os.Stderr, cliUsage, MyName, MyVersion, MyName)
 	flag.PrintDefaults()
 }
 
