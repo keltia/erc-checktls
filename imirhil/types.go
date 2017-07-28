@@ -6,7 +6,10 @@
 
 package imirhil
 
-import "time"
+import (
+	"time"
+	"net/http"
+)
 
 // Key describes a single key
 type Key struct {
@@ -65,4 +68,10 @@ type Host struct {
 type Report struct {
 	Hosts []Host
 	Date  time.Time `json:"date"`
+}
+
+// Context is used to store proxyauth
+type Context struct {
+	proxyauth string
+	Client    *http.Client
 }

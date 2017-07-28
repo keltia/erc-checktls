@@ -22,30 +22,21 @@ const (
 	DefaultWait = 10 * time.Second
 )
 
+var (
+	ctx = &Context{}
+)
+
 // Private area
 
-// callAPI makes the actual call, probably "Pending" as 1st answer
-func callAPI(url string) (resp *http.Response, err error) {
-	resp, err = http.Get(url)
-	if err != nil {
-		return
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		var body []byte
-
-		body, err = ioutil.ReadAll(resp.Body)
-		if string(body) == "pending" {
-			resp, err = http.Get(url)
-			if err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
 // Public functions
+
+// Init setups proxy authentication
+func Init(proxyauth string) {
+	if proxyauth != "" {
+		ctx.proxyauth = proxyauth
+	}
+	log.Printf("imirhil: ctx=%#v", ctx)
+}
 
 // GetScore retrieves the current score for tls.imirhil.fr
 func GetScore(site string) (score string) {
@@ -63,27 +54,33 @@ func GetScore(site string) (score string) {
 func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
-	// We force the refresh, URL is ugly there but who cares?
-	resp, err := http.Get(baseURL + site + ext)
-	if err != nil {
+	str := baseURL + site + ext
+	req, trsp  := setupTransport(str)
+
+	if req == nil || trsp == nil {
+		err = fmt.Errorf("Can not setup connection")
 		return
 	}
 
+	// It is better to re-use than creating a new one each time
+	if ctx.Client == nil {
+		ctx.Client = &http.Client{Transport: trsp, Timeout: 10 * time.Second}
+	}
+
+	resp, err := ctx.Client.Do(req)
+	defer resp.Body.Close()
+
+	body, err = ioutil.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
 
-		body, err = ioutil.ReadAll(resp.Body)
 		if string(body) == "pending" {
 			time.Sleep(10 * time.Second)
-			resp, err = http.Get(baseURL + site + ext)
+			resp, err = ctx.Client.Do(req)
 			if err != nil {
 				return
 			}
 		}
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+	} else {
 		err = fmt.Errorf("did not get acceptable status code: %v body: %q", resp.Status, body)
 		return
 	}
