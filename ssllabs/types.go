@@ -222,12 +222,14 @@ type LabsEndpointDetails struct {
 	SessionTickets           int    `json:"sessionTickets"`
 	OcspStapling             bool   `json:"ocspStapling"`
 	StaplingRevocationStatus int    `json:"staplingRevocationStatus"`
+	StaplingRevocationErrorMessage string `json:"staplingRevocationErrorMessage"`
 	SniRequired              bool   `json:"sniRequired"`
 	HTTPStatusCode           int    `json:"httpStatusCode"`
+	HTTPForwarding     		 string `json:"httpForwarding"`
+	ForwardSecrecy           int    `json:"forwardSecrecy"`
 	SupportsRC4              bool   `json:"supportsRc4"`
 	RC4WithModern            bool   `json:"rc4WithModern"`
 	RC4Only                  bool   `json:"rc4Only"`
-	ForwardSecrecy           int    `json:"forwardSecrecy"`
 	Sims                     LabsSimDetails
 	Heartbleed               bool
 	Heartbeat                bool
