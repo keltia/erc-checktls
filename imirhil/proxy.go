@@ -33,7 +33,7 @@ func setupTransport(str string) (*http.Request, *http.Transport) {
         return nil, nil
     }
 
-    req, err := http.NewRequest("HEAD", str, nil)
+    req, err := http.NewRequest("GET", str, nil)
     if err != nil {
         log.Printf("error: req is nil: %v", err)
         return nil, nil
