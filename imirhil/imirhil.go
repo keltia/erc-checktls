@@ -64,7 +64,7 @@ func GetDetailedReport(site string) (report Report, err error) {
 
 	// It is better to re-use than creating a new one each time
 	if ctx.Client == nil {
-		ctx.Client = &http.Client{Transport: trsp, Timeout: 10 * time.Second}
+		ctx.Client = &http.Client{Transport: trsp, Timeout: DefaultWait}
 	}
 
 	resp, err := ctx.Client.Do(req)
