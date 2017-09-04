@@ -26,7 +26,7 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
-	MyVersion    = "0.9.0"
+	MyVersion    = "0.9.1"
 )
 
 type Context struct {
@@ -94,7 +94,8 @@ func main() {
 
 	// Announce ourselves
 	if fVerbose {
-		fmt.Printf("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]), MyVersion, imirhil.Version)
+		fmt.Printf("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
+			MyVersion, imirhil.Version)
 	}
 
 	// Initiase context
