@@ -15,6 +15,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"github.com/keltia/erc-checktls/imirhil"
 )
 
 var (
@@ -93,7 +94,7 @@ func main() {
 
 	// Announce ourselves
 	if fVerbose {
-		fmt.Printf("%s version %s\n\n", filepath.Base(os.Args[0]), MyVersion)
+		fmt.Printf("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]), MyVersion, imirhil.Version)
 	}
 
 	// Initiase context
