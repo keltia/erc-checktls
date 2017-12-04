@@ -71,7 +71,15 @@ func GetDetailedReport(site string) (report Report, err error) {
 		ctx.Client = &http.Client{Transport: trsp, Timeout: DefaultWait}
 	}
 
+	verbose("req=%#v", req)
+	verbose("clt=%#v", ctx.Client)
+
 	resp, err := ctx.Client.Do(req)
+	if err != nil {
+		verbose("err=%#v", err)
+		return
+	}
+	verbose("resp=%#v", resp)
 	defer resp.Body.Close()
 
 	body, err = ioutil.ReadAll(resp.Body)
