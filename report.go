@@ -79,7 +79,7 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 	e.Sites = make([][]string, len(*reports)+1)
 
 	if !fIgnoreImirhil {
-		imirhil.Init(ctx.proxyauth)
+		imirhil.Init(fVerbose, ctx.proxyauth)
 	}
 
 	if fVerbose {
