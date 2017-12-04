@@ -82,9 +82,7 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 		imirhil.Init(fVerbose, ctx.proxyauth)
 	}
 
-	if fVerbose {
-		log.Printf("%d sites found.", len(*reports))
-	}
+	verbose("%d sites found.", len(*reports))
 	// First add the headers line
 	e.Sites[0] = headersLine
 
@@ -210,9 +208,7 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 // ToCSV output a CSV file from a report
 func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)
-	if fVerbose {
-		fmt.Printf("%v\n", r.Sites)
-	}
+	verbose("%v\n", r.Sites)
 	err = wh.WriteAll(r.Sites)
 	return
 }
