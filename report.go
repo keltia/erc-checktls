@@ -98,9 +98,7 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 		det := endp.Details
 		cert := endp.Details.Cert
 
-		if fVerbose {
-			log.Printf("  Host: %s", site.Host)
-		}
+		verbose("  Host: %s", site.Host)
 		// make space
 		var siteData []string
 
