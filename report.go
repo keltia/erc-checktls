@@ -75,8 +75,10 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	e = &TLSReport{Date: time.Now(), Sites: nil}
-	e.Sites = make([][]string, len(*reports)+1)
+	e = &TLSReport{
+		Date: time.Now(),
+		Sites: make([][]string, len(*reports)+1),
+	}
 
 	if !fIgnoreImirhil {
 		imirhil.Init(fVerbose, ctx.proxyauth)
