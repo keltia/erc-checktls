@@ -73,5 +73,6 @@ type Report struct {
 // Context is used to store proxyauth
 type Context struct {
 	proxyauth string
+	fVerbose  bool
 	Client    *http.Client
 }

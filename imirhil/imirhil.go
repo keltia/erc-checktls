@@ -32,11 +32,14 @@ var (
 // Public functions
 
 // Init setups proxy authentication
-func Init(proxyauth string) {
+func Init(fVerbose bool, proxyauth string) {
 	if proxyauth != "" {
 		ctx.proxyauth = proxyauth
 	}
-	log.Printf("imirhil: ctx=%#v", ctx)
+	if fVerbose {
+		ctx.fVerbose = true
+	}
+	verbose("imirhil: ctx=%#v", ctx)
 }
 
 // GetScore retrieves the current score for tls.imirhil.fr
