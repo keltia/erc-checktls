@@ -20,7 +20,7 @@ const (
 	ext     = ".json"
 
 	DefaultWait = 10 * time.Second
-	Version = "201706"
+	Version     = "201712"
 )
 
 var (
