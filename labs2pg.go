@@ -10,12 +10,11 @@ import (
 	"flag"
 
 	"encoding/csv"
-	"fmt"
+	"github.com/keltia/erc-checktls/imirhil"
 	"github.com/keltia/erc-checktls/ssllabs"
 	"log"
 	"os"
 	"path/filepath"
-	"github.com/keltia/erc-checktls/imirhil"
 )
 
 var (
@@ -93,10 +92,8 @@ func main() {
 	flag.Parse()
 
 	// Announce ourselves
-	if fVerbose {
-		fmt.Printf("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
-			MyVersion, imirhil.Version)
-	}
+	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
+		MyVersion, imirhil.Version)
 
 	// Initiase context
 	ctx := &Context{}
@@ -143,7 +140,7 @@ func main() {
 		}
 	} else {
 		// XXX Early debugging
-		fmt.Printf("%#v\n", final)
+		verbose("%#v\n", final)
 	}
 	if fVerbose {
 		categoryCounts(allSites)
