@@ -3,6 +3,7 @@
 // XXX Versioning of the API is nonexistent, we have to cope
 // 20160510 "old" API
 // 20160511 "new" API
+// 20171204 add ID to struct Report
 
 package imirhil
 
@@ -68,10 +69,14 @@ type Host struct {
 type Report struct {
 	Hosts []Host
 	Date  time.Time `json:"date"`
+	ID    struct {
+	    Oid string `json:"$oid"`
+    } `json:"_id"`
 }
 
 // Context is used to store proxyauth
 type Context struct {
 	proxyauth string
+	level     int
 	Client    *http.Client
 }

@@ -10,6 +10,10 @@ import (
 	"strings"
 )
 
+const (
+	proxyTag = "proxy"
+)
+
 var (
 	dbrcFile = filepath.Join(os.Getenv("HOME"), ".dbrc")
 
@@ -17,7 +21,7 @@ var (
 )
 
 func setupProxyAuth(ctx *Context) (err error) {
-	err = loadDbrc(ctx, dbrcFile)
+	err = loadDbrc(dbrcFile)
 	if err != nil {
 		log.Printf("No dbrc file: %v", err)
 	}
@@ -34,7 +38,7 @@ func setupProxyAuth(ctx *Context) (err error) {
 	return
 }
 
-func loadDbrc(ctx *Context, file string) (err error) {
+func loadDbrc(file string) (err error) {
 	fh, err := os.Open(file)
 	if err != nil {
 		return fmt.Errorf("Error: can not find %s: %v", file, err)
@@ -57,7 +61,7 @@ func loadDbrc(ctx *Context, file string) (err error) {
 		flds := strings.Split(l, " ")
 
 		// Check what we need
-		if flds[0] == "proxy" {
+		if flds[0] == proxyTag {
 			user = flds[1]
 			password = flds[2]
 			break
@@ -68,7 +72,7 @@ func loadDbrc(ctx *Context, file string) (err error) {
 	}
 
 	if user == "" {
-		return fmt.Errorf("no user/password for cimbl in %s", dbrcFile)
+		return fmt.Errorf("no user/password for %s in %s", proxyTag, dbrcFile)
 	}
 
 	return

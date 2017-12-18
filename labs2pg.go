@@ -10,23 +10,24 @@ import (
 	"flag"
 
 	"encoding/csv"
-	"fmt"
+	"github.com/keltia/erc-checktls/imirhil"
 	"github.com/keltia/erc-checktls/ssllabs"
 	"log"
 	"os"
 	"path/filepath"
-	"github.com/keltia/erc-checktls/imirhil"
 )
 
 var (
 	MyName = filepath.Base(os.Args[0])
 
 	contracts map[string]string
+
+	logLevel = 0
 )
 
 const (
 	contractFile = "sites-list.csv"
-	MyVersion    = "0.9.1"
+	MyVersion    = "0.9.2"
 )
 
 type Context struct {
@@ -93,10 +94,8 @@ func main() {
 	flag.Parse()
 
 	// Announce ourselves
-	if fVerbose {
-		fmt.Printf("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
-			MyVersion, imirhil.Version)
-	}
+	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
+		MyVersion, imirhil.Version)
 
 	// Initiase context
 	ctx := &Context{}
@@ -128,6 +127,15 @@ func main() {
 		log.Fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
 
+	// Set logging level
+	if fVerbose {
+		logLevel = 1
+	}
+
+	if fDebug {
+		logLevel = 2
+	}
+
 	//fmt.Printf("all=%#v\n", allSites)
 
 	// generate the final report
@@ -143,7 +151,7 @@ func main() {
 		}
 	} else {
 		// XXX Early debugging
-		fmt.Printf("%#v\n", final)
+		debug("%#v\n", final)
 	}
 	if fVerbose {
 		categoryCounts(allSites)
