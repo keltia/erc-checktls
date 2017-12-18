@@ -21,6 +21,8 @@ var (
 	MyName = filepath.Base(os.Args[0])
 
 	contracts map[string]string
+
+	logLevel = 0
 )
 
 const (
@@ -123,6 +125,15 @@ func main() {
 	contracts, err = readContractFile(contractFile)
 	if err != nil {
 		log.Fatalf("Error: can not read contract file %s: %v", contractFile, err)
+	}
+
+	// Set logging level
+	if fVerbose {
+		logLevel = 1
+	}
+
+	if fDebug {
+		logLevel = 2
 	}
 
 	//fmt.Printf("all=%#v\n", allSites)

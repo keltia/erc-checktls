@@ -33,12 +33,13 @@ var (
 // Public functions
 
 // Init setups proxy authentication
-func Init(fVerbose bool, proxyauth string) {
+func Init(logLevel int, proxyauth string) {
 	if proxyauth != "" {
 		ctx.proxyauth = proxyauth
 	}
-	if fVerbose {
-		ctx.verbose = true
+
+	if logLevel >= 0 {
+		ctx.level = logLevel
 	}
 
 	_, trsp := setupTransport(baseURL)
