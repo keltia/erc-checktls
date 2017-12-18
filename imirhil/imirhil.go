@@ -16,7 +16,8 @@ import (
 )
 
 const (
-	baseURL = "https://tls.imirhil.fr/https/"
+	baseURL = "https://tls.imirhil.fr/"
+	typeURL = "https/"
 	ext     = ".json"
 
 	DefaultWait = 10 * time.Second
@@ -37,8 +38,11 @@ func Init(fVerbose bool, proxyauth string) {
 		ctx.proxyauth = proxyauth
 	}
 	if fVerbose {
-		ctx.fVerbose = true
+		ctx.verbose = true
 	}
+
+	_, trsp := setupTransport(baseURL)
+	ctx.Client = &http.Client{Transport: trsp, Timeout: DefaultWait}
 	verbose("imirhil: ctx=%#v", ctx)
 }
 
@@ -58,17 +62,12 @@ func GetScore(site string) (score string) {
 func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
-	str := baseURL + site + ext
-	req, trsp := setupTransport(str)
+	str := fmt.Sprintf("%s/%s/%s.%s", baseURL, typeURL, site, ext)
 
-	if req == nil || trsp == nil {
-		err = fmt.Errorf("Can not setup connection")
-		return
-	}
-
-	// It is better to re-use than creating a new one each time
-	if ctx.Client == nil {
-		ctx.Client = &http.Client{Transport: trsp, Timeout: DefaultWait}
+	req, err := http.NewRequest("GET", str, nil)
+	if err != nil {
+		log.Printf("error: req is nil: %v", err)
+		return Report{}, nil
 	}
 
 	verbose("req=%#v", req)
