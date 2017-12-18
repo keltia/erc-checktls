@@ -151,7 +151,7 @@ func main() {
 		}
 	} else {
 		// XXX Early debugging
-		verbose("%#v\n", final)
+		debug("%#v\n", final)
 	}
 	if fVerbose {
 		categoryCounts(allSites)

@@ -44,7 +44,7 @@ func Init(logLevel int, proxyauth string) {
 
 	_, trsp := setupTransport(baseURL)
 	ctx.Client = &http.Client{Transport: trsp, Timeout: DefaultWait}
-	verbose("imirhil: ctx=%#v", ctx)
+	debug("imirhil: ctx=%#v", ctx)
 }
 
 // GetScore retrieves the current score for tls.imirhil.fr
@@ -71,15 +71,15 @@ func GetDetailedReport(site string) (report Report, err error) {
 		return Report{}, nil
 	}
 
-	verbose("req=%#v", req)
-	verbose("clt=%#v", ctx.Client)
+	debug("req=%#v", req)
+	debug("clt=%#v", ctx.Client)
 
 	resp, err := ctx.Client.Do(req)
 	if err != nil {
 		verbose("err=%#v", err)
 		return
 	}
-	verbose("resp=%#v", resp)
+	debug("resp=%#v", resp)
 	defer resp.Body.Close()
 
 	body, err = ioutil.ReadAll(resp.Body)
