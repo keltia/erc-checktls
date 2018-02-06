@@ -141,6 +141,8 @@ func main() {
 	// generate the final report
 	final, err := NewTLSReport(ctx, allSites)
 
+	verbose("SSLabs engine: %s/%s", final.EngineVersion, final.CriteriaVersion)
+
 	// Open output file
 	fOutputFH := checkOutput(fOutput)
 
