@@ -183,7 +183,7 @@ type LabsHpkpPolicy struct {
 	ReportURI         string
 	Pins              []LabsHpkpPin
 	MatchedPins       []LabsHpkpPin `json:"matchedPins"`
-	Directives        []string
+	Directives        map[string]string
 }
 
 // LabsDrownHost describes a potentially Drown-weak site
