@@ -157,7 +157,7 @@ type LabsHstsPolicy struct {
 	MaxAge            int64 `json:"maxAge"`
 	IncludeSubDomains bool  `json:"includeSubDomains"`
 	Preload           bool
-	Directives        []string
+	Directives        map[string]string
 }
 
 // LabsHstsPreload is for HSTS preloading
@@ -184,7 +184,7 @@ type LabsHpkpPolicy struct {
 	ReportURI         string
 	Pins              []LabsHpkpPin
 	MatchedPins       []LabsHpkpPin `json:"matchedPins"`
-	Directives        map[string]string
+	Directives        []string
 }
 
 // LabsDrownHost describes a potentially Drown-weak site
