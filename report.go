@@ -40,6 +40,7 @@ var (
 		"Ciphers",
 		"Imirhil",
 		"Sweet32",
+		"Robot",
 	}
 )
 
@@ -76,7 +77,7 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 	e = &TLSReport{
-		Date: time.Now(),
+		Date:  time.Now(),
 		Sites: make([][]string, len(*reports)+1),
 	}
 
@@ -200,6 +201,10 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 		} else {
 			siteData = append(siteData, "NO")
 		}
+
+		// [19] = Robot Attack, return of the Oracle?
+		siteData = append(siteData, "NO")
+
 		e.Sites[i+1] = siteData
 	}
 	return
