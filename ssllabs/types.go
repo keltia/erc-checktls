@@ -157,7 +157,7 @@ type LabsHstsPolicy struct {
 	MaxAge            int64 `json:"maxAge"`
 	IncludeSubDomains bool  `json:"includeSubDomains"`
 	Preload           bool
-	Directives        map[string]string
+	Directives        []string
 }
 
 // LabsHstsPreload is for HSTS preloading
