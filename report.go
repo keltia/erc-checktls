@@ -92,7 +92,7 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 	// Now analyze each site
 	for i, site := range *reports {
 		// Hack to get SSLLabs report engiveVersion & CriteriaVersion
-		if e.CriteriaVersion == "" {
+		if e.CriteriaVersion == "" || e.EngineVersion == "" {
 			e.CriteriaVersion = site.CriteriaVersion
 			e.EngineVersion = site.EngineVersion
 		}
