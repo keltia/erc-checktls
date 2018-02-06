@@ -91,6 +91,12 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 
 	// Now analyze each site
 	for i, site := range *reports {
+		// Hack to get SSLLabs report engiveVersion & CriteriaVersion
+		if e.CriteriaVersion == "" {
+			e.CriteriaVersion = site.CriteriaVersion
+			e.EngineVersion = site.EngineVersion
+		}
+
 		if site.Endpoints == nil {
 			log.Printf("Site %s has no endpoint", site.Host)
 			continue
