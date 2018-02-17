@@ -12,37 +12,40 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 const (
-	baseURL = "https://tls.imirhil.fr/https/"
+	baseURL = "https://tls.imirhil.fr/"
+	typeURL = "https/"
 	ext     = ".json"
+
+	DefaultWait = 10 * time.Second
+	Version     = "201712"
+)
+
+var (
+	ctx = &Context{}
 )
 
 // Private area
 
-// callAPI makes the actual call, probably "Pending" as 1st answer
-func callAPI(url string) (resp *http.Response, err error) {
-	resp, err = http.Get(url)
-	if err != nil {
-		return
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		var body []byte
-
-		body, err = ioutil.ReadAll(resp.Body)
-		if string(body) == "pending" {
-			resp, err = http.Get(url)
-			if err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
 // Public functions
+
+// Init setups proxy authentication
+func Init(logLevel int, proxyauth string) {
+	if proxyauth != "" {
+		ctx.proxyauth = proxyauth
+	}
+
+	if logLevel >= 0 {
+		ctx.level = logLevel
+	}
+
+	_, trsp := setupTransport(baseURL)
+	ctx.Client = &http.Client{Transport: trsp, Timeout: DefaultWait}
+	debug("imirhil: ctx=%#v", ctx)
+}
 
 // GetScore retrieves the current score for tls.imirhil.fr
 func GetScore(site string) (score string) {
@@ -60,25 +63,36 @@ func GetScore(site string) (score string) {
 func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
-	resp, err := http.Get(baseURL + site + ext)
+	str := fmt.Sprintf("%s/%s/%s.%s", baseURL, typeURL, site, ext)
+
+	req, err := http.NewRequest("GET", str, nil)
 	if err != nil {
-		return
+		log.Printf("error: req is nil: %v", err)
+		return Report{}, nil
 	}
 
+	debug("req=%#v", req)
+	debug("clt=%#v", ctx.Client)
+
+	resp, err := ctx.Client.Do(req)
+	if err != nil {
+		verbose("err=%#v", err)
+		return
+	}
+	debug("resp=%#v", resp)
+	defer resp.Body.Close()
+
+	body, err = ioutil.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
 
-		body, err = ioutil.ReadAll(resp.Body)
 		if string(body) == "pending" {
-			resp, err = http.Get(baseURL + site + ext)
+			time.Sleep(10 * time.Second)
+			resp, err = ctx.Client.Do(req)
 			if err != nil {
 				return
 			}
 		}
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+	} else {
 		err = fmt.Errorf("did not get acceptable status code: %v body: %q", resp.Status, body)
 		return
 	}

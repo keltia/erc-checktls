@@ -74,25 +74,31 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 // Public functions
 
 // NewTLSReport generates everything we need for display/export
-func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	e = &TLSReport{Date: time.Now(), Sites: nil}
-	e.Sites = make([][]string, len(*reports)+1)
-
-	if fVerbose {
-		log.Printf("%d sites found.", len(*reports))
+func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err error) {
+	e = &TLSReport{
+		Date: time.Now(),
+		Sites: make([][]string, len(*reports)+1),
 	}
+
+	if !fIgnoreImirhil {
+		imirhil.Init(logLevel, ctx.proxyauth)
+	}
+
+	verbose("%d sites found.", len(*reports))
 	// First add the headers line
 	e.Sites[0] = headersLine
 
 	// Now analyze each site
 	for i, site := range *reports {
+		if site.Endpoints == nil {
+			log.Printf("Site %s has no endpoint", site.Host)
+			continue
+		}
 		endp := site.Endpoints[0]
 		det := endp.Details
 		cert := endp.Details.Cert
 
-		if fVerbose {
-			log.Printf("  Host: %s", site.Host)
-		}
+		verbose("  Host: %s", site.Host)
 		// make space
 		var siteData []string
 
@@ -202,9 +208,7 @@ func NewTLSReport(reports *ssllabs.LabsReports) (e *TLSReport, err error) {
 // ToCSV output a CSV file from a report
 func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)
-	if fVerbose {
-		fmt.Printf("%v\n", r.Sites)
-	}
+	verbose("%v\n", r.Sites)
 	err = wh.WriteAll(r.Sites)
 	return
 }

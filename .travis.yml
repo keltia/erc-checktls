@@ -2,6 +2,9 @@ language: go
 go:
 - "1.10"
 - tip
+matrix:
+  allow_failures:
+  - go: master
 branches:
   only:
   - develop

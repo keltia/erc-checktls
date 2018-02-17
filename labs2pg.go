@@ -9,24 +9,30 @@ package main
 import (
 	"flag"
 
-	"github.com/keltia/erc-checktls/ssllabs"
-	//	"github.com/astaxie/beego/orm"
 	"encoding/csv"
-	"fmt"
-	//_ "github.com/lib/pq" // import your used driver
+	"github.com/keltia/erc-checktls/imirhil"
+	"github.com/keltia/erc-checktls/ssllabs"
 	"log"
 	"os"
 	"path/filepath"
 )
 
 var (
+	MyName = filepath.Base(os.Args[0])
+
 	contracts map[string]string
+
+	logLevel = 0
 )
 
 const (
 	contractFile = "sites-list.csv"
-	tlsVersion   = "0.8"
+	MyVersion    = "0.9.2"
 )
+
+type Context struct {
+	proxyauth string
+}
 
 // getContract retrieve the site's contract from the DB
 func readContractFile(file string) (contracts map[string]string, err error) {
@@ -88,9 +94,14 @@ func main() {
 	flag.Parse()
 
 	// Announce ourselves
-	if fVerbose {
-		fmt.Printf("%s version %s\n\n", filepath.Base(os.Args[0]), tlsVersion)
-	}
+	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
+		MyVersion, imirhil.Version)
+
+	// Initiase context
+	ctx := &Context{}
+
+	// Load proxy auth
+	err := setupProxyAuth(ctx)
 
 	// Basic argument check
 	if len(flag.Args()) != 1 {
@@ -116,10 +127,19 @@ func main() {
 		log.Fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
 
+	// Set logging level
+	if fVerbose {
+		logLevel = 1
+	}
+
+	if fDebug {
+		logLevel = 2
+	}
+
 	//fmt.Printf("all=%#v\n", allSites)
 
 	// generate the final report
-	final, err := NewTLSReport(allSites)
+	final, err := NewTLSReport(ctx, allSites)
 
 	// Open output file
 	fOutputFH := checkOutput(fOutput)
@@ -131,7 +151,7 @@ func main() {
 		}
 	} else {
 		// XXX Early debugging
-		fmt.Printf("%#v\n", final)
+		debug("%#v\n", final)
 	}
 	if fVerbose {
 		categoryCounts(allSites)

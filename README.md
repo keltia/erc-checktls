@@ -10,8 +10,8 @@ In addition the grade checked by [Imirhil](https://tls.imirhil.fr/) will be chec
 
 ## Requirements
 
-* Go >= 1.3
-* jq
+* Go >= 1.8
+* jq (optional)
 
 ## Usage
 

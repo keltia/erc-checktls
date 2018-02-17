@@ -22,13 +22,27 @@ var (
 		"E",
 		"F",
 		"T",
+		"PFS",
+		"Sweet32",
 	}
 )
 
 func categoryCounts(reports *ssllabs.LabsReports) {
 	cntrs = make(map[string]int)
 	for _, r := range *reports {
-		cntrs[r.Endpoints[0].Grade]++
+		if r.Endpoints != nil {
+			endp := r.Endpoints[0]
+			det := endp.Details
+
+			cntrs[r.Endpoints[0].Grade]++
+			if det.ForwardSecrecy >= 2 {
+				cntrs["PFS"]++
+			}
+			if checkSweet32(det) {
+				cntrs["Sweet32"]++
+			}
+
+		}
 	}
 }
 
