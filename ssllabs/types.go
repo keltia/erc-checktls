@@ -174,6 +174,11 @@ type LabsHpkpPin struct {
 	Value        string
 }
 
+type LabsHpkpDirective struct {
+	Name  string
+	Value string
+}
+
 // LabsHpkpPolicy describes the HPKP policy
 type LabsHpkpPolicy struct {
 	Header            string
@@ -184,7 +189,7 @@ type LabsHpkpPolicy struct {
 	ReportURI         string
 	Pins              []LabsHpkpPin
 	MatchedPins       []LabsHpkpPin `json:"matchedPins"`
-	Directives        []string
+	Directives        []LabsHpkpDirective
 }
 
 // LabsDrownHost describes a potentially Drown-weak site
