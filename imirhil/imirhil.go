@@ -63,7 +63,7 @@ func GetScore(site string) (score string) {
 func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
-	str := fmt.Sprintf("%s/%s/%s.%s", baseURL, typeURL, site, ext)
+	str := fmt.Sprintf("%s/%s/%s.%s/refresh", baseURL, typeURL, site, ext)
 
 	req, err := http.NewRequest("GET", str, nil)
 	if err != nil {

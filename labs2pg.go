@@ -27,7 +27,7 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
-	MyVersion    = "0.9.2"
+	MyVersion    = "0.9.3"
 )
 
 type Context struct {
@@ -140,6 +140,8 @@ func main() {
 
 	// generate the final report
 	final, err := NewTLSReport(ctx, allSites)
+
+	verbose("SSLabs engine: %s/%s", final.EngineVersion, final.CriteriaVersion)
 
 	// Open output file
 	fOutputFH := checkOutput(fOutput)

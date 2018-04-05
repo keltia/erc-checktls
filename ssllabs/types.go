@@ -58,6 +58,7 @@ type LabsCert struct {
 	ValidationType       string `json:"validationType"`
 	Issues               int
 	Sct                  bool
+	MustStaple           int    `json:"mustStaple"`
 	SHA1Hash             string `json:"sha1Hash"`
 	PinSHA256            string `json:"pinSha256"`
 }
@@ -173,6 +174,11 @@ type LabsHpkpPin struct {
 	Value        string
 }
 
+type LabsHpkpDirective struct {
+	Name  string
+	Value string
+}
+
 // LabsHpkpPolicy describes the HPKP policy
 type LabsHpkpPolicy struct {
 	Header            string
@@ -183,7 +189,7 @@ type LabsHpkpPolicy struct {
 	ReportURI         string
 	Pins              []LabsHpkpPin
 	MatchedPins       []LabsHpkpPin `json:"matchedPins"`
-	Directives        []string
+	Directives        []LabsHpkpDirective
 }
 
 // LabsDrownHost describes a potentially Drown-weak site
@@ -234,6 +240,7 @@ type LabsEndpointDetails struct {
 	Heartbleed                     bool
 	Heartbeat                      bool
 	OpenSSLCcs                     int `json:"openSslCcs"`
+	OpenSSLLuckyMinus20            int `json:"openSSLLuckyMinus20"`
 	Poodle                         bool
 	PoodleTLS                      int  `json:"poodleTLS"`
 	FallbackScsv                   bool `json:"fallbackScsv"`
@@ -285,7 +292,7 @@ type LabsReport struct {
 	CacheExpiryTime int64  `json:"cacheExpiryTime"`
 	Endpoints       []LabsEndpoint
 	CertHostnames   []string `json:"certHostnames"`
-	rawJSON         string   `json:"rawJson"`
+	RawJSON         string   `json:"rawJson"`
 }
 
 // LabsReports is a shortcut to all reports
