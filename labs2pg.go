@@ -27,7 +27,7 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
-	MyVersion    = "0.9.2"
+	MyVersion    = "0.9.3"
 )
 
 type Context struct {
