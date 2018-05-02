@@ -1,5 +1,7 @@
 // types.go
 
+// v1 on tls.imrhil.fr
+
 // XXX Versioning of the API is nonexistent, we have to cope
 // 20160510 "old" API
 // 20160511 "new" API
@@ -82,4 +84,5 @@ type Context struct {
 	proxyauth string
 	level     int
 	Client    *http.Client
+	refresh   bool
 }
