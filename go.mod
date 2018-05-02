@@ -1,1 +1,1 @@
-module "github.com/keltia/erc-checktls"
+module github.com/keltia/erc-checktls
