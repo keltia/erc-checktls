@@ -1,10 +1,10 @@
-// labs2pg.go
+// main.go
 
 /*
 This package implements reading the json from ssllabs-scan output
 into our Pg database.
 */
-package main
+package main // import "github.com/keltia/erc-checktls"
 
 import (
 	"flag"
