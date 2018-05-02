@@ -23,6 +23,9 @@ erc-checktls: ${SRCS}
 install:
 	go install ${OPTS}
 
+lint:
+	gometalinter .
+
 clean:
 	go clean -v
 
