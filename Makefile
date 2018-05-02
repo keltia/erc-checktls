@@ -7,7 +7,7 @@
 .PATH= imirhil:ssllabs
 GOBIN=   ${GOPATH}/bin
 
-SRCS= labs2pg.go cli.go kpi.go report.go utils.go \
+SRCS= main.go cli.go kpi.go report.go utils.go \
 	config.go \
     imirhil/imirhil.go imirhil/types.go imirhil/proxy.go \
     ssllabs/ssllabs.go ssllabs/types.go
