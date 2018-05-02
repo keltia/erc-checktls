@@ -4,6 +4,7 @@
 // 20160510 "old" API
 // 20160511 "new" API
 // 20171204 add ID to struct Report
+// 20180502 added two fields in the report top struct
 
 package imirhil
 
@@ -70,8 +71,10 @@ type Report struct {
 	Hosts []Host
 	Date  time.Time `json:"date"`
 	ID    struct {
-	    Oid string `json:"$oid"`
-    } `json:"_id"`
+		Oid string `json:"$oid"`
+	} `json:"_id"`
+	Host string
+	Port int
 }
 
 // Context is used to store proxyauth
