@@ -25,15 +25,19 @@ const (
 )
 
 var (
-	ctx = &Context{}
+	ctx = &Context{refresh: false}
 )
 
 // Private area
 
+func myRedirect(req *http.Request, via []*http.Request) error {
+	return nil
+}
+
 // Public functions
 
 // Init setups proxy authentication
-func Init(logLevel int, proxyauth string) {
+func Init(logLevel int, proxyauth string, refresh bool) {
 	if proxyauth != "" {
 		ctx.proxyauth = proxyauth
 	}
@@ -42,8 +46,16 @@ func Init(logLevel int, proxyauth string) {
 		ctx.level = logLevel
 	}
 
+	if refresh {
+		ctx.refresh = refresh
+	}
+
 	_, trsp := setupTransport(baseURL)
-	ctx.Client = &http.Client{Transport: trsp, Timeout: DefaultWait}
+	ctx.Client = &http.Client{
+		Transport:     trsp,
+		Timeout:       DefaultWait,
+		CheckRedirect: myRedirect,
+	}
 	debug("imirhil: ctx=%#v", ctx)
 }
 
@@ -63,7 +75,11 @@ func GetScore(site string) (score string) {
 func GetDetailedReport(site string) (report Report, err error) {
 	var body []byte
 
-	str := fmt.Sprintf("%s/%s/%s.%s/refresh", baseURL, typeURL, site, ext)
+	str := fmt.Sprintf("%s/%s/%s.%s", baseURL, typeURL, site, ext)
+
+	if ctx.refresh {
+		str = str + "/refresh"
+	}
 
 	req, err := http.NewRequest("GET", str, nil)
 	if err != nil {
@@ -85,12 +101,27 @@ func GetDetailedReport(site string) (report Report, err error) {
 	body, err = ioutil.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
 
+		debug("status OK")
+
 		if string(body) == "pending" {
 			time.Sleep(10 * time.Second)
 			resp, err = ctx.Client.Do(req)
 			if err != nil {
 				return
 			}
+		}
+	} else if resp.StatusCode == http.StatusFound {
+		str := resp.Header["Location"][0]
+
+		debug("Got 302 to %s", str)
+
+		req, err = http.NewRequest("GET", str, nil)
+		if err != nil {
+			log.Printf("Cannot handle redirect: %v", err)
+		}
+		resp, err = ctx.Client.Do(req)
+		if err != nil {
+			return
 		}
 	} else {
 		err = fmt.Errorf("did not get acceptable status code: %v body: %q", resp.Status, body)
