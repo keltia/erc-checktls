@@ -82,7 +82,7 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 	}
 
 	if !fIgnoreImirhil {
-		imirhil.Init(logLevel, ctx.proxyauth)
+		imirhil.Init(logLevel, ctx.proxyauth, fRefresh)
 	}
 
 	verbose("%d sites found.", len(*reports))

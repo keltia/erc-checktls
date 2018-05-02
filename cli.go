@@ -10,6 +10,7 @@ import (
 
 var (
 	fDebug         bool
+	fRefresh       bool
 	fType          string
 	fOutput        string
 	fSiteName      string
@@ -37,6 +38,7 @@ func init() {
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
+	flag.BoolVar(&fRefresh, "R", false, "Force refresh")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
 	flag.BoolVar(&fReallyVerbose, "V", false, "More verbose mode")
 }
