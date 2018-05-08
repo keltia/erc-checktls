@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/keltia/erc-checktls/imirhil"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/keltia/imirhil-go"
 )
 
 var (
@@ -76,13 +76,19 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err error) {
+	var client *imirhil.Client
+
 	e = &TLSReport{
 		Date:  time.Now(),
 		Sites: make([][]string, len(*reports)+1),
 	}
 
 	if !fIgnoreImirhil {
-		imirhil.Init(logLevel, ctx.proxyauth, fRefresh)
+		cnf := imirhil.Config{
+			Log:     logLevel,
+			Refresh: fRefresh,
+		}
+		client = imirhil.NewClient(cnf)
 	}
 
 	verbose("%d sites found.", len(*reports))
@@ -196,7 +202,11 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 
 		// [17] = imirhil score unless ignored
 		if !fIgnoreImirhil {
-			siteData = append(siteData, imirhil.GetScore(site.Host))
+			score, err := client.GetScore(site.Host)
+			if err != nil {
+				verbose("can not get imirhil score: %v", err)
+			}
+			siteData = append(siteData, score)
 		} else {
 			siteData = append(siteData, "")
 		}
