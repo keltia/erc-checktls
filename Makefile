@@ -9,7 +9,6 @@ GOBIN=   ${GOPATH}/bin
 
 SRCS= main.go cli.go kpi.go report.go utils.go \
 	config.go \
-    imirhil/imirhil.go imirhil/types.go imirhil/proxy.go \
     ssllabs/ssllabs.go ssllabs/types.go
 
 OPTS=	-ldflags="-s -w" -v
