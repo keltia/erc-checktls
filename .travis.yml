@@ -1,6 +1,6 @@
 language: go
 go:
-- "1.10"
+- "1.10.2"
 - tip
 matrix:
   allow_failures:
@@ -10,7 +10,7 @@ branches:
   - develop
   - master
 install:
-  - go get github.com/keltia/erc-checktls/imirhil
+  - go get github.com/keltia/imirhil-go
 script:
   - go build -v ./...
   - go test -v ./...
