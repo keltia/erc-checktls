@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
-	"github.com/keltia/imirhil-go"
 )
 
 var (
@@ -38,7 +38,7 @@ var (
 		"ALPN?",
 		"Drown?",
 		"Ciphers",
-		"Imirhil",
+		"cryptcheck",
 		"Sweet32",
 		"Robot",
 	}
@@ -76,7 +76,7 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	var client *imirhil.Client
+	var client *cryptcheck.Client
 
 	e = &TLSReport{
 		Date:  time.Now(),
@@ -84,11 +84,11 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 	}
 
 	if !fIgnoreImirhil {
-		cnf := imirhil.Config{
+		cnf := cryptcheck.Config{
 			Log:     logLevel,
 			Refresh: fRefresh,
 		}
-		client = imirhil.NewClient(cnf)
+		client = cryptcheck.NewClient(cnf)
 	}
 
 	verbose("%d sites found.", len(*reports))
@@ -200,11 +200,11 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 		// [16] = # of ciphers
 		siteData = append(siteData, fmt.Sprintf("%d", len(det.Suites.List)))
 
-		// [17] = imirhil score unless ignored
+		// [17] = cryptcheck score unless ignored
 		if !fIgnoreImirhil {
 			score, err := client.GetScore(site.Host)
 			if err != nil {
-				verbose("can not get imirhil score: %v", err)
+				verbose("can not get cryptcheck score: %v", err)
 			}
 			siteData = append(siteData, score)
 		} else {

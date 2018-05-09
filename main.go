@@ -11,7 +11,7 @@ import (
 
 	"encoding/csv"
 	"github.com/keltia/erc-checktls/ssllabs"
-	"github.com/keltia/imirhil-go"
+	"github.com/keltia/cryptcheck"
 	"log"
 	"os"
 	"path/filepath"
@@ -95,7 +95,7 @@ func main() {
 
 	// Announce ourselves
 	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
-		MyVersion, imirhil.Version())
+		MyVersion, cryptcheck.Version())
 
 	// Initiase context
 	ctx := &Context{}
