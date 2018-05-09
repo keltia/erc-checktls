@@ -10,7 +10,7 @@ branches:
   - develop
   - master
 install:
-  - go get github.com/keltia/imirhil-go
+  - go get github.com/keltia/cryptcheck
 script:
   - go build -v ./...
   - go test -v ./...

@@ -1,3 +1,3 @@
 module github.com/keltia/erc-checktls
 
-require github.com/keltia/imirhil-go v1.0.0
+require github.com/keltia/cryptcheck v1.1.0

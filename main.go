@@ -10,8 +10,8 @@ import (
 	"flag"
 
 	"encoding/csv"
+	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
-	"github.com/keltia/imirhil-go"
 	"log"
 	"os"
 	"path/filepath"
@@ -27,7 +27,8 @@ var (
 
 const (
 	contractFile = "sites-list.csv"
-	MyVersion    = "0.10.0"
+	// MyVersion uses semantic versioning.
+	MyVersion = "0.11.0"
 )
 
 type Context struct {
@@ -95,7 +96,7 @@ func main() {
 
 	// Announce ourselves
 	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
-		MyVersion, imirhil.Version())
+		MyVersion, cryptcheck.Version())
 
 	// Initiase context
 	ctx := &Context{}
