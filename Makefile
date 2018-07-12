@@ -7,7 +7,7 @@
 .PATH= ssllabs
 GOBIN=   ${GOPATH}/bin
 
-SRCS= main.go cli.go kpi.go report.go utils.go \
+SRCS= main.go cli.go report.go utils.go \
 	config.go \
     ssllabs/ssllabs.go ssllabs/types.go
 
