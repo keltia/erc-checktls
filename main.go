@@ -2,7 +2,7 @@
 
 /*
 This package implements reading the json from ssllabs-scan output
-into our Pg database.
+and generating a csv file.
 */
 package main // import "github.com/keltia/erc-checktls"
 
@@ -100,9 +100,6 @@ func main() {
 
 	// Initiase context
 	ctx := &Context{}
-
-	// Load proxy auth
-	err := setupProxyAuth(ctx)
 
 	// Basic argument check
 	if len(flag.Args()) != 1 {
