@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/keltia/cryptcheck"
+	"github.com/keltia/erc-checktls/obs"
 	"github.com/keltia/erc-checktls/ssllabs"
 )
 
@@ -41,6 +42,7 @@ var (
 		"cryptcheck",
 		"Sweet32",
 		"Robot",
+		"Mozilla",
 	}
 
 	yesno = map[bool]string{
@@ -81,7 +83,10 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	var client *cryptcheck.Client
+	var (
+		client *cryptcheck.Client
+		moz    *obs.Client
+	)
 
 	e = &TLSReport{
 		Date:  time.Now(),
@@ -94,6 +99,14 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 			Refresh: fRefresh,
 		}
 		client = cryptcheck.NewClient(cnf)
+	}
+
+	if !fIgnoreMozilla {
+		cnf := obs.Config{
+			Log:     logLevel,
+			Refresh: fRefresh,
+		}
+		moz = obs.NewClient(cnf)
 	}
 
 	verbose("%d sites found.", len(*reports))
@@ -197,6 +210,17 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 
 		// [19] = Robot Attack, return of the Oracle?
 		siteData = append(siteData, "NO")
+
+		// [20] = Mozilla Observatory score unless ignored
+		if !fIgnoreMozilla {
+			grade, err := moz.GetGrade(site.Host)
+			if err != nil {
+				verbose("can not get Mozilla grade: %v", err)
+			}
+			siteData = append(siteData, grade)
+		} else {
+			siteData = append(siteData, "")
+		}
 
 		e.Sites[i+1] = siteData
 	}
