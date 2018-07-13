@@ -28,7 +28,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.11.0"
+	MyVersion = "0.20.0"
 )
 
 type Context struct {
