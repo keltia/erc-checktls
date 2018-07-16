@@ -1,0 +1,4 @@
+github.com/keltia/cryptcheck v1.1.0/go.mod h1:g4ty749TslgxA9ryviym07IxZdvNBENlYiLJIDrNpQc=
+github.com/keltia/cryptcheck v1.2.1 h1:TsfWK+/dCIgf9eVbaknv0N8h3Q/EV2DekSynFQC1NqM=
+github.com/keltia/cryptcheck v1.2.1/go.mod h1:g4ty749TslgxA9ryviym07IxZdvNBENlYiLJIDrNpQc=
+github.com/stretchr/testify v1.2.1/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
