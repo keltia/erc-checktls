@@ -15,6 +15,7 @@ var (
 	fOutput        string
 	fSiteName      string
 	fIgnoreImirhil bool
+	fIgnoreMozilla bool
 	fVerbose       bool
 	fReallyVerbose bool
 )
@@ -34,9 +35,10 @@ var Usage = func() {
 
 func init() {
 	flag.StringVar(&fOutput, "o", "-", "Save into file (default stdout)")
-	flag.StringVar(&fType, "t", "text", "Type of report")
+	flag.StringVar(&fType, "t", "csv", "Type of report")
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
+	flag.BoolVar(&fIgnoreMozilla, "M", false, "Do not fetch Mozilla Observatory data")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
 	flag.BoolVar(&fRefresh, "R", false, "Force refresh")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")

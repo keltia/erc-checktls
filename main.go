@@ -2,7 +2,7 @@
 
 /*
 This package implements reading the json from ssllabs-scan output
-into our Pg database.
+and generating a csv file.
 */
 package main // import "github.com/keltia/erc-checktls"
 
@@ -28,7 +28,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.11.0"
+	MyVersion = "0.20.0"
 )
 
 type Context struct {
@@ -100,9 +100,6 @@ func main() {
 
 	// Initiase context
 	ctx := &Context{}
-
-	// Load proxy auth
-	err := setupProxyAuth(ctx)
 
 	// Basic argument check
 	if len(flag.Args()) != 1 {

@@ -11,6 +11,7 @@ branches:
   - master
 install:
   - go get github.com/keltia/cryptcheck
+  - go get github.com/keltia/proxy
 script:
   - go build -v ./...
   - go test -v ./...
