@@ -1,3 +1,3 @@
 module github.com/keltia/erc-checktls
 
-require github.com/keltia/cryptcheck v1.1.0
+require github.com/keltia/cryptcheck v1.2.1
