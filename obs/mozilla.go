@@ -21,7 +21,7 @@ const (
 	DefaultWait = 10 * time.Second
 
 	// MyVersion is the API version
-	MyVersion = "0.1.0"
+	MyVersion = "0.2.0"
 
 	// MyName is the name used for the configuration
 	MyName = "obs"
