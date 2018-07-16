@@ -125,6 +125,11 @@ func NewClient(cnf ...Config) *Client {
 			c.timeout = time.Duration(cnf[0].Timeout) * time.Second
 		}
 
+		// Ensure we have the API endpoint right
+		if c.baseurl == "" {
+			c.baseurl = baseURL
+		}
+
 		c.verbose("got cnf: %#v", cnf[0])
 	}
 
