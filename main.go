@@ -9,14 +9,14 @@ package main // import "github.com/keltia/erc-checktls"
 import (
 	"flag"
 
+	"bytes"
 	"encoding/csv"
+	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
-	"github.com/gobuffalo/packr"
 	"log"
 	"os"
 	"path/filepath"
-	"bytes"
 )
 
 var (
@@ -31,7 +31,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.21.0"
+	MyVersion = "0.22.0"
 )
 
 type Context struct {
