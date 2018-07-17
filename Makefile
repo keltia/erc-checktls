@@ -8,8 +8,8 @@
 GOBIN=   ${GOPATH}/bin
 
 SRCS= main.go cli.go report.go utils.go \
-	config.go \
-    ssllabs/ssllabs.go ssllabs/types.go
+    ssllabs/ssllabs.go ssllabs/types.go \
+    obs/mozilla.go obs/types.go obj/utils.go
 
 OPTS=	-ldflags="-s -w" -v
 
@@ -33,5 +33,3 @@ push:
 	git push --tags
 	git push --all backup
 	git push --tags backup
-	git push --all upstream
-	git push --tags upstream
