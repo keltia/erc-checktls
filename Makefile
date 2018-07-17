@@ -1,7 +1,7 @@
 
 # Main Makefile for labs2pg
 #
-# Copyright 2015 © by Ollivier Robert for the EEC
+# Copyright 2015-2018 © by Ollivier Robert for the EEC
 #
 
 .PATH= ssllabs
