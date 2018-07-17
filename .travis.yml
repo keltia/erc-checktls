@@ -1,6 +1,6 @@
 language: go
 go:
-- "1.10.2"
+- "1.10.3"
 - tip
 matrix:
   allow_failures:
@@ -12,6 +12,7 @@ branches:
 install:
   - go get github.com/keltia/cryptcheck
   - go get github.com/keltia/proxy
+  - go get github.com/gobuffalo/packr
 script:
   - go build -v ./...
   - go test -v ./...
