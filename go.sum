@@ -1,3 +1,5 @@
+github.com/gobuffalo/packr v1.11.1 h1:L44og8g+xWusakqZ5N52ujRSopFNtXextBGJgn69D28=
+github.com/gobuffalo/packr v1.11.1/go.mod h1:rYwMLC6NXbAbkKb+9j3NTKbxSswkKLlelZYccr4HYVw=
 github.com/keltia/cryptcheck v1.1.0/go.mod h1:g4ty749TslgxA9ryviym07IxZdvNBENlYiLJIDrNpQc=
 github.com/keltia/cryptcheck v1.2.1 h1:TsfWK+/dCIgf9eVbaknv0N8h3Q/EV2DekSynFQC1NqM=
 github.com/keltia/cryptcheck v1.2.1/go.mod h1:g4ty749TslgxA9ryviym07IxZdvNBENlYiLJIDrNpQc=
