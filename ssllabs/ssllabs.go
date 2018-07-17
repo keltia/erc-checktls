@@ -7,6 +7,7 @@ package ssllabs
 
 import (
 	"encoding/json"
+	"github.com/pkg/errors"
 	"log"
 )
 
@@ -35,7 +36,7 @@ func ParseResults(content []byte) (*LabsReports, error) {
 	var data LabsReports
 
 	err := json.Unmarshal(content, &data)
-	return &data, err
+	return &data, errors.Wrap(err, "unmarshal failed")
 }
 
 // InsertResults saves all reports

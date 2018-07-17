@@ -12,6 +12,7 @@ import (
 	"encoding/csv"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/pkg/errors"
 	"log"
 	"os"
 	"path/filepath"
@@ -43,11 +44,11 @@ func readContractFile(file string) (contracts map[string]string, err error) {
 
 	_, err = os.Stat(file)
 	if err != nil {
-		return
+		return nil, errors.Wrapf(err, "unable to find %s", file)
 	}
 
 	if fh, err = os.Open(file); err != nil {
-		return
+		return nil, errors.Wrapf(err, "unable to open %s", file)
 	}
 	defer fh.Close()
 
