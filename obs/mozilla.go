@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/keltia/proxy"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -41,7 +42,7 @@ func (c *Client) callAPI(site, word, sbody string) (*Analyze, error) {
 	req, err := http.NewRequest(word, str, nil)
 	if err != nil {
 		log.Printf("error: req is nil: %v", err)
-		return &Analyze{}, nil
+		return &Analyze{}, errors.Wrap(err, "req is nil")
 	}
 
 	c.debug("req=%#v", req)
@@ -58,14 +59,14 @@ func (c *Client) callAPI(site, word, sbody string) (*Analyze, error) {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		c.verbose("err=%#v", err)
-		return &Analyze{}, err
+		return &Analyze{}, errors.Wrap(err, "1st call failed")
 	}
 	c.debug("resp=%#v", resp)
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return &Analyze{}, err
+		return &Analyze{}, errors.Wrap(err, "can not read body")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -76,7 +77,7 @@ func (c *Client) callAPI(site, word, sbody string) (*Analyze, error) {
 			time.Sleep(10 * time.Second)
 			resp, err = c.client.Do(req)
 			if err != nil {
-				return &Analyze{}, err
+				return &Analyze{}, errors.Wrap(err, "pending failed")
 			}
 			c.verbose("resp was %v", resp)
 		}
@@ -87,18 +88,16 @@ func (c *Client) callAPI(site, word, sbody string) (*Analyze, error) {
 
 		req, err = http.NewRequest("GET", str, nil)
 		if err != nil {
-			err = fmt.Errorf("Cannot handle redirect: %v", err)
-			return &Analyze{}, err
+			return &Analyze{}, errors.Wrap(err, "Cannot handle redirect")
 		}
 
 		resp, err = c.client.Do(req)
 		if err != nil {
-			return &Analyze{}, err
+			return &Analyze{}, errors.Wrap(err, "client.Do failed")
 		}
 		c.verbose("resp was %v", resp)
 	} else {
-		err = fmt.Errorf("did not get acceptable status code: %v body: %q", resp.Status, body)
-		return &Analyze{}, err
+		return &Analyze{}, errors.Wrapf(err, "did not get acceptable status code: %v body: %q", resp.Status, body)
 	}
 
 	var report Analyze
@@ -167,10 +166,10 @@ func (c *Client) GetScore(site string) (score int, err error) {
 	c.debug("GetScore")
 	_, err = c.callAPI(site, "POST", "hidden=true&rescan=true")
 	if err != nil {
-		return -1, err
+		return -1, errors.Wrap(err, "callAPI failed")
 	}
 	r, err := c.callAPI(site, "GET", "")
-	return r.Score, err
+	return r.Score, errors.Wrap(err, "GetScore failed")
 }
 
 // GetGrade returns the letter equivalent to the score
@@ -178,8 +177,8 @@ func (c *Client) GetGrade(site string) (grade string, err error) {
 	c.debug("GetGrade")
 	_, err = c.callAPI(site, "POST", "hidden=true&rescan=true")
 	if err != nil {
-		return "Z", err
+		return "Z", errors.Wrap(err, "callAPI failed")
 	}
 	r, err := c.callAPI(site, "GET", "")
-	return r.Grade, err
+	return r.Grade, errors.Wrap(err, "GetGrade failed")
 }

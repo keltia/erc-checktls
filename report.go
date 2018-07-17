@@ -18,6 +18,7 @@ import (
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/obs"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -57,12 +58,12 @@ var (
 func getResults(file string) (res []byte, err error) {
 	fh, err := os.Open(file)
 	if err != nil {
-		return
+		return res, errors.Wrapf(err, "can not open %s", file)
 	}
 	defer fh.Close()
 
 	res, err = ioutil.ReadAll(fh)
-	return
+	return res, errors.Wrapf(err, "can not read json %s", file)
 }
 
 func fixTimestamp(ts int64) (int64, int64) {
@@ -232,7 +233,7 @@ func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)
 	verbose("%v\n", r.Sites)
 	err = wh.WriteAll(r.Sites)
-	return
+	return errors.Wrap(err, "can not write csv file")
 }
 
 /* Display for one report

@@ -9,7 +9,9 @@ package main // import "github.com/keltia/erc-checktls"
 import (
 	"flag"
 
+	"bytes"
 	"encoding/csv"
+	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
 	"log"
@@ -18,6 +20,7 @@ import (
 )
 
 var (
+	// MyName is obvious
 	MyName = filepath.Base(os.Args[0])
 
 	contracts map[string]string
@@ -28,7 +31,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.21.0"
+	MyVersion = "0.22.0"
 )
 
 type Context struct {
@@ -36,20 +39,9 @@ type Context struct {
 }
 
 // getContract retrieve the site's contract from the DB
-func readContractFile(file string) (contracts map[string]string, err error) {
-	var (
-		fh *os.File
-	)
-
-	_, err = os.Stat(file)
-	if err != nil {
-		return
-	}
-
-	if fh, err = os.Open(file); err != nil {
-		return
-	}
-	defer fh.Close()
+func readContractFile(box packr.Box) (contracts map[string]string, err error) {
+	cf := box.Bytes(contractFile)
+	fh := bytes.NewBuffer(cf)
 
 	all := csv.NewReader(fh)
 	allSites, err := all.ReadAll()
@@ -119,8 +111,11 @@ func main() {
 		log.Fatalf("Can't parse %s: %v", file, err.Error())
 	}
 
+	// We embed the file now
+	box := packr.NewBox("./files")
+
 	// We need that for the reports
-	contracts, err = readContractFile(contractFile)
+	contracts, err = readContractFile(box)
 	if err != nil {
 		log.Fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}

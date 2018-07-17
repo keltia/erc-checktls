@@ -1,19 +1,23 @@
 
 # Main Makefile for labs2pg
 #
-# Copyright 2015 © by Ollivier Robert for the EEC
+# Copyright 2015-2018 © by Ollivier Robert for the EEC
 #
 
 .PATH= ssllabs
 GOBIN=   ${GOPATH}/bin
 
 SRCS= main.go cli.go report.go utils.go \
-	config.go \
-    ssllabs/ssllabs.go ssllabs/types.go
+    ssllabs/ssllabs.go ssllabs/types.go \
+    obs/mozilla.go obs/types.go obs/utils.go \
+    main-packr.go
 
 OPTS=	-ldflags="-s -w" -v
 
 all: erc-checktls
+
+main-packr.go:
+	packr
 
 erc-checktls: ${SRCS}
 	go build ${OPTS}
@@ -27,11 +31,10 @@ lint:
 
 clean:
 	go clean -v
+	packr clean
 
 push:
 	git push --all
 	git push --tags
 	git push --all backup
 	git push --tags backup
-	git push --all upstream
-	git push --tags upstream

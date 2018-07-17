@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/pkg/errors"
 	"io"
 )
 
@@ -72,5 +73,5 @@ func categoriesCSV(cntrs map[string]int, w io.Writer) (err error) {
 
 	wh := csv.NewWriter(w)
 	err = wh.WriteAll(res)
-	return
+	return errors.Wrap(err, "csv write failed")
 }
