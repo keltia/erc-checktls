@@ -14,6 +14,7 @@ import (
 	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/pkg/errors"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,7 +32,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.22.0"
+	MyVersion = "0.23.0"
 )
 
 type Context struct {
@@ -45,11 +46,15 @@ func readContractFile(box packr.Box) (contracts map[string]string, err error) {
 
 	all := csv.NewReader(fh)
 	allSites, err := all.ReadAll()
+	if err != nil {
+		return nil, errors.Wrap(err, "ReadAll")
+	}
 
 	contracts = make(map[string]string)
 	for _, site := range allSites {
 		contracts[site[0]] = site[1]
 	}
+	err = nil
 	return
 }
 
