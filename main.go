@@ -12,10 +12,11 @@ import (
 	"encoding/csv"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
-	"github.com/pkg/errors"
+	"github.com/gobuffalo/packr"
 	"log"
 	"os"
 	"path/filepath"
+	"bytes"
 )
 
 var (
@@ -38,20 +39,9 @@ type Context struct {
 }
 
 // getContract retrieve the site's contract from the DB
-func readContractFile(file string) (contracts map[string]string, err error) {
-	var (
-		fh *os.File
-	)
-
-	_, err = os.Stat(file)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to find %s", file)
-	}
-
-	if fh, err = os.Open(file); err != nil {
-		return nil, errors.Wrapf(err, "unable to open %s", file)
-	}
-	defer fh.Close()
+func readContractFile(box packr.Box) (contracts map[string]string, err error) {
+	cf := box.Bytes(contractFile)
+	fh := bytes.NewBuffer(cf)
 
 	all := csv.NewReader(fh)
 	allSites, err := all.ReadAll()
@@ -121,8 +111,11 @@ func main() {
 		log.Fatalf("Can't parse %s: %v", file, err.Error())
 	}
 
+	// We embed the file now
+	box := packr.NewBox("./files")
+
 	// We need that for the reports
-	contracts, err = readContractFile(contractFile)
+	contracts, err = readContractFile(box)
 	if err != nil {
 		log.Fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
