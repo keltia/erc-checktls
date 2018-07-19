@@ -9,9 +9,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"log"
-	"os"
 	"strings"
 	"time"
 

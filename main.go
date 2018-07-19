@@ -11,12 +11,12 @@ import (
 
 	"bytes"
 	"encoding/csv"
+	"fmt"
 	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
 	"github.com/pkg/errors"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -63,14 +63,12 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 
 	// Open output file
 	if fOutput != "" {
-		if fVerbose {
-			log.Printf("Output file is %s\n", fOutput)
-		}
+		verbose("Output file is %s\n", fOutput)
 
 		if fOutput != "-" {
 			fOutputFH, err = os.Create(fOutput)
 			if err != nil {
-				log.Fatalf("Error creating %s\n", fOutput)
+				fatalf("Error creating %s\n", fOutput)
 			}
 		}
 	}
@@ -104,20 +102,20 @@ func init() {
 func main() {
 	// Basic argument check
 	if len(flag.Args()) != 1 {
-		log.Fatalf("Error: you must specify an input file!")
+		fatalf("Error: you must specify an input file!")
 	}
 
 	file := flag.Arg(0)
 
 	raw, err := getResults(file)
 	if err != nil {
-		log.Fatalf("Can't read %s: %v", file, err.Error())
+		fatalf("Can't read %s: %v", file, err.Error())
 	}
 
 	// raw is the []byte array to be deserialized into LabsReports
 	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
-		log.Fatalf("Can't parse %s: %v", file, err.Error())
+		fatalf("Can't parse %s: %v", file, err.Error())
 	}
 
 	// We embed the file now
@@ -126,7 +124,7 @@ func main() {
 	// We need that for the reports
 	contracts, err = readContractFile(box)
 	if err != nil {
-		log.Fatalf("Error: can not read contract file %s: %v", contractFile, err)
+		fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
 
 	// Set logging level
@@ -153,18 +151,11 @@ func main() {
 	if fType == "csv" {
 		err := final.ToCSV(fOutputFH)
 		if err != nil {
-			log.Fatalf("Error can not generate CSV: %v", err)
+			fatalf("Error can not generate CSV: %v", err)
 		}
 	} else {
 		// XXX Early debugging
-		debug("%#v\n", final)
-	}
-	if fVerbose {
-		cntrs := categoryCounts(allSites)
-		if fType == "csv" {
-			categoriesCSV(cntrs, os.Stdout)
-		} else {
-			log.Printf("%s\n", displayCategories(cntrs))
-		}
+		fmt.Printf("%#v\n", final)
+		fmt.Printf("%s\n", displayCategories(cntrs))
 	}
 }
