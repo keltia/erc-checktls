@@ -107,14 +107,14 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 		SSLLabs: getSSLablsVersion(reports[0]),
 	}
 
-	verbose("%d sites found.", len(reports))
+	verbose("%d sites found.\n", len(reports))
 
 	// Now analyze each site
 	for _, site := range reports {
 		var current TLSSite
 
 		if site.Endpoints == nil {
-			verbose("Site %s has no endpoint", site.Host)
+			verbose("Site %s has no endpoint\n", site.Host)
 			current = TLSSite{
 				Name:     site.Host,
 				Contract: contracts[site.Host],

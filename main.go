@@ -145,7 +145,7 @@ func main() {
 	final, err := NewTLSReport(allSites)
 	cntrs := categoryCounts(allSites)
 
-	verbose("SSLabs engine: %s", final.SSLLabs)
+	verbose("SSLabs engine: %s\n", final.SSLLabs)
 
 	// Open output file
 	fOutputFH := checkOutput(fOutput)
