@@ -80,6 +80,18 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 	return
 }
 
+// getResults read the JSON array generated and gone through jq
+func getResults(file string) (res []byte, err error) {
+    fh, err := os.Open(file)
+    if err != nil {
+        return res, errors.Wrapf(err, "can not open %s", file)
+    }
+    defer fh.Close()
+
+    res, err = ioutil.ReadAll(fh)
+    return res, errors.Wrapf(err, "can not read json %s", file)
+}
+
 // init is for pg connection and stuff
 func init() {
 	// set default database
