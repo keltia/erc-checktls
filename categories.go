@@ -11,8 +11,6 @@ import (
 )
 
 var (
-	cntrs map[string]int
-
 	keys = []string{
 		"A+",
 		"A",
@@ -28,9 +26,9 @@ var (
 	}
 )
 
-func categoryCounts(reports *ssllabs.LabsReports) {
+func categoryCounts(reports []ssllabs.LabsReport) (cntrs map[string]int) {
 	cntrs = make(map[string]int)
-	for _, r := range *reports {
+	for _, r := range reports {
 		if r.Endpoints != nil {
 			endp := r.Endpoints[0]
 			det := endp.Details
@@ -45,6 +43,7 @@ func categoryCounts(reports *ssllabs.LabsReports) {
 
 		}
 	}
+	return cntrs
 }
 
 func displayCategories(cntrs map[string]int) string {
