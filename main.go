@@ -141,10 +141,11 @@ func main() {
 
 	//fmt.Printf("all=%#v\n", allSites)
 
-	// generate the final report
-	final, err := NewTLSReport(ctx, allSites)
+	// generate the final report & summary
+	final, err := NewTLSReport(allSites)
+	cntrs := categoryCounts(allSites)
 
-	verbose("SSLabs engine: %s/%s", final.EngineVersion, final.CriteriaVersion)
+	verbose("SSLabs engine: %s", final.SSLLabs)
 
 	// Open output file
 	fOutputFH := checkOutput(fOutput)
@@ -154,6 +155,7 @@ func main() {
 		if err != nil {
 			fatalf("Error can not generate CSV: %v", err)
 		}
+		writeSummary(cntrs, os.Stdout)
 	} else {
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
