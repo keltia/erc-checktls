@@ -131,7 +131,9 @@ func main() {
 	}
 
 	if fDebug {
+		fVerbose = true
 		logLevel = 2
+		debug("debug mode")
 	}
 
 	//fmt.Printf("all=%#v\n", allSites)
