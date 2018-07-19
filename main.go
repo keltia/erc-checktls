@@ -154,7 +154,7 @@ func main() {
 		debug("%#v\n", final)
 	}
 	if fVerbose {
-		categoryCounts(allSites)
+		cntrs := categoryCounts(allSites)
 		if fType == "csv" {
 			categoriesCSV(cntrs, os.Stdout)
 		} else {
