@@ -143,6 +143,9 @@ func main() {
 
 	// generate the final report & summary
 	final, err := NewTLSReport(allSites)
+	if err != nil {
+		fatalf("error analyzing report: %v", err)
+	}
 	cntrs := categoryCounts(allSites)
 
 	verbose("SSLabs engine: %s\n", final.SSLLabs)
@@ -151,11 +154,12 @@ func main() {
 	fOutputFH := checkOutput(fOutput)
 
 	if fType == "csv" {
-		err := final.ToCSV(fOutputFH)
-		if err != nil {
+		if err = final.ToCSV(fOutputFH); err != nil {
 			fatalf("Error can not generate CSV: %v", err)
 		}
-		writeSummary(cntrs, os.Stdout)
+		if err = writeSummary(cntrs, os.Stdout); err != nil {
+			fmt.Fprintf(os.Stderr, "can not generate summary: %v", err)
+		}
 	} else {
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
