@@ -26,6 +26,9 @@ var (
 
 	client *cryptcheck.Client
 	moz    *obs.Client
+
+	fnImirhil func(site ssllabs.LabsReport) string
+	fnMozilla func(site ssllabs.LabsReport) string
 )
 
 const (
@@ -44,6 +47,18 @@ func init() {
 			Refresh: fRefresh,
 		}
 		client = cryptcheck.NewClient(cnf)
+
+		fnImirhil = func(site ssllabs.LabsReport) string {
+			score, err := client.GetScore(site.Host)
+			if err != nil {
+				verbose("can not get cryptcheck score: %v", err)
+			}
+			return score
+		}
+	} else {
+		fnImirhil = func(site ssllabs.LabsReport) string {
+			return ""
+		}
 	}
 
 	if !fIgnoreMozilla {
@@ -52,6 +67,18 @@ func init() {
 			Refresh: fRefresh,
 		}
 		moz = obs.NewClient(cnf)
+
+		fnMozilla = func(site ssllabs.LabsReport) string {
+			score, err := moz.GetGrade(site.Host)
+			if err != nil {
+				verbose("can not get Mozilla score: %v", err)
+			}
+			return score
+		}
+	} else {
+		fnMozilla = func(site ssllabs.LabsReport) string {
+			return ""
+		}
 	}
 }
 
@@ -69,26 +96,8 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 	return false
 }
 
-func getImirhil(site ssllabs.LabsReport) string {
-	if !fIgnoreImirhil {
-		score, err := client.GetScore(site.Host)
-		if err != nil {
-			verbose("can not get cryptcheck score: %v", err)
-		}
-		return score
-	}
-	return ""
-}
-
-func getMozilla(site ssllabs.LabsReport) string {
-	if !fIgnoreMozilla {
-		grade, err := moz.GetGrade(site.Host)
-		if err != nil {
-			verbose("can not get Mozilla grade: %v", err)
-		}
-		return grade
-	}
-	return ""
+func getGrade(site ssllabs.LabsReport, fn func(site ssllabs.LabsReport) string) string {
+	return fn(site)
 }
 
 func getSSLablsVersion(site ssllabs.LabsReport) string {
@@ -135,8 +144,8 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 				Name:       site.Host,
 				Contract:   contracts[site.Host],
 				Grade:      fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored),
-				CryptCheck: getImirhil(site),
-				Mozilla:    getMozilla(site),
+				CryptCheck: getGrade(site, fnImirhil),
+				Mozilla:    getGrade(site, fnMozilla),
 				DefKey:     det.Key.Size == DefaultKeySize && det.Key.Alg == DefaultAlg,
 				DefCA:      det.Cert.IssuerLabel == DefaultIssuer,
 				DefSig:     det.Cert.SigAlg == DefaultSig,
