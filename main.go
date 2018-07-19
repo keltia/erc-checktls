@@ -92,6 +92,11 @@ func init() {
 	flag.Usage = Usage
 	flag.Parse()
 
+	// Basic argument check
+	if len(flag.Args()) != 1 {
+		fatalf("Error: you must specify an input file!")
+	}
+
 	// Announce ourselves
 	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
 		MyVersion, cryptcheck.Version())
@@ -100,10 +105,6 @@ func init() {
 
 // main is the the starting point
 func main() {
-	// Basic argument check
-	if len(flag.Args()) != 1 {
-		fatalf("Error: you must specify an input file!")
-	}
 
 	file := flag.Arg(0)
 
