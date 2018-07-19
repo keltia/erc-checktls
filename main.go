@@ -15,6 +15,7 @@ import (
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
 	"github.com/pkg/errors"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -34,10 +35,6 @@ const (
 	// MyVersion uses semantic versioning.
 	MyVersion = "0.23.0"
 )
-
-type Context struct {
-	proxyauth string
-}
 
 // getContract retrieve the site's contract from the DB
 func readContractFile(box packr.Box) (contracts map[string]string, err error) {
@@ -82,24 +79,18 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 
 // getResults read the JSON array generated and gone through jq
 func getResults(file string) (res []byte, err error) {
-    fh, err := os.Open(file)
-    if err != nil {
-        return res, errors.Wrapf(err, "can not open %s", file)
-    }
-    defer fh.Close()
+	fh, err := os.Open(file)
+	if err != nil {
+		return res, errors.Wrapf(err, "can not open %s", file)
+	}
+	defer fh.Close()
 
-    res, err = ioutil.ReadAll(fh)
-    return res, errors.Wrapf(err, "can not read json %s", file)
+	res, err = ioutil.ReadAll(fh)
+	return res, errors.Wrapf(err, "can not read json %s", file)
 }
 
 // init is for pg connection and stuff
 func init() {
-	// set default database
-	//orm.RegisterDataBase("default", "postgres", "roberto", 30)
-}
-
-// main is the the starting point
-func main() {
 	flag.Usage = Usage
 	flag.Parse()
 
@@ -107,9 +98,10 @@ func main() {
 	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
 		MyVersion, cryptcheck.Version())
 
-	// Initiase context
-	ctx := &Context{}
+}
 
+// main is the the starting point
+func main() {
 	// Basic argument check
 	if len(flag.Args()) != 1 {
 		log.Fatalf("Error: you must specify an input file!")
