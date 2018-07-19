@@ -6,8 +6,8 @@ This file contains func for generating the report
 package main
 
 import (
-	"encoding/csv"
 	"fmt"
+	"github.com/atotto/encoding/csv"
 	"io"
 	"strings"
 	"time"
@@ -19,48 +19,40 @@ import (
 )
 
 var (
-	headersLine = []string{
-		"Site",
-		"Contract",
-		"Grade",
-		"Key",
-		"Signature",
-		"Issuer",
-		"Validity",
-		"Path",
-		"Issues",
-		"Protocols",
-		"RC4?",
-		"PFS?",
-		"OCSP?",
-		"HSTS?",
-		"ALPN?",
-		"Drown?",
-		"Ciphers",
-		"cryptcheck",
-		"Sweet32",
-		"Robot",
-		"Mozilla",
-	}
-
 	yesno = map[bool]string{
 		true:  "YES",
 		false: "NO",
 	}
+
+	client *cryptcheck.Client
+	moz    *obs.Client
+)
+
+const (
+	DefaultKeySize = 2048
+	DefaultAlg     = "RSA"
+	DefaultIssuer  = "GlobalSign Organization Validation CA - SHA256 - G2"
+	DefaultSig     = "SHA256withRSA"
 )
 
 // Private functions
 
-// getResults read the JSON array generated and gone through jq
-func getResults(file string) (res []byte, err error) {
-	fh, err := os.Open(file)
-	if err != nil {
-		return res, errors.Wrapf(err, "can not open %s", file)
+func init() {
+	if !fIgnoreImirhil {
+		cnf := cryptcheck.Config{
+			Log:     logLevel,
+			Refresh: fRefresh,
+		}
+		client = cryptcheck.NewClient(cnf)
 	}
-	defer fh.Close()
 
-	res, err = ioutil.ReadAll(fh)
-	return res, errors.Wrapf(err, "can not read json %s", file)
+	if !fIgnoreMozilla {
+		cnf := obs.Config{
+			Log:     logLevel,
+			Refresh: fRefresh,
+		}
+		moz = obs.NewClient(cnf)
+	}
 }
 
 func fixTimestamp(ts int64) (int64, int64) {
@@ -77,150 +69,99 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 	return false
 }
 
-// Public functions
+func getImirhil(site ssllabs.LabsReport) string {
+	if !fIgnoreImirhil {
+		score, err := client.GetScore(site.Host)
+		if err != nil {
+			verbose("can not get cryptcheck score: %v", err)
+		}
+		return score
+	}
+	return ""
+}
+
+func getMozilla(site ssllabs.LabsReport) string {
+	if !fIgnoreMozilla {
+		grade, err := moz.GetGrade(site.Host)
+		if err != nil {
+			verbose("can not get Mozilla grade: %v", err)
+		}
+		return grade
+	}
+	return ""
+}
+
+func getSSLablsVersion(site ssllabs.LabsReport) string {
+	debug("%#v", site)
+	return fmt.Sprintf("%s/%s", site.EngineVersion, site.CriteriaVersion)
+}
 
 // NewTLSReport generates everything we need for display/export
-func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err error) {
-	var (
-		client *cryptcheck.Client
-		moz    *obs.Client
-	)
+func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
+	if len(reports) == 0 {
+		return nil, fmt.Errorf("empty list")
+	}
 
 	e = &TLSReport{
-		Date:  time.Now(),
-		Sites: make([][]string, len(*reports)+1),
+		Date:    time.Now(),
+		SSLLabs: getSSLablsVersion(reports[0]),
 	}
 
-	if !fIgnoreImirhil {
-		cnf := cryptcheck.Config{
-			Log:     logLevel,
-			Refresh: fRefresh,
-		}
-		client = cryptcheck.NewClient(cnf)
-	}
-
-	if !fIgnoreMozilla {
-		cnf := obs.Config{
-			Log:     logLevel,
-			Refresh: fRefresh,
-		}
-		moz = obs.NewClient(cnf)
-	}
-
-	verbose("%d sites found.", len(*reports))
-	// First add the headers line
-	e.Sites[0] = headersLine
+	verbose("%d sites found.", len(reports))
 
 	// Now analyze each site
-	for i, site := range *reports {
-		// Hack to get SSLLabs report engiveVersion & CriteriaVersion
-		if e.CriteriaVersion == "" || e.EngineVersion == "" {
-			e.CriteriaVersion = site.CriteriaVersion
-			e.EngineVersion = site.EngineVersion
-		}
+	for _, site := range reports {
+		var current TLSSite
 
 		if site.Endpoints == nil {
-			log.Printf("Site %s has no endpoint", site.Host)
-			continue
-		}
-		endp := site.Endpoints[0]
-		det := endp.Details
-		cert := endp.Details.Cert
-
-		verbose("  Host: %s", site.Host)
-		// make space
-		var siteData []string
-
-		// [0] = site
-		siteData = append(siteData, site.Host)
-
-		// [1] = contract
-		siteData = append(siteData, contracts[site.Host])
-
-		// [2] = grade
-		siteData = append(siteData, fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored))
-
-		// [3] = key
-		siteData = append(siteData, fmt.Sprintf("%s %d bits",
-			det.Key.Alg,
-			det.Key.Size))
-
-		// [4] = signature
-		siteData = append(siteData, det.Cert.SigAlg)
-
-		// [5] = issuer
-		siteData = append(siteData, det.Cert.IssuerLabel)
-
-		// [6] = validity
-		siteData = append(siteData, time.Unix(fixTimestamp(cert.NotAfter)).String())
-
-		// [7] = path
-		siteData = append(siteData, fmt.Sprintf("%d", len(det.Chain.Certs)))
-
-		// [8] = issues
-		siteData = append(siteData, fmt.Sprintf("%d", det.Chain.Issues))
-
-		// [9] = protocols
-		protos := []string{}
-		for _, p := range det.Protocols {
-			protos = append(protos, fmt.Sprintf("%sv%s", p.Name, p.Version))
-		}
-		siteData = append(siteData, strings.Join(protos, ","))
-
-		// [10] = RC4
-		siteData = append(siteData, yesno[det.SupportsRC4])
-
-		// [11] = PFS
-		// 0 = NO
-		// 1 = with some browsers but not the reference ones
-		// 2 = with modern browsers
-		// 4 = with most browsers (ROBUST)
-		siteData = append(siteData, yesno[det.ForwardSecrecy >= 2])
-
-		// [12] = OCSP Stapling
-		siteData = append(siteData, yesno[det.OcspStapling])
-
-		// [13] = HSTS
-		siteData = append(siteData, yesno[det.HstsPolicy.Status == "present"])
-
-		// [14] = ALPN
-		siteData = append(siteData, yesno[det.SupportsAlpn])
-
-		// [15] = Drown vuln
-		siteData = append(siteData, yesno[det.DrownVulnerable])
-
-		// [16] = # of ciphers
-		siteData = append(siteData, fmt.Sprintf("%d", len(det.Suites.List)))
-
-		// [17] = cryptcheck score unless ignored
-		if !fIgnoreImirhil {
-			score, err := client.GetScore(site.Host)
-			if err != nil {
-				verbose("can not get cryptcheck score: %v", err)
+			verbose("Site %s has no endpoint", site.Host)
+			current = TLSSite{
+				Name:     site.Host,
+				Contract: contracts[site.Host],
 			}
-			siteData = append(siteData, score)
 		} else {
-			siteData = append(siteData, "")
-		}
+			endp := site.Endpoints[0]
+			det := endp.Details
+			cert := endp.Details.Cert
 
-		// [18] = include 64-bytes ciphers?
-		siteData = append(siteData, yesno[checkSweet32(det)])
+			verbose("  Host: %s\n", site.Host)
 
-		// [19] = Robot Attack, return of the Oracle?
-		siteData = append(siteData, "NO")
-
-		// [20] = Mozilla Observatory score unless ignored
-		if !fIgnoreMozilla {
-			grade, err := moz.GetGrade(site.Host)
-			if err != nil {
-				verbose("can not get Mozilla grade: %v", err)
+			protos := []string{}
+			for _, p := range det.Protocols {
+				protos = append(protos, fmt.Sprintf("%sv%s", p.Name, p.Version))
 			}
-			siteData = append(siteData, grade)
-		} else {
-			siteData = append(siteData, "")
-		}
 
-		e.Sites[i+1] = siteData
+			current = TLSSite{
+				Name:       site.Host,
+				Contract:   contracts[site.Host],
+				Grade:      fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored),
+				CryptCheck: getImirhil(site),
+				Mozilla:    getMozilla(site),
+				DefKey:     det.Key.Size == DefaultKeySize && det.Key.Alg == DefaultAlg,
+				DefCA:      det.Cert.IssuerLabel == DefaultIssuer,
+				DefSig:     det.Cert.SigAlg == DefaultSig,
+				IsExpired:  time.Now().After(time.Unix(fixTimestamp(cert.NotAfter))),
+				Protocols:  strings.Join(protos, ","),
+				RC4:        det.SupportsRC4,
+				PFS:        det.ForwardSecrecy >= 2,
+				OCSP:       det.OcspStapling,
+				HSTS:       det.HstsPolicy.Status == "present",
+				ALPN:       det.SupportsAlpn,
+				Drown:      det.DrownVulnerable,
+				Sweet32:    checkSweet32(det),
+			}
+			/*
+				// make space
+				var siteData []string
+
+				// [7] = path
+				siteData = append(siteData, fmt.Sprintf("%d", len(det.Chain.Certs)))
+
+				// [8] = issues
+				siteData = append(siteData, fmt.Sprintf("%d", det.Chain.Issues))
+			*/
+		}
+		e.Sites = append(e.Sites, current)
 	}
 	return
 }
@@ -228,22 +169,11 @@ func NewTLSReport(ctx *Context, reports *ssllabs.LabsReports) (e *TLSReport, err
 // ToCSV output a CSV file from a report
 func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)
-	verbose("%v\n", r.Sites)
-	err = wh.WriteAll(r.Sites)
+	debug("%v\n", r.Sites)
+	if err = wh.WriteStructHeader(r.Sites[0]); err != nil {
+		return errors.Wrap(err, "can not write csv header")
+	}
+
+	err = wh.WriteStructAll(r.Sites)
 	return errors.Wrap(err, "can not write csv file")
 }
-
-/* Display for one report
-func (rep *ssllabs.LabsReport) String() {
-	host := rep.Host
-	grade := rep.Endpoints[0].Grade
-	details := rep.Endpoints[0].Details
-	log.Printf("Looking at %s/%s — grade %s", host, contracts[host], grade)
-	if fVerbose {
-		log.Printf("  Ciphers: %d", details.Suites.len())
-	} else if fReallyVerbose {
-		for _, cipher := range details.Suites.List {
-			log.Printf("  %s: %d bits", cipher.Name, cipher.CipherStrength)
-		}
-	}
-}*/
