@@ -1,17 +1,26 @@
 package main
 
-import "log"
+import (
+	"fmt"
+	"os"
+)
 
 // debug displays only if fDebug is set
 func debug(str string, a ...interface{}) {
 	if fDebug {
-		log.Printf(str, a...)
+		fmt.Fprintf(os.Stderr, str, a...)
 	}
 }
 
-// debug displays only if fVerbose is set
+// verbose displays only if fVerbose is set
 func verbose(str string, a ...interface{}) {
 	if fVerbose {
-		log.Printf(str, a...)
+		fmt.Printf(str, a...)
 	}
+}
+
+// fatalf is like log.Fatalf()
+func fatalf(str string, a ...interface{}) {
+	fmt.Fprintf(os.Stderr, str, a...)
+	os.Exit(1)
 }
