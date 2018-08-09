@@ -3,16 +3,14 @@
 package main
 
 import (
-	"encoding/csv"
 	"fmt"
 	"github.com/keltia/erc-checktls/ssllabs"
+	tw "github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"io"
 )
 
 var (
-	cntrs map[string]int
-
 	keys = []string{
 		"A+",
 		"A",
@@ -23,14 +21,17 @@ var (
 		"E",
 		"F",
 		"T",
+		"RC4",
+		"OCSP",
+		"HSTS",
 		"PFS",
 		"Sweet32",
 	}
 )
 
-func categoryCounts(reports *ssllabs.LabsReports) {
+func categoryCounts(reports []ssllabs.LabsReport) (cntrs map[string]int) {
 	cntrs = make(map[string]int)
-	for _, r := range *reports {
+	for _, r := range reports {
 		if r.Endpoints != nil {
 			endp := r.Endpoints[0]
 			det := endp.Details
@@ -42,9 +43,18 @@ func categoryCounts(reports *ssllabs.LabsReports) {
 			if checkSweet32(det) {
 				cntrs["Sweet32"]++
 			}
-
+			if det.SupportsRC4 {
+				cntrs["RC4"]++
+			}
+			if det.OcspStapling {
+				cntrs["OCSP"]++
+			}
+			if det.HstsPolicy.Status == "present" {
+				cntrs["HSTS"]++
+			}
 		}
 	}
+	return cntrs
 }
 
 func displayCategories(cntrs map[string]int) string {
@@ -55,23 +65,22 @@ func displayCategories(cntrs map[string]int) string {
 	return str
 }
 
-func categoriesCSV(cntrs map[string]int, w io.Writer) (err error) {
-	res := make([][]string, 2)
+func writeSummary(cntrs map[string]int, w io.Writer) (err error) {
+	table := tw.NewWriter(w)
+	table.SetHeader(keys)
+	table.SetAlignment(tw.ALIGN_CENTER)
 
-	hdrs := []string{}
 	line := []string{}
 	for _, c := range keys {
-		hdrs = append(hdrs, c)
 		if v, ok := cntrs[c]; ok {
 			line = append(line, fmt.Sprintf("%d", v))
 		} else {
 			line = append(line, "0")
 		}
 	}
-	res[0] = hdrs
-	res[1] = line
 
-	wh := csv.NewWriter(w)
-	err = wh.WriteAll(res)
+	table.Append(line)
+	table.Render()
+
 	return errors.Wrap(err, "csv write failed")
 }

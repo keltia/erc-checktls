@@ -288,7 +288,7 @@ type LabsReport struct {
 	StartTime       int64  `json:"startTime"`
 	TestTime        int64  `json:"testTime"`
 	EngineVersion   string `json:"engineVersion"`
-	CriteriaVersion string `json:"criteriaVerison"`
+	CriteriaVersion string `json:"criteriaVersion"`
 	CacheExpiryTime int64  `json:"cacheExpiryTime"`
 	Endpoints       []LabsEndpoint
 	CertHostnames   []string `json:"certHostnames"`
