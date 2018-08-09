@@ -4,6 +4,7 @@
 # Copyright 2015-2018 © by Ollivier Robert for the EEC
 #
 
+GO=		go
 .PATH= ssllabs
 GOBIN=   ${GOPATH}/bin
 
@@ -20,17 +21,17 @@ main-packr.go:
 	packr
 
 erc-checktls: ${SRCS}
-	go build ${OPTS}
-	go test -v
+	${GO} build ${OPTS}
+	${GO} test -v
 
 install:
-	go install ${OPTS}
+	${GO} install ${OPTS}
 
 lint:
 	gometalinter .
 
 clean:
-	go clean -v
+	${GO} clean -v
 	packr clean
 
 push:
