@@ -33,7 +33,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.23.0"
+	MyVersion = "0.24.0"
 )
 
 // getContract retrieve the site's contract from the DB
