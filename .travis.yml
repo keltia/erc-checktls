@@ -14,6 +14,7 @@ install:
   - go get github.com/keltia/proxy
   - go get github.com/gobuffalo/packr
   - go get github.com/olekukonko/tablewriter
+  - go get github.com/atotto/encoding/csv
 script:
   - go build -v ./...
   - go test -v ./...
