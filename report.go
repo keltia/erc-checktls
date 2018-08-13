@@ -7,11 +7,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/atotto/encoding/csv"
 	"io"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/atotto/encoding/csv"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/erc-checktls/ssllabs"
 	"github.com/keltia/observatory"
