@@ -10,7 +10,6 @@ GOBIN=   ${GOPATH}/bin
 
 SRCS= main.go cli.go report.go utils.go \
     ssllabs/ssllabs.go ssllabs/types.go \
-    obs/mozilla.go obs/types.go obs/utils.go \
     main-packr.go
 
 OPTS=	-ldflags="-s -w" -v

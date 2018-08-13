@@ -7,14 +7,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/atotto/encoding/csv"
 	"io"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/atotto/encoding/csv"
 	"github.com/keltia/cryptcheck"
-	"github.com/keltia/erc-checktls/obs"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/keltia/observatory"
 	"github.com/pkg/errors"
 )
 
@@ -23,9 +24,6 @@ var (
 		true:  "YES",
 		false: "NO",
 	}
-
-	client *cryptcheck.Client
-	moz    *obs.Client
 
 	fnImirhil func(site ssllabs.LabsReport) string
 	fnMozilla func(site ssllabs.LabsReport) string
@@ -46,7 +44,7 @@ func init() {
 			Log:     logLevel,
 			Refresh: fRefresh,
 		}
-		client = cryptcheck.NewClient(cnf)
+		client := cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.LabsReport) string {
 			score, err := client.GetScore(site.Host)
@@ -62,11 +60,13 @@ func init() {
 	}
 
 	if !fIgnoreMozilla {
-		cnf := obs.Config{
-			Log:     logLevel,
-			Refresh: fRefresh,
+		cnf := observatory.Config{
+			Log: logLevel,
 		}
-		moz = obs.NewClient(cnf)
+		moz, err := observatory.NewClient(cnf)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "can not create observatory client: %v", err)
+		}
 
 		fnMozilla = func(site ssllabs.LabsReport) string {
 			score, err := moz.GetGrade(site.Host)
