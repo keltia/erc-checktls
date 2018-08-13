@@ -24,9 +24,6 @@ var (
 		false: "NO",
 	}
 
-	client *cryptcheck.Client
-	moz    *obs.Client
-
 	fnImirhil func(site ssllabs.LabsReport) string
 	fnMozilla func(site ssllabs.LabsReport) string
 )
@@ -46,7 +43,7 @@ func init() {
 			Log:     logLevel,
 			Refresh: fRefresh,
 		}
-		client = cryptcheck.NewClient(cnf)
+		client := cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.LabsReport) string {
 			score, err := client.GetScore(site.Host)
