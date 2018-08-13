@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/keltia/cryptcheck"
-	"github.com/keltia/erc-checktls/obs"
 	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/keltia/observatory"
 	"github.com/pkg/errors"
 )
 
@@ -62,11 +62,13 @@ func init() {
 	}
 
 	if !fIgnoreMozilla {
-		cnf := obs.Config{
-			Log:     logLevel,
-			Refresh: fRefresh,
+		cnf := observatory.Config{
+			Log: logLevel,
 		}
-		moz = obs.NewClient(cnf)
+		moz, err := observatory.NewClient(cnf)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "can not create observatory client: %v", err)
+		}
 
 		fnMozilla = func(site ssllabs.LabsReport) string {
 			score, err := moz.GetGrade(site.Host)
