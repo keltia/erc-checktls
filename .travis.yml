@@ -10,8 +10,9 @@ branches:
   - develop
   - master
 install:
-  - go get github.com/keltia/cryptcheck
   - go get github.com/keltia/proxy
+  - go get github.com/keltia/observatory
+  - go get github.com/keltia/cryptcheck
   - go get github.com/gobuffalo/packr
   - go get github.com/olekukonko/tablewriter
   - go get github.com/atotto/encoding/csv
