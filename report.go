@@ -87,7 +87,7 @@ func fixTimestamp(ts int64) (int64, int64) {
 }
 
 func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
-	ciphers := det.Suites.List
+	ciphers := det.Suites[0].List
 	for _, cipher := range ciphers {
 		if strings.Contains(cipher.Name, "DES") {
 			return true
@@ -131,7 +131,7 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 		} else {
 			endp := site.Endpoints[0]
 			det := endp.Details
-			cert := endp.Details.Cert
+			cert := site.Certs[0]
 
 			verbose("  Host: %s\n", site.Host)
 
@@ -146,9 +146,9 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 				Grade:      fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored),
 				CryptCheck: getGrade(site, fnImirhil),
 				Mozilla:    getGrade(site, fnMozilla),
-				DefKey:     det.Key.Size == DefaultKeySize && det.Key.Alg == DefaultAlg,
-				DefCA:      det.Cert.IssuerLabel == DefaultIssuer,
-				DefSig:     det.Cert.SigAlg == DefaultSig,
+				DefKey:     cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg,
+				DefCA:      cert.IssuerLabel == DefaultIssuer,
+				DefSig:     cert.SigAlg == DefaultSig,
 				IsExpired:  time.Now().After(time.Unix(fixTimestamp(cert.NotAfter))),
 				Protocols:  strings.Join(protos, ","),
 				RC4:        det.SupportsRC4,
