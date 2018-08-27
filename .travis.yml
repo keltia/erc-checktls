@@ -10,5 +10,4 @@ branches:
   - develop
   - master
 script:
-  - env GO111MODULE=yes go build -v ./...
-  - env GO111MODULE=yes go test -v ./...
+  - env GO111MODULE=yes make
