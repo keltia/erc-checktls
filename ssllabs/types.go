@@ -2,6 +2,8 @@
 
 /*
 Package ssllabs These are the types used by SSLLabs/Qualys
+
+This is for API v3
 */
 package ssllabs
 
@@ -38,29 +40,50 @@ type LabsKey struct {
 	Q          int
 }
 
+// LabsCaaRecord describe the DNS CAA record content
+type LabsCaaRecord struct {
+	Tag   string
+	Value string
+	Flags int
+}
+
+// LabsCaaPolicy is the policy around CAA usage
+type LabsCaaPolicy struct {
+	PolicyHostname string          `json:"policyHostname"`
+	CaaRecords     []LabsCaaRecord `json:"caaRecords"`
+}
+
 // LabsCert describes an X.509 certificate
 type LabsCert struct {
-	Subject              string
-	CommonNames          []string `json:"commonNames"`
-	AltNames             []string `json:"altNames"`
-	NotBefore            int64    `json:"notBefore"`
-	NotAfter             int64    `json:"notAfter"`
-	IssuerSubject        string   `json:"issuerSubject"`
-	SigAlg               string   `json:"sigAlg"`
-	IssuerLabel          string   `json:"issuerLabel"`
-	RevocationInfo       int      `json:"revocationInfo"`
-	CrlURIs              []string `json:"crlURIs"`
-	OcspURIs             []string `json:"ocspUTIs"`
-	RevocationStatus     int      `json:"revocationStatus"`
-	CrlRevocationStatus  int      `json:"crlRevocationStatus"`
-	OcspRevocationStatus int      `json:"ocspRevocationStatus"`
-	Sgc                  int
-	ValidationType       string `json:"validationType"`
-	Issues               int
-	Sct                  bool
-	MustStaple           int    `json:"mustStaple"`
-	SHA1Hash             string `json:"sha1Hash"`
-	PinSHA256            string `json:"pinSha256"`
+	ID                     string
+	Subject                string
+	CommonNames            []string      `json:"commonNames"`
+	AltNames               []string      `json:"altNames"`
+	NotBefore              int64         `json:"notBefore"`
+	NotAfter               int64         `json:"notAfter"`
+	IssuerSubject          string        `json:"issuerSubject"`
+	SigAlg                 string        `json:"sigAlg"`
+	IssuerLabel            string        `json:"issuerLabel"`
+	RevocationInfo         int           `json:"revocationInfo"`
+	CrlURIs                []string      `json:"crlURIs"`
+	OcspURIs               []string      `json:"ocspURIs"`
+	RevocationStatus       int           `json:"revocationStatus"`
+	CrlRevocationStatus    int           `json:"crlRevocationStatus"`
+	OcspRevocationStatus   int           `json:"ocspRevocationStatus"`
+	DnsCaa                 bool          `json:"dnsCaa"`
+	CaaPolicy              LabsCaaPolicy `json:"caaPolicy"`
+	MustStaple             bool          `json:"mustStaple"`
+	Sgc                    int
+	ValidationType         string `json:"validationType"`
+	Issues                 int
+	Sct                    bool
+	SHA1Hash               string `json:"sha1Hash"`
+	PinSHA256              string `json:"pinSha256"`
+	KeyAlg                 string `json:"keyAlg"`
+	KeySize                int    `json:"keySize"`
+	KeyStrength            int    `json:"keyStrength"`
+	KeyKnownDebianInsecure bool   `json:"keyKnownDebianInsecure"`
+	Raw                    string `json:"raw"`
 }
 
 // LabsChainCert describes the chained certificates
@@ -70,8 +93,8 @@ type LabsChainCert struct {
 	NotBefore            int64  `json:"notBefore"`
 	NotAfter             int64  `json:"notAfter"`
 	IssuerSubject        string `json:"issuerSubject"`
-	SigAlg               string `json:"sigAlg"`
 	IssuerLabel          string `json:"issuerLabel"`
+	SigAlg               string `json:"sigAlg"`
 	Issues               int
 	KeyAlg               string `json:"sigAlg"`
 	KeySize              int    `json:"keySize"`
@@ -79,8 +102,6 @@ type LabsChainCert struct {
 	RevocationStatus     int    `json:"revocationStatus"`
 	CrlRevocationStatus  int    `json:"crlRevocationStatus"`
 	OcspRevocationStatus int    `json:"ocspRevocationStatus"`
-	SHA1Hash             string `json:"sha1Hash"`
-	PinSHA256            string `json:"pinSha256"`
 	Raw                  string
 }
 
@@ -96,7 +117,6 @@ type LabsProtocol struct {
 	Name             string
 	Version          string
 	V2SuitesDisabled bool
-	ErrorMessage     bool `json:"errorMessage"`
 	Q                int
 }
 
@@ -111,12 +131,28 @@ type LabsSimClient struct {
 
 // LabsSimulation describes the simulation of a given client
 type LabsSimulation struct {
-	Client     LabsSimClient
-	ErrorCode  int `json:"errorCode"`
-	Attempts   int
-	ProtocolID int    `json:"protocolId"`
-	SuiteID    int    `json:"suiteId"`
-	KxInfo     string `json:"kxInfo"`
+	Client         LabsSimClient
+	ErrorCode      int    `json:"errorCode"`
+	ErrorMessage   string `json:"errorMessage"`
+	Attempts       int
+	CertChainId    string `json:"certChainId"`
+	ProtocolID     int    `json:"protocolId"`
+	SuiteID        int    `json:"suiteId"`
+	SuiteName      string `json:"suiteName"`
+	KxType         string `json:"kxType"`
+	KxStrength     int    `json:"kxStrength"`
+	DhBits         int    `json:"dhBits"`
+	DHP            int    `json:"dhP"`
+	DHG            int    `json:"dhG"`
+	DHYs           int    `json:"dhYs"`
+	NamedGroupBits int    `json:"namedGroupBits"`
+	NamedGroupId   int    `json:"namedGroupId"`
+	NamedGroupName string `json:"namedGroupName"`
+	AlertType      int    `json:"alertType"`
+	AlertCode      int    `json:"alertCode"`
+	KeyAlg         string `json:"keyAlg"`
+	KeySize        int    `json:"keySize"`
+	SigAlg         string `json:"sigAlg"`
 }
 
 // LabsSimDetails are the result of simulation
@@ -128,18 +164,22 @@ type LabsSimDetails struct {
 type LabsSuite struct {
 	ID             int `json:"id"`
 	Name           string
-	CipherStrength int `json:"cipherStrength"`
-	DHStrength     int `json:"dhStrength"`
-	DHP            int `json:"dhP"`
-	DHG            int `json:"dhG"`
-	DHYs           int `json:"dhYs"`
-	ECDHBits       int `json:"ecdhBits"`
-	ECDHStrength   int `json:"ecdhStrength"`
+	CipherStrength int    `json:"cipherStrength"`
+	KxType         string `json:"kxType"`
+	KxStrength     int    `json:"kxStrength"`
+	DhBits         int    `json:"dhBits"`
+	DHP            int    `json:"dhP"`
+	DHG            int    `json:"dhG"`
+	DHYs           int    `json:"dhYs"`
+	NamedGroupBits int    `json:"namedGroupBits"`
+	NamedGroupId   int    `json:"namedGroupId"`
+	NamedGroudName string `json:"namedGroupName"`
 	Q              int
 }
 
 // LabsSuites is a set of protocols
 type LabsSuites struct {
+	Protocol   int
 	List       []LabsSuite
 	Preference bool
 }
@@ -163,6 +203,7 @@ type LabsHstsPolicy struct {
 // LabsHstsPreload is for HSTS preloading
 type LabsHstsPreload struct {
 	Source     string
+	HostName   string `json:"hostName"`
 	Status     string
 	Error      string
 	SourceTime int64 `json:"sourceTime"`
@@ -202,29 +243,74 @@ type LabsDrownHost struct {
 	Status  string
 }
 
+type LabsCertChain struct {
+	ID        string
+	CertIds   []string        `json:"certIds"`
+	Trustpath []LabsTrustPath `json:"trustpath"`
+	Issues    int
+	NoSni     bool `json:"noSni"`
+}
+
+type LabsTrustPath struct {
+	CertIds       []string    `json:"certIds"`
+	Trust         []LabsTrust `json:"trust"`
+	IsPinned      bool        `json:"isPinned"`
+	MatchedPins   int         `json:"matchedPins"`
+	UnMatchedPins int         `json:"unMatchedPins"`
+}
+
+type LabsTrust struct {
+	RootStore         string `json:"rootStore"`
+	IsTrusted         bool   `json:"isTrusted"`
+	TrustErrorMessage string `json:"trustErrorMessage"`
+}
+
+type LabsNamedGroups struct {
+	List       []LabsNamedGroup
+	Preference bool
+}
+
+type LabsNamedGroup struct {
+	ID   int
+	Name string
+	Bits int
+}
+
+type LabsHttpTransaction struct {
+	RequestUrl        string           `json:"requestUrl"`
+	StatusCode        int              `json:"statusCode"`
+	RequestLine       string           `json:"requestLine"`
+	RequestHeaders    []string         `json:"requestHeaders"`
+	ResponseLine      string           `json:"responseLine"`
+	ResponseRawHeader []string         `json:"responseRawHeader"`
+	ResponseHeader    []LabsHttpHeader `json:"responseHeader"`
+	FragileServer     bool             `json:"fragileServer"`
+}
+
+type LabsHttpHeader struct {
+	Name  string
+	Value string
+}
+
 // LabsEndpointDetails gives the details of a given Endpoint
 type LabsEndpointDetails struct {
-	HostStartTime                  int64 `json:"hostStartTime"`
-	Key                            LabsKey
-	Cert                           LabsCert
-	Chain                          LabsChain
+	HostStartTime                  int64           `json:"hostStartTime"`
+	CertChains                     []LabsCertChain `json:"certChains"`
 	Protocols                      []LabsProtocol
-	Suites                         LabsSuites
-	ServerSignature                string `json:"serverSignature"`
-	PrefixDelegation               bool   `json:"prefixDelegation"`
-	NonPrefixDelegation            bool   `json:"nonPrefixDelegation"`
-	VulnBeast                      bool   `json:"vulnBeast"`
-	RenegSupport                   int    `json:"renegSupport"`
-	StsStatus                      string `json:"stsStatus"`
-	StsResponseHeader              string `json:"stsResponseHeader"`
-	StsMaxAge                      int    `json:"stsMaxAge"`
-	StsSubdomains                  bool   `json:"stsSubdomains"`
-	StsPreload                     bool   `json:"stsPreload"`
-	SessionResumption              int    `json:"sessionResumption"`
-	CompressionMethods             int    `json:"compressionMethods"`
-	SupportsNpn                    bool   `json:"supportsNpn"`
-	NpnProcotols                   string `json:"npnProtocols"`
-	SupportsAlpn                   bool   `json:"supportsAlpn"`
+	Suites                         []LabsSuites
+	NoSniSuites                    LabsSuites      `json:"noSniSuites"`
+	NamedGroups                    LabsNamedGroups `json:"named_groups"`
+	ServerSignature                string          `json:"serverSignature"`
+	PrefixDelegation               bool            `json:"prefixDelegation"`
+	NonPrefixDelegation            bool            `json:"nonPrefixDelegation"`
+	VulnBeast                      bool            `json:"vulnBeast"`
+	RenegSupport                   int             `json:"renegSupport"`
+	SessionResumption              int             `json:"sessionResumption"`
+	CompressionMethods             int             `json:"compressionMethods"`
+	SupportsNpn                    bool            `json:"supportsNpn"`
+	NpnProcotols                   string          `json:"npnProtocols"`
+	SupportsAlpn                   bool            `json:"supportsAlpn"`
+	AlpnProtocols                  string
 	SessionTickets                 int    `json:"sessionTickets"`
 	OcspStapling                   bool   `json:"ocspStapling"`
 	StaplingRevocationStatus       int    `json:"staplingRevocationStatus"`
@@ -232,15 +318,20 @@ type LabsEndpointDetails struct {
 	SniRequired                    bool   `json:"sniRequired"`
 	HTTPStatusCode                 int    `json:"httpStatusCode"`
 	HTTPForwarding                 string `json:"httpForwarding"`
-	ForwardSecrecy                 int    `json:"forwardSecrecy"`
 	SupportsRC4                    bool   `json:"supportsRc4"`
 	RC4WithModern                  bool   `json:"rc4WithModern"`
 	RC4Only                        bool   `json:"rc4Only"`
+	ForwardSecrecy                 int    `json:"forwardSecrecy"`
+	SupportAead                    bool   `json:"supportsAead"`
+	ProtocolIntolerance            int    `json:"protocolIntolerance"`
+	MiscIntolerance                int    `json:"miscIntolerance"`
 	Sims                           LabsSimDetails
 	Heartbleed                     bool
 	Heartbeat                      bool
 	OpenSSLCcs                     int `json:"openSslCcs"`
 	OpenSSLLuckyMinus20            int `json:"openSSLLuckyMinus20"`
+	Ticketbleed                    int
+	Bleichenbacher                 int
 	Poodle                         bool
 	PoodleTLS                      int  `json:"poodleTLS"`
 	FallbackScsv                   bool `json:"fallbackScsv"`
@@ -249,6 +340,7 @@ type LabsEndpointDetails struct {
 	DhPrimes                       []string `json:"dhPrimes"`
 	DhUsesKnownPrimes              int      `json:"dhUsesKnownPrimes"`
 	DhYsReuse                      bool     `json:"dhYsReuse"`
+	EcdhParameterReuse             bool     `json:"ecdhParameterReuse"`
 	Logjam                         bool
 	ChaCha20Preference             bool
 	HstsPolicy                     LabsHstsPolicy    `json:"hstsPolicy"`
@@ -268,8 +360,9 @@ type LabsEndpoint struct {
 	StatusDetailsMessage string `json:"statusDetailsMessage"`
 	Grade                string
 	GradeTrustIgnored    string `json:"gradeTrustIgnored"`
-	HasWarnings          bool   `json:"hasWarnings"`
-	IsExceptional        bool   `json:"isExceptional"`
+	FutureGrade          string
+	HasWarnings          bool `json:"hasWarnings"`
+	IsExceptional        bool `json:"isExceptional"`
 	Progress             int
 	Duration             int
 	Eta                  int
@@ -284,15 +377,16 @@ type LabsReport struct {
 	Protocol        string
 	IsPublic        bool `json:"isPublic"`
 	Status          string
-	StatusMessage   string `json:"statusMessage"`
-	StartTime       int64  `json:"startTime"`
-	TestTime        int64  `json:"testTime"`
-	EngineVersion   string `json:"engineVersion"`
-	CriteriaVersion string `json:"criteriaVersion"`
-	CacheExpiryTime int64  `json:"cacheExpiryTime"`
-	Endpoints       []LabsEndpoint
+	StatusMessage   string   `json:"statusMessage"`
+	StartTime       int64    `json:"startTime"`
+	TestTime        int64    `json:"testTime"`
+	EngineVersion   string   `json:"engineVersion"`
+	CriteriaVersion string   `json:"criteriaVersion"`
+	CacheExpiryTime int64    `json:"cacheExpiryTime"`
 	CertHostnames   []string `json:"certHostnames"`
-	RawJSON         string   `json:"rawJson"`
+	Endpoints       []LabsEndpoint
+	Certs           []LabsCert
+	RawJSON         string `json:"rawJson"`
 }
 
 // LabsReports is a shortcut to all reports

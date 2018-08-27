@@ -87,10 +87,12 @@ func fixTimestamp(ts int64) (int64, int64) {
 }
 
 func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
-	ciphers := det.Suites.List
-	for _, cipher := range ciphers {
-		if strings.Contains(cipher.Name, "DES") {
-			return true
+	if len(det.Suites) != 0 {
+		ciphers := det.Suites[0].List
+		for _, cipher := range ciphers {
+			if strings.Contains(cipher.Name, "DES") {
+				return true
+			}
 		}
 	}
 	return false
@@ -131,7 +133,6 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 		} else {
 			endp := site.Endpoints[0]
 			det := endp.Details
-			cert := endp.Details.Cert
 
 			verbose("  Host: %s\n", site.Host)
 
@@ -140,16 +141,13 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 				protos = append(protos, fmt.Sprintf("%sv%s", p.Name, p.Version))
 			}
 
+			// FIll in all details
 			current = TLSSite{
 				Name:       site.Host,
 				Contract:   contracts[site.Host],
 				Grade:      fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored),
 				CryptCheck: getGrade(site, fnImirhil),
 				Mozilla:    getGrade(site, fnMozilla),
-				DefKey:     det.Key.Size == DefaultKeySize && det.Key.Alg == DefaultAlg,
-				DefCA:      det.Cert.IssuerLabel == DefaultIssuer,
-				DefSig:     det.Cert.SigAlg == DefaultSig,
-				IsExpired:  time.Now().After(time.Unix(fixTimestamp(cert.NotAfter))),
 				Protocols:  strings.Join(protos, ","),
 				RC4:        det.SupportsRC4,
 				PFS:        det.ForwardSecrecy >= 2,
@@ -159,6 +157,17 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 				Drown:      det.DrownVulnerable,
 				Sweet32:    checkSweet32(det),
 			}
+
+			// Handle case where we have a DNS entry but no connection
+			if len(site.Certs) != 0 {
+				cert := site.Certs[0]
+				current.DefKey = cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg
+
+				current.DefCA = cert.IssuerLabel == DefaultIssuer
+				current.DefSig = cert.SigAlg == DefaultSig
+				current.IsExpired = time.Now().After(time.Unix(fixTimestamp(cert.NotAfter)))
+			}
+
 			/*
 				// make space
 				var siteData []string
@@ -173,6 +182,30 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 		e.Sites = append(e.Sites, current)
 	}
 	return
+}
+
+func displayWildcards(all []ssllabs.LabsReport) string {
+	var buf strings.Builder
+
+	fmt.Fprint(&buf, "")
+	// Now analyze each site
+	for _, site := range all {
+		debug("site=%s\n", site.Host)
+		if site.Endpoints != nil {
+			// If Certs is empty, we could not connect
+			if len(site.Certs) != 0 {
+				cert := site.Certs[0]
+				debug("  cert=%#v\n", cert)
+				debug("  CN=%s\n", cert.Subject)
+
+				if strings.HasPrefix(cert.Subject, "CN=*") {
+					debug("adding %s\n", site.Host)
+					buf.WriteString(fmt.Sprintf("  %-35s %-16s CN=%v \n", site.Host, site.Endpoints[0].IPAddress, cert.CommonNames))
+				}
+			}
+		}
+	}
+	return buf.String()
 }
 
 // ToCSV output a CSV file from a report
