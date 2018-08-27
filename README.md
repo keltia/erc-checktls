@@ -69,6 +69,11 @@ Windows:
 
 The rules of Go's `ProxyFromEnvironment` apply (`HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, lowercase variants allowed).
 
+## TODO
+
+- Implement full online calls for SSLLabs
+- Better separation between batch & online mode
+
 ## License
 
 The [BSD 2-Clause license][bsd].

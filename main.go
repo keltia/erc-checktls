@@ -33,7 +33,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.40.0"
+	MyVersion = "0.50.0"
 )
 
 // getContract retrieve the site's contract from the DB
@@ -98,8 +98,8 @@ func init() {
 	}
 
 	// Announce ourselves
-	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
-		MyVersion, cryptcheck.Version())
+	verbose("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
+		MyVersion, cryptcheck.Version(), "v3")
 
 }
 
@@ -136,10 +136,18 @@ func main() {
 	if fDebug {
 		fVerbose = true
 		logLevel = 2
-		debug("debug mode")
+		debug("debug mode\n")
 	}
 
-	//fmt.Printf("all=%#v\n", allSites)
+	// Open output file
+	fOutputFH := checkOutput(fOutput)
+
+	if fCmdWild {
+		str := displayWildcards(allSites)
+		debug("str=%s\n", str)
+		fmt.Fprintf(fOutputFH, "All wildcards certs:\n%s", str)
+		os.Exit(0)
+	}
 
 	// generate the final report & summary
 	final, err := NewTLSReport(allSites)
@@ -149,9 +157,6 @@ func main() {
 	cntrs := categoryCounts(allSites)
 
 	verbose("SSLabs engine: %s\n", final.SSLLabs)
-
-	// Open output file
-	fOutputFH := checkOutput(fOutput)
 
 	if fType == "csv" {
 		if err = final.ToCSV(fOutputFH); err != nil {

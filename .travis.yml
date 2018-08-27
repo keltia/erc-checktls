@@ -10,12 +10,12 @@ branches:
   - develop
   - master
 install:
-  - go get github.com/keltia/proxy
-  - go get github.com/keltia/observatory
-  - go get github.com/keltia/cryptcheck
-  - go get github.com/gobuffalo/packr
-  - go get github.com/olekukonko/tablewriter
-  - go get github.com/atotto/encoding/csv
+  - env GO111MODULE=yes go get github.com/keltia/proxy
+  - env GO111MODULE=yes go get github.com/keltia/observatory
+  - env GO111MODULE=yes go get github.com/keltia/cryptcheck
+  - env GO111MODULE=yes go get github.com/gobuffalo/packr
+  - env GO111MODULE=yes go get github.com/olekukonko/tablewriter
+  - env GO111MODULE=yes go get github.com/atotto/encoding/csv
 script:
-  - go build -v ./...
-  - go test -v ./...
+  - env GO111MODULE=yes go build -v ./...
+  - env GO111MODULE=yes go test -v ./...
