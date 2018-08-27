@@ -1,6 +1,6 @@
 language: go
 go:
-- "1.10.x"
+- "1.11.x"
 - tip
 matrix:
   allow_failures:
@@ -9,13 +9,6 @@ branches:
   only:
   - develop
   - master
-install:
-  - env GO111MODULE=yes go get github.com/keltia/proxy
-  - env GO111MODULE=yes go get github.com/keltia/observatory
-  - env GO111MODULE=yes go get github.com/keltia/cryptcheck
-  - env GO111MODULE=yes go get github.com/gobuffalo/packr
-  - env GO111MODULE=yes go get github.com/olekukonko/tablewriter
-  - env GO111MODULE=yes go get github.com/atotto/encoding/csv
 script:
   - env GO111MODULE=yes go build -v ./...
   - env GO111MODULE=yes go test -v ./...
