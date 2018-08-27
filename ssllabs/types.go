@@ -72,7 +72,7 @@ type LabsCert struct {
 	OcspRevocationStatus   int           `json:"ocspRevocationStatus"`
 	DnsCaa                 bool          `json:"dnsCaa"`
 	CaaPolicy              LabsCaaPolicy `json:"caaPolicy"`
-	MustStaple             int           `json:"mustStaple"`
+	MustStaple             bool          `json:"mustStaple"`
 	Sgc                    int
 	ValidationType         string `json:"validationType"`
 	Issues                 int
