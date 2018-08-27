@@ -18,6 +18,8 @@ var (
 	fIgnoreMozilla bool
 	fVerbose       bool
 	fReallyVerbose bool
+
+	fCmdWild bool
 )
 
 const (
@@ -43,4 +45,6 @@ func init() {
 	flag.BoolVar(&fRefresh, "R", false, "Force refresh")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
 	flag.BoolVar(&fReallyVerbose, "V", false, "More verbose mode")
+
+	flag.BoolVar(&fCmdWild, "wild", false, "Display wildcards")
 }
