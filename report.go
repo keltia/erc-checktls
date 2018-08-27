@@ -87,10 +87,12 @@ func fixTimestamp(ts int64) (int64, int64) {
 }
 
 func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
-	ciphers := det.Suites[0].List
-	for _, cipher := range ciphers {
-		if strings.Contains(cipher.Name, "DES") {
-			return true
+	if len(det.Suites) != 0 {
+		ciphers := det.Suites[0].List
+		for _, cipher := range ciphers {
+			if strings.Contains(cipher.Name, "DES") {
+				return true
+			}
 		}
 	}
 	return false
@@ -131,7 +133,6 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 		} else {
 			endp := site.Endpoints[0]
 			det := endp.Details
-			cert := site.Certs[0]
 
 			verbose("  Host: %s\n", site.Host)
 
@@ -140,6 +141,7 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 				protos = append(protos, fmt.Sprintf("%sv%s", p.Name, p.Version))
 			}
 
+			// FIll in all details
 			current = TLSSite{
 				Name:       site.Host,
 				Contract:   contracts[site.Host],
@@ -155,6 +157,17 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 				Drown:      det.DrownVulnerable,
 				Sweet32:    checkSweet32(det),
 			}
+
+			// Handle case where we have a DNS entry but no connection
+			if len(site.Certs) != 0 {
+				cert := site.Certs[0]
+				current.DefKey = cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg
+
+				current.DefCA = cert.IssuerLabel == DefaultIssuer
+				current.DefSig = cert.SigAlg == DefaultSig
+				current.IsExpired = time.Now().After(time.Unix(fixTimestamp(cert.NotAfter)))
+			}
+
 			/*
 				// make space
 				var siteData []string
