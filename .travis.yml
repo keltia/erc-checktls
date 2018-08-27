@@ -12,4 +12,4 @@ branches:
 install:
   - go get github.com/gobuffalo/packr/...
 script:
-  - make GO111MODULE=yes
+  - make GO111MODULE=on
