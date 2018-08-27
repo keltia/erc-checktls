@@ -139,7 +139,15 @@ func main() {
 		debug("debug mode\n")
 	}
 
-	//fmt.Printf("all=%#v\n", allSites)
+	// Open output file
+	fOutputFH := checkOutput(fOutput)
+
+	if fCmdWild {
+		str := displayWildcards(allSites)
+		debug("str=%s\n", str)
+		fmt.Fprintf(fOutputFH, "All wildcards certs:\n%s", str)
+		os.Exit(0)
+	}
 
 	// generate the final report & summary
 	final, err := NewTLSReport(allSites)
@@ -149,9 +157,6 @@ func main() {
 	cntrs := categoryCounts(allSites)
 
 	verbose("SSLabs engine: %s\n", final.SSLLabs)
-
-	// Open output file
-	fOutputFH := checkOutput(fOutput)
 
 	if fType == "csv" {
 		if err = final.ToCSV(fOutputFH); err != nil {
