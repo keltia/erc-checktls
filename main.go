@@ -98,8 +98,8 @@ func init() {
 	}
 
 	// Announce ourselves
-	verbose("%s version %s - Imirhil %s\n\n", filepath.Base(os.Args[0]),
-		MyVersion, cryptcheck.Version())
+	verbose("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
+		MyVersion, cryptcheck.Version(), "v3")
 
 }
 
