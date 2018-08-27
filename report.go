@@ -146,10 +146,6 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 				Grade:      fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored),
 				CryptCheck: getGrade(site, fnImirhil),
 				Mozilla:    getGrade(site, fnMozilla),
-				DefKey:     cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg,
-				DefCA:      cert.IssuerLabel == DefaultIssuer,
-				DefSig:     cert.SigAlg == DefaultSig,
-				IsExpired:  time.Now().After(time.Unix(fixTimestamp(cert.NotAfter))),
 				Protocols:  strings.Join(protos, ","),
 				RC4:        det.SupportsRC4,
 				PFS:        det.ForwardSecrecy >= 2,
@@ -173,6 +169,30 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 		e.Sites = append(e.Sites, current)
 	}
 	return
+}
+
+func displayWildcards(all []ssllabs.LabsReport) string {
+	var buf strings.Builder
+
+	fmt.Fprint(&buf, "")
+	// Now analyze each site
+	for _, site := range all {
+		debug("site=%s\n", site.Host)
+		if site.Endpoints != nil {
+			// If Certs is empty, we could not connect
+			if len(site.Certs) != 0 {
+				cert := site.Certs[0]
+				debug("  cert=%#v\n", cert)
+				debug("  CN=%s\n", cert.Subject)
+
+				if strings.HasPrefix(cert.Subject, "CN=*") {
+					debug("adding %s\n", site.Host)
+					buf.WriteString(fmt.Sprintf("  %-35s %-16s CN=%v \n", site.Host, site.Endpoints[0].IPAddress, cert.CommonNames))
+				}
+			}
+		}
+	}
+	return buf.String()
 }
 
 // ToCSV output a CSV file from a report
