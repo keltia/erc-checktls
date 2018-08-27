@@ -10,6 +10,6 @@ branches:
   - develop
   - master
 install:
-  - GO111MODULE=yes go get github.com/gobuffalo/packr/...
+  - go get github.com/gobuffalo/packr/...
 script:
-  - GO111MODULE=yes make
+  - make GO111MODULE=yes
