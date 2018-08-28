@@ -24,7 +24,7 @@ var (
 
 const (
 	cliUsage = `%s version %s
-Usage: %s [-hvVI] [-t text|csv] [-o file] file[.json]
+Usage: %s [-hvIMV] [-t text|csv] [-o file] file[.json]
 
 `
 )
