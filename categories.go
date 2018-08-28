@@ -21,6 +21,9 @@ var (
 		"E",
 		"F",
 		"T",
+		"X",
+		"Z",
+		"Total",
 		"RC4",
 		"OCSP",
 		"HSTS",
@@ -31,11 +34,21 @@ var (
 
 func categoryCounts(reports []ssllabs.LabsReport) (cntrs map[string]int) {
 	cntrs = make(map[string]int)
+
+	baddies := 0
+	broken := 0
+	reals := 0
+
 	for _, r := range reports {
 		if r.Endpoints != nil {
 			endp := r.Endpoints[0]
 			det := endp.Details
 
+			if r.Endpoints[0].Grade != "" && r.Endpoints[0].Grade != "Z" {
+				reals++
+			} else {
+				baddies++
+			}
 			cntrs[r.Endpoints[0].Grade]++
 			if det.ForwardSecrecy >= 2 {
 				cntrs["PFS"]++
@@ -52,8 +65,13 @@ func categoryCounts(reports []ssllabs.LabsReport) (cntrs map[string]int) {
 			if det.HstsPolicy.Status == "present" {
 				cntrs["HSTS"]++
 			}
+		} else {
+			broken++
 		}
 	}
+	cntrs["Total"] = reals
+	cntrs["X"] = broken
+	cntrs["Z"] = baddies
 	return cntrs
 }
 
