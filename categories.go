@@ -100,5 +100,5 @@ func writeSummary(cntrs map[string]int, w io.Writer) (err error) {
 	table.Append(line)
 	table.Render()
 
-	return errors.Wrap(err, "csv write failed")
+	return errors.Wrap(err, "table")
 }
