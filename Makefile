@@ -9,8 +9,7 @@ GO=		go
 GOBIN=   ${GOPATH}/bin
 
 SRCS= main.go cli.go report.go utils.go \
-    ssllabs/ssllabs.go ssllabs/types.go \
-    main-packr.go
+	main-packr.go
 
 OPTS=	-ldflags="-s -w" -v
 

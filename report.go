@@ -14,8 +14,8 @@ import (
 
 	"github.com/atotto/encoding/csv"
 	"github.com/keltia/cryptcheck"
-	"github.com/keltia/erc-checktls/ssllabs"
 	"github.com/keltia/observatory"
+	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
 )
 
@@ -25,8 +25,8 @@ var (
 		false: "NO",
 	}
 
-	fnImirhil func(site ssllabs.LabsReport) string
-	fnMozilla func(site ssllabs.LabsReport) string
+	fnImirhil func(site ssllabs.Host) string
+	fnMozilla func(site ssllabs.Host) string
 )
 
 const (
@@ -46,7 +46,7 @@ func init() {
 		}
 		client := cryptcheck.NewClient(cnf)
 
-		fnImirhil = func(site ssllabs.LabsReport) string {
+		fnImirhil = func(site ssllabs.Host) string {
 			score, err := client.GetScore(site.Host)
 			if err != nil {
 				verbose("can not get cryptcheck score: %v", err)
@@ -54,7 +54,7 @@ func init() {
 			return score
 		}
 	} else {
-		fnImirhil = func(site ssllabs.LabsReport) string {
+		fnImirhil = func(site ssllabs.Host) string {
 			return ""
 		}
 	}
@@ -68,7 +68,7 @@ func init() {
 			fmt.Fprintf(os.Stderr, "can not create observatory client: %v", err)
 		}
 
-		fnMozilla = func(site ssllabs.LabsReport) string {
+		fnMozilla = func(site ssllabs.Host) string {
 			score, err := moz.GetGrade(site.Host)
 			if err != nil {
 				verbose("can not get Mozilla score: %v", err)
@@ -76,7 +76,7 @@ func init() {
 			return score
 		}
 	} else {
-		fnMozilla = func(site ssllabs.LabsReport) string {
+		fnMozilla = func(site ssllabs.Host) string {
 			return ""
 		}
 	}
@@ -86,7 +86,7 @@ func fixTimestamp(ts int64) (int64, int64) {
 	return ts / 1000, ts % 1000
 }
 
-func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
+func checkSweet32(det ssllabs.EndpointDetails) (yes bool) {
 	if len(det.Suites) != 0 {
 		ciphers := det.Suites[0].List
 		for _, cipher := range ciphers {
@@ -98,17 +98,17 @@ func checkSweet32(det ssllabs.LabsEndpointDetails) (yes bool) {
 	return false
 }
 
-func getGrade(site ssllabs.LabsReport, fn func(site ssllabs.LabsReport) string) string {
+func getGrade(site ssllabs.Host, fn func(site ssllabs.Host) string) string {
 	return fn(site)
 }
 
-func getSSLablsVersion(site ssllabs.LabsReport) string {
+func getSSLablsVersion(site ssllabs.Host) string {
 	debug("%#v", site)
 	return fmt.Sprintf("%s/%s", site.EngineVersion, site.CriteriaVersion)
 }
 
 // NewTLSReport generates everything we need for display/export
-func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
+func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 	if len(reports) == 0 {
 		return nil, fmt.Errorf("empty list")
 	}
@@ -184,7 +184,7 @@ func NewTLSReport(reports []ssllabs.LabsReport) (e *TLSReport, err error) {
 	return
 }
 
-func displayWildcards(all []ssllabs.LabsReport) string {
+func displayWildcards(all []ssllabs.Host) string {
 	var buf strings.Builder
 
 	fmt.Fprint(&buf, "")

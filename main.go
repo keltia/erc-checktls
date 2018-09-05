@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
-	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
@@ -113,7 +113,7 @@ func main() {
 		fatalf("Can't read %s: %v", file, err.Error())
 	}
 
-	// raw is the []byte array to be deserialized into LabsReports
+	// raw is the []byte array to be deserialized into Hosts
 	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
 		fatalf("Can't parse %s: %v", file, err.Error())
