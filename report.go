@@ -134,7 +134,7 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 			endp := site.Endpoints[0]
 			det := endp.Details
 
-			verbose("  Host: %s\n", site.Host)
+			fmt.Printf("  Host: %s\n", site.Host)
 
 			protos := []string{}
 			for _, p := range det.Protocols {

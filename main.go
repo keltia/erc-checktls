@@ -7,18 +7,18 @@ and generating a csv file.
 package main // import "github.com/keltia/erc-checktls"
 
 import (
-	"flag"
-
 	"bytes"
 	"encoding/csv"
+	"flag"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 )
 
 var (
@@ -98,7 +98,7 @@ func init() {
 	}
 
 	// Announce ourselves
-	verbose("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
+	fmt.Printf("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
 		MyVersion, cryptcheck.Version(), "v3")
 
 }
