@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/keltia/erc-checktls/ssllabs"
+	"github.com/keltia/ssllabs"
 	tw "github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"io"
@@ -32,7 +32,7 @@ var (
 	}
 )
 
-func categoryCounts(reports []ssllabs.LabsReport) (cntrs map[string]int) {
+func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
 	cntrs = make(map[string]int)
 
 	baddies := 0

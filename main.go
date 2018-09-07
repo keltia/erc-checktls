@@ -7,18 +7,18 @@ and generating a csv file.
 package main // import "github.com/keltia/erc-checktls"
 
 import (
-	"flag"
-
 	"bytes"
 	"encoding/csv"
+	"flag"
 	"fmt"
-	"github.com/gobuffalo/packr"
-	"github.com/keltia/cryptcheck"
-	"github.com/keltia/erc-checktls/ssllabs"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/gobuffalo/packr"
+	"github.com/keltia/cryptcheck"
+	"github.com/keltia/ssllabs"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -33,7 +33,7 @@ var (
 const (
 	contractFile = "sites-list.csv"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.50.0"
+	MyVersion = "0.50.0-ssllabs"
 )
 
 // getContract retrieve the site's contract from the DB
@@ -98,7 +98,7 @@ func init() {
 	}
 
 	// Announce ourselves
-	verbose("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
+	fmt.Printf("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
 		MyVersion, cryptcheck.Version(), "v3")
 
 }
@@ -113,7 +113,7 @@ func main() {
 		fatalf("Can't read %s: %v", file, err.Error())
 	}
 
-	// raw is the []byte array to be deserialized into LabsReports
+	// raw is the []byte array to be deserialized into Hosts
 	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
 		fatalf("Can't parse %s: %v", file, err.Error())
