@@ -121,8 +121,6 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 			PFS:        det.ForwardSecrecy >= 2,
 			OCSP:       det.OcspStapling,
 			HSTS:       det.HstsPolicy.Status == "present",
-			ALPN:       det.SupportsAlpn,
-			Drown:      det.DrownVulnerable,
 			Sweet32:    checkSweet32(det),
 		}
 
