@@ -6,7 +6,7 @@ require (
 	github.com/keltia/cryptcheck v1.5.0
 	github.com/keltia/observatory v1.2.0
 	github.com/keltia/proxy v0.9.4 // indirect
-	github.com/keltia/ssllabs v0.9.0
+	github.com/keltia/ssllabs v0.10.0
 	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/olekukonko/tablewriter v0.0.0-20180506121414-d4647c9c7a84
 	github.com/pkg/errors v0.8.0
