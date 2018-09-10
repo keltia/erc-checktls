@@ -4,14 +4,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/keltia/ssllabs"
-	tw "github.com/olekukonko/tablewriter"
-	"github.com/pkg/errors"
 	"io"
+
+	"github.com/keltia/ssllabs"
+	"github.com/pkg/errors"
+
+	tw "github.com/olekukonko/tablewriter"
 )
 
 var (
-	keys = []string{
+	tlsKeys = []string{
 		"A+",
 		"A",
 		"A-",
@@ -29,6 +31,31 @@ var (
 		"HSTS",
 		"PFS",
 		"Sweet32",
+	}
+	httpKeys = []string{
+		"A+",
+		"A",
+		"A-",
+		"B-",
+		"B",
+		"B-",
+		"C+",
+		"C",
+		"C-",
+		"D+",
+		"D",
+		"D-",
+		"E+",
+		"E",
+		"E-",
+		"F+",
+		"F",
+		"F-",
+		"T",
+		"X",
+		"Z",
+		"Total",
+		"Broken",
 	}
 )
 
@@ -75,15 +102,39 @@ func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
 	return cntrs
 }
 
+func httpCounts(report *TLSReport) (cntrs map[string]int) {
+	cntrs = make(map[string]int)
+
+	baddies := 0
+	broken := 0
+	reals := 0
+
+	for _, r := range report.Sites {
+		if r.Mozilla != "" {
+			if r.Mozilla >= "G" {
+				baddies++
+			} else {
+				reals++
+			}
+			cntrs[r.Mozilla]++
+		} else {
+			broken++
+		}
+	}
+	cntrs["Total"] = reals
+	cntrs["Broken"] = broken
+	return
+}
+
 func displayCategories(cntrs map[string]int) string {
 	str := ""
-	for _, k := range keys {
+	for _, k := range tlsKeys {
 		str = str + fmt.Sprintf("%s:%d ", k, cntrs[k])
 	}
 	return str
 }
 
-func writeSummary(cntrs map[string]int, w io.Writer) (err error) {
+func writeSummary(keys []string, cntrs map[string]int, w io.Writer) (err error) {
 	table := tw.NewWriter(w)
 	table.SetHeader(keys)
 	table.SetAlignment(tw.ALIGN_CENTER)
