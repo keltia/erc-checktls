@@ -154,7 +154,10 @@ func main() {
 	if err != nil {
 		fatalf("error analyzing report: %v", err)
 	}
+
+	// Gather statistics for summaries
 	cntrs := categoryCounts(allSites)
+	https := httpCounts(final)
 
 	verbose("SSLabs engine: %s\n", final.SSLLabs)
 
@@ -162,8 +165,13 @@ func main() {
 		if err = final.ToCSV(fOutputFH); err != nil {
 			fatalf("Error can not generate CSV: %v", err)
 		}
-		if err = writeSummary(cntrs, os.Stdout); err != nil {
-			fmt.Fprintf(os.Stderr, "can not generate summary: %v", err)
+		fmt.Printf("\nTLS Summary\n")
+		if err = writeSummary(tlsKeys, cntrs, os.Stdout); err != nil {
+			fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
+		}
+		fmt.Printf("\nHTTP Summary\n")
+		if err = writeSummary(httpKeys, https, os.Stdout); err != nil {
+			fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
 		}
 	} else {
 		// XXX Early debugging
