@@ -14,7 +14,7 @@ import (
 const (
 	DefaultKeySize = 2048
 	DefaultAlg     = "RSA"
-	DefaultIssuer  = "GlobalSign Organization Validation CA - SHA256 - G2"
+	DefaultIssuer  = "CN=GlobalSign Organization Validation CA - SHA256 - G2, O=GlobalSign nv-sa, C=BE"
 	DefaultSig     = "SHA256withRSA"
 )
 
@@ -131,12 +131,16 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 			cert := site.Certs[0]
 			current.DefKey = cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg
 
-			current.DefCA = cert.IssuerLabel == DefaultIssuer
+			current.DefCA = checkIssuer(cert, DefaultIssuer)
 			current.DefSig = cert.SigAlg == DefaultSig
 			current.IsExpired = time.Now().After(time.Unix(fixTimestamp(cert.NotAfter)))
 		}
 	}
 	return current
+}
+
+func checkIssuer(cert ssllabs.Cert, ours string) bool {
+	return cert.IssuerSubject == ours
 }
 
 func displayWildcards(all []ssllabs.Host) string {
