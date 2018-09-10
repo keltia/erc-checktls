@@ -117,7 +117,6 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 			CryptCheck: getGrade(site, fnImirhil),
 			Mozilla:    getGrade(site, fnMozilla),
 			Protocols:  strings.Join(protos, ","),
-			RC4:        det.SupportsRC4,
 			PFS:        det.ForwardSecrecy >= 2,
 			OCSP:       det.OcspStapling,
 			HSTS:       det.HstsPolicy.Status == "present",

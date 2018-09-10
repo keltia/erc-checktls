@@ -31,7 +31,6 @@ type TLSSite struct {
 	Protocols string
 	PFS       bool
 
-	RC4     bool
 	OCSP    bool
 	HSTS    bool
 	Sweet32 bool
