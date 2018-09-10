@@ -83,7 +83,8 @@ func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
 			if checkSweet32(det) {
 				cntrs["Sweet32"]++
 			}
-			if det.CertChains[0].Issues != 0 {
+			if len(det.CertChains) == 0 ||
+				det.CertChains[0].Issues != 0 {
 				cntrs["Issues"]++
 			}
 			if det.OcspStapling {

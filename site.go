@@ -131,6 +131,9 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 			current.DefCA = checkIssuer(cert, DefaultIssuer)
 			current.DefSig = cert.SigAlg == DefaultSig
 			current.IsExpired = time.Now().After(time.Unix(fixTimestamp(cert.NotAfter)))
+		}
+
+		if len(det.CertChains) != 0 {
 			current.PathIssues = det.CertChains[0].Issues != 0
 		}
 	}
