@@ -113,7 +113,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 		current = TLSSite{
 			Name:       site.Host,
 			Contract:   contracts[site.Host],
-			Grade:      fmt.Sprintf("%s/%s", endp.Grade, endp.GradeTrustIgnored),
+			Grade:      endp.Grade,
 			CryptCheck: getGrade(site, fnImirhil),
 			Mozilla:    getGrade(site, fnMozilla),
 			Protocols:  strings.Join(protos, ","),
