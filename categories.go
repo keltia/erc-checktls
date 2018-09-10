@@ -26,10 +26,10 @@ var (
 		"X",
 		"Z",
 		"Total",
-		"RC4",
+		"Issues",
+		"PFS",
 		"OCSP",
 		"HSTS",
-		"PFS",
 		"Sweet32",
 	}
 	httpKeys = []string{
@@ -83,8 +83,8 @@ func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
 			if checkSweet32(det) {
 				cntrs["Sweet32"]++
 			}
-			if det.SupportsRC4 {
-				cntrs["RC4"]++
+			if det.CertChains[0].Issues != 0 {
+				cntrs["Issues"]++
 			}
 			if det.OcspStapling {
 				cntrs["OCSP"]++
