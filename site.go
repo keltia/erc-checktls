@@ -52,7 +52,7 @@ func init() {
 		client := cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.Host) string {
-			verbose("imirhil")
+			verbose("imirhil\n")
 			score, err := client.GetScore(site.Host)
 			if err != nil {
 				verbose("can not get cryptcheck score: %v\n", err)
@@ -75,7 +75,7 @@ func init() {
 		}
 
 		fnMozilla = func(site ssllabs.Host) string {
-			verbose("observatory")
+			verbose("observatory\n")
 			score, err := moz.GetGrade(site.Host)
 			if err != nil {
 				verbose("can not get Mozilla score: %v\n", err)
