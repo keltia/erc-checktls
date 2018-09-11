@@ -164,7 +164,7 @@ func green(str string) string {
 func white(str string) string {
 	var buf strings.Builder
 
-	t, _ := template.New("white").Parse(`<td class=xl66 align=center>{{.}}</td>`)
+	t, _ := template.New("white").Parse(`<td class=xl661 align=center>{{.}}</td>`)
 	t.Execute(&buf, str)
 	return buf.String()
 }
