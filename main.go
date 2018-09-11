@@ -93,22 +93,20 @@ func getResults(file string) (res []byte, err error) {
 func init() {
 	flag.Usage = Usage
 	flag.Parse()
+}
+
+// main is the the starting point
+func main() {
+	// Announce ourselves
+	fmt.Printf("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
+		MyVersion, cryptcheck.Version(), "v3")
+
+	file := flag.Arg(0)
 
 	// Basic argument check
 	if len(flag.Args()) != 1 {
 		fatalf("Error: you must specify an input file!")
 	}
-
-	// Announce ourselves
-	fmt.Printf("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
-		MyVersion, cryptcheck.Version(), "v3")
-
-}
-
-// main is the the starting point
-func main() {
-
-	file := flag.Arg(0)
 
 	raw, err := getResults(file)
 	if err != nil {
