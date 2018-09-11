@@ -14,7 +14,7 @@ OPTS=	-ldflags="-s -w" -v
 
 all: erc-checktls
 
-main-packr.go: main.go
+main-packr.go: main.go files/html.templ files/sites-list.csv
 	packr
 
 erc-checktls: ${SRCS}
