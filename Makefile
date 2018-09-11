@@ -5,17 +5,16 @@
 #
 
 GO=		go
-.PATH= ssllabs
 GOBIN=   ${GOPATH}/bin
 
-SRCS= main.go cli.go report.go utils.go \
+SRCS= main.go categories.go cli.go html.go  report.go site.go utils.go types.go \
 	main-packr.go
 
 OPTS=	-ldflags="-s -w" -v
 
 all: erc-checktls
 
-main-packr.go:
+main-packr.go: main.go
 	packr
 
 erc-checktls: ${SRCS}
