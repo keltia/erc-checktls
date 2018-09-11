@@ -1,0 +1,146 @@
+{{define "tr"}}<tr height=21 style='height:16.0pt'>
+    {{.Name}}
+    {{.Contract}}
+    {{.Grade}}
+    {{.Cryptcheck}}
+    {{.Mozilla}}
+    {{.DefKey}}
+    {{.DefSig}}
+    {{.DefCA}}
+    {{.IsExpired}}
+    {{.Protocols}}
+    {{.PFS}}
+    {{.OCSP}}
+    {{.HSTS}}
+    {{.Sweet32}}
+</tr>
+{{end}}
+{{define "html-report"}}<!--HTML template-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:x="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <style id="erc-summary_394_Styles">
+        <!--table
+        {mso-displayed-decimal-separator:"\.";
+            mso-displayed-thousand-separator:" ";}
+        @page
+        {margin:.75in .7in .75in .7in;
+            mso-header-margin:.3in;
+            mso-footer-margin:.3in;}
+        tr
+        {mso-height-source:auto;}
+        col
+        {mso-width-source:auto;}
+        br
+        {mso-data-placement:same-cell;}
+        .style0
+        {mso-number-format:General;
+            text-align:general;
+            vertical-align:bottom;
+            white-space:nowrap;
+            mso-rotate:0;
+            mso-background-source:auto;
+            mso-pattern:auto;
+            color:black;
+            font-size:12.0pt;
+            font-weight:400;
+            font-style:normal;
+            text-decoration:none;
+            font-family:Calibri, sans-serif;
+            mso-font-charset:0;
+            border:none;
+            mso-protection:locked visible;
+            mso-style-name:Normal;
+            mso-style-id:0;}
+        td
+        {mso-style-parent:style0;
+            padding-top:1px;
+            padding-right:1px;
+            padding-left:1px;
+            mso-ignore:padding;
+            color:black;
+            font-size:12.0pt;
+            font-weight:400;
+            font-style:normal;
+            text-decoration:none;
+            font-family:Calibri, sans-serif;
+            mso-font-charset:0;
+            mso-number-format:General;
+            text-align:general;
+            vertical-align:bottom;
+            border:none;
+            mso-background-source:auto;
+            mso-pattern:auto;
+            mso-protection:locked visible;
+            white-space:nowrap;
+            mso-rotate:0;}
+        .xl63
+        {mso-style-parent:style0;
+            background:#FFC000;
+            mso-pattern:black none;}
+        .xl64
+        {mso-style-parent:style0;
+            background:red;
+            mso-pattern:black none;}
+        .xl65
+        {mso-style-parent:style0;
+            background:#92D050;
+            mso-pattern:black none;}
+        .xl66
+        {mso-style-parent:style0;
+            font-weight:700;}
+        .xl67
+        {mso-style-parent:style0;
+            font-weight:700;
+            background:white;
+            mso-pattern:black none;}
+        -->
+    </style>
+</head>
+
+<body>
+<div id="erc-summary_394" align=center x:publishsource="Excel">
+
+    <table border=0 cellpadding=0 cellspacing=0>
+        <col width=256>
+        <col width=87>
+        <tr height=21 style='height:16.0pt'>
+            <td height=21 width=256 style='height:16.0pt;width:192pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td class=xl66 width=87 style='width:65pt'>Scores</td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td class=xl66 width=87 style='width:65pt'>Compliance</td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+            <td width=87 style='width:65pt'></td>
+        </tr>
+        <tr height=21 style='height:16.0pt'>
+            <td height=21 class=xl66 style='height:16.0pt'><a name="new_list_20180901_2_1">Name</a></td>
+            <td class=xl66>Contract</td>
+            <td class=xl66 align="center">Grade</td>
+            <td class=xl66 align="center">CryptCheck</td>
+            <td class=xl66 align="center">Mozilla</td>
+            <td class=xl66 align="center">DefKey</td>
+            <td class=xl66 align="center">DefSig</td>
+            <td class=xl66 align="center">DefCA</td>
+            <td class=xl66 align="center">IsExpired</td>
+            <td class=xl66 align="center">Protocols</td>
+            <td class=xl66 align="center">PFS</td>
+            <td class=xl67 align="center">OCSP</td>
+            <td class=xl66 align="center">HSTS</td>
+            <td class=xl66 align="center">Sweet32</td>
+        </tr>
+        {{ range .Sites }}
+            {{ template "tr" .}}
+        {{ end }}
+    </table>
+</div>
+</body>
+{{end}}
