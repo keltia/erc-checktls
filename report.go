@@ -15,13 +15,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	yesno = map[bool]string{
-		true:  "YES",
-		false: "NO",
-	}
-)
-
 // Private functions
 
 func getSSLablsVersion(site ssllabs.Host) string {
