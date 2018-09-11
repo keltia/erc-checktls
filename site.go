@@ -43,6 +43,10 @@ func getGrade(site ssllabs.Host, fn func(site ssllabs.Host) string) string {
 	return fn(site)
 }
 
+func hasExpired(t int64) bool {
+	return time.Now().After(time.Unix(fixTimestamp(t)))
+}
+
 func init() {
 	if !fIgnoreImirhil {
 		cnf := cryptcheck.Config{
@@ -130,7 +134,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 
 			current.DefCA = checkIssuer(cert, DefaultIssuer)
 			current.DefSig = cert.SigAlg == DefaultSig
-			current.IsExpired = time.Now().After(time.Unix(fixTimestamp(cert.NotAfter)))
+			current.IsExpired = hasExpired(cert.NotAfter)
 		}
 
 		if len(det.CertChains) != 0 {
