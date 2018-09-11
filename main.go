@@ -104,18 +104,33 @@ func init() {
 	flag.Parse()
 }
 
+func checkFlags() {
+	// Basic argument check
+	if len(flag.Args()) != 1 {
+		fatalf("Error: you must specify an input file!")
+	}
+
+	// Set logging level
+	if fVerbose {
+		logLevel = 1
+	}
+
+	if fDebug {
+		fVerbose = true
+		logLevel = 2
+		debug("debug mode\n")
+	}
+}
+
 // main is the the starting point
 func main() {
 	// Announce ourselves
 	fmt.Printf("%s version %s - Imirhil %s SSLLabs %s\n\n", filepath.Base(os.Args[0]),
 		MyVersion, cryptcheck.Version(), "v3")
 
-	file := flag.Arg(0)
+	checkFlags()
 
-	// Basic argument check
-	if len(flag.Args()) != 1 {
-		fatalf("Error: you must specify an input file!")
-	}
+	file := flag.Arg(0)
 
 	raw, err := getResults(file)
 	if err != nil {
@@ -135,22 +150,6 @@ func main() {
 	contracts, err = readContractFile(box)
 	if err != nil {
 		fatalf("Error: can not read contract file %s: %v", contractFile, err)
-	}
-
-	tmpl = readTemplate(box)
-	if tmpl == "" {
-		fatalf("Error: can not read HTML template %s: %v", htmlTemplate, err)
-	}
-
-	// Set logging level
-	if fVerbose {
-		logLevel = 1
-	}
-
-	if fDebug {
-		fVerbose = true
-		logLevel = 2
-		debug("debug mode\n")
 	}
 
 	// Open output file
@@ -189,6 +188,11 @@ func main() {
 			fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
 		}
 	case "html":
+		tmpl = readTemplate(box)
+		if tmpl == "" {
+			fatalf("Error: can not read HTML template %s: %v", htmlTemplate, err)
+		}
+
 		if err := final.ToHTML(fOutputFH, tmpl); err != nil {
 			fatalf("Can not write HTML: %v", err)
 		}
