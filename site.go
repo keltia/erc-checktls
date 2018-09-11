@@ -47,7 +47,7 @@ func hasExpired(t int64) bool {
 	return time.Now().After(time.Unix(fixTimestamp(t)))
 }
 
-func init() {
+func initAPIs() {
 	if !fIgnoreImirhil {
 		cnf := cryptcheck.Config{
 			Log:     logLevel,
@@ -96,6 +96,7 @@ func init() {
 func NewTLSSite(site ssllabs.Host) TLSSite {
 	var current TLSSite
 
+	initAPIs()
 	if site.Endpoints == nil {
 		verbose("Site %s has no endpoint\n", site.Host)
 		current = TLSSite{
