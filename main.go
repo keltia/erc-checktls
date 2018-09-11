@@ -26,12 +26,14 @@ var (
 	MyName = filepath.Base(os.Args[0])
 
 	contracts map[string]string
+	tmpl      string
 
 	logLevel = 0
 )
 
 const (
 	contractFile = "sites-list.csv"
+	htmlTemplate = "templ.html"
 	// MyVersion uses semantic versioning.
 	MyVersion = "0.50.0-ssllabs"
 )
@@ -54,6 +56,13 @@ func readContractFile(box packr.Box) (contracts map[string]string, err error) {
 	}
 	err = nil
 	return
+}
+
+// readTemplate gets the embedded template
+func readTemplate(box packr.Box) string {
+	debug("reading HTML template\n")
+	ht := box.Bytes(htmlTemplate)
+	return string(ht)
 }
 
 // checkOutput checks whether we want to specify an output file
@@ -128,6 +137,11 @@ func main() {
 		fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
 
+	tmpl = readTemplate(box)
+	if tmpl == "" {
+		fatalf("Error: can not read HTML template %s: %v", htmlTemplate, err)
+	}
+
 	// Set logging level
 	if fVerbose {
 		logLevel = 1
@@ -161,7 +175,8 @@ func main() {
 
 	verbose("SSLabs engine: %s\n", final.SSLLabs)
 
-	if fType == "csv" {
+	switch fType {
+	case "csv":
 		if err = final.ToCSV(fOutputFH); err != nil {
 			fatalf("Error can not generate CSV: %v", err)
 		}
@@ -173,7 +188,11 @@ func main() {
 		if err = writeSummary(httpKeys, https, os.Stdout); err != nil {
 			fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
 		}
-	} else {
+	case "html":
+		if err := final.ToHTML(fOutputFH, tmpl); err != nil {
+			fatalf("Can not write HTML: %v", err)
+		}
+	default:
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
 		fmt.Printf("%s\n", displayCategories(cntrs))
