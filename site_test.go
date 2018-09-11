@@ -34,7 +34,8 @@ func TestInitAPI(t *testing.T) {
 	fIgnoreMozilla = true
 	fIgnoreImirhil = true
 	initAPIs()
-
+	assert.Empty(t, fnMozilla(ssllabs.Host{}))
+	assert.Empty(t, fnImirhil(ssllabs.Host{}))
 }
 
 func TestInitAPI1(t *testing.T) {
@@ -42,6 +43,10 @@ func TestInitAPI1(t *testing.T) {
 	fIgnoreMozilla = true
 	fIgnoreImirhil = false
 	initAPIs()
+	assert.Empty(t, fnMozilla(ssllabs.Host{}))
+	assert.Panics(t, func() {
+		fnImirhil(ssllabs.Host{})
+	})
 }
 
 func TestInitAPI2(t *testing.T) {
@@ -49,6 +54,8 @@ func TestInitAPI2(t *testing.T) {
 	fIgnoreMozilla = false
 	fIgnoreImirhil = true
 	initAPIs()
+	assert.Empty(t, fnMozilla(ssllabs.Host{}))
+	assert.Empty(t, fnImirhil(ssllabs.Host{}))
 }
 
 func TestInitAPI3(t *testing.T) {
@@ -56,6 +63,10 @@ func TestInitAPI3(t *testing.T) {
 	fIgnoreMozilla = false
 	fIgnoreImirhil = false
 	initAPIs()
+	assert.Empty(t, fnMozilla(ssllabs.Host{}))
+	assert.Panics(t, func() {
+		fnImirhil(ssllabs.Host{})
+	})
 }
 
 func TestTLSSite_HasExpiredTrue(t *testing.T) {
