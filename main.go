@@ -38,6 +38,7 @@ const (
 
 // getContract retrieve the site's contract from the DB
 func readContractFile(box packr.Box) (contracts map[string]string, err error) {
+	debug("reading contracts\n")
 	cf := box.Bytes(contractFile)
 	fh := bytes.NewBuffer(cf)
 
@@ -72,6 +73,7 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 			}
 		}
 	}
+	debug("output=%v\n", fOutputFH)
 	return
 }
 
@@ -177,5 +179,6 @@ func main() {
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
 		fmt.Printf("%s\n", displayCategories(cntrs))
+
 	}
 }
