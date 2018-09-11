@@ -181,11 +181,11 @@ func main() {
 			fatalf("Error can not generate CSV: %v", err)
 		}
 		fmt.Printf("\nTLS Summary\n")
-		if err = writeSummary(tlsKeys, cntrs, os.Stdout); err != nil {
+		if err = writeSummary(os.Stdout, tlsKeys, cntrs); err != nil {
 			fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
 		}
 		fmt.Printf("\nHTTP Summary\n")
-		if err = writeSummary(httpKeys, https, os.Stdout); err != nil {
+		if err = writeSummary(os.Stdout, httpKeys, https); err != nil {
 			fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
 		}
 	case "html":

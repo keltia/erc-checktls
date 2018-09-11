@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func writeSummary(keys []string, cntrs map[string]int, w io.Writer) (err error) {
+func writeSummary(w io.Writer, keys []string, cntrs map[string]int) (err error) {
 	table := tw.NewWriter(w)
 	table.SetHeader(keys)
 	table.SetAlignment(tw.ALIGN_CENTER)
