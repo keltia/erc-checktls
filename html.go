@@ -156,7 +156,7 @@ func yellow(str string) string {
 func orange(str string) string {
 	var buf strings.Builder
 
-	t, _ := template.New("yellow").Parse(`<td class=xl63 align=center>{{.}}</td>`)
+	t, _ := template.New("orange").Parse(`<td class=xl63 align=center>{{.}}</td>`)
 	t.Execute(&buf, str)
 	return buf.String()
 
