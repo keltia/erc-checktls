@@ -31,9 +31,9 @@ func grade(val string) string {
 	case "A+":
 		fallthrough
 	case "A":
-		fallthrough
-	case "A-":
 		return green(val)
+	case "A-":
+		return yellow(val)
 	case "B+":
 		fallthrough
 	case "B":
@@ -45,7 +45,7 @@ func grade(val string) string {
 	case "C":
 		fallthrough
 	case "C-":
-		return yellow(val)
+		return orange(val)
 	case "D+":
 		fallthrough
 	case "D":
@@ -145,6 +145,15 @@ func red(str string) string {
 }
 
 func yellow(str string) string {
+	var buf strings.Builder
+
+	t, _ := template.New("yellow").Parse(`<td class=xl631 align=center>{{.}}</td>`)
+	t.Execute(&buf, str)
+	return buf.String()
+
+}
+
+func orange(str string) string {
 	var buf strings.Builder
 
 	t, _ := template.New("yellow").Parse(`<td class=xl63 align=center>{{.}}</td>`)
