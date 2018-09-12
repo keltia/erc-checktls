@@ -27,3 +27,7 @@ func writeSummary(w io.Writer, keys []string, cntrs map[string]int) (err error) 
 
 	return errors.Wrap(err, "table")
 }
+
+func writeHTMLSummary(w io.Writer, keys []string, cntrs map[string]int) (err error) {
+	return nil
+}

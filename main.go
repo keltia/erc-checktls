@@ -193,9 +193,14 @@ func main() {
 		if tmpl == "" {
 			fatalf("Error: can not read HTML template %s: %v", htmlTemplate, err)
 		}
-
 		if err := final.ToHTML(fOutputFH, tmpl); err != nil {
 			fatalf("Can not write HTML: %v", err)
+		}
+		if fSummary != "" {
+			fOutputFH = checkOutput(filepath.Join(fSummary, ".html"))
+			if err := writeHTMLSummary(fOutputFH, []string{}, https); err != nil {
+				fatalf("summary failed: %v\n", err)
+			}
 		}
 	default:
 		// XXX Early debugging
