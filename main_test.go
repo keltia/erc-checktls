@@ -38,6 +38,14 @@ func TestReadContractFile(t *testing.T) {
 	assert.NotEmpty(t, cntrs)
 }
 
+func TestReadTemplate(t *testing.T) {
+	// We embed the file now
+	box := packr.NewBox("./files")
+
+	str := readTemplate(box)
+	assert.NotEmpty(t, str)
+}
+
 func TestCheckOutput(t *testing.T) {
 	fh := checkOutput("")
 	assert.NotEmpty(t, fh)
@@ -58,4 +66,8 @@ func TestCheckOutput_1(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, fi)
 	assert.NotEmpty(t, fi)
+}
+
+func TestMainRun(t *testing.T) {
+	//	main()
 }
