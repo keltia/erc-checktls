@@ -146,6 +146,11 @@ func main() {
 		fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
 
+	tmpls, err = loadTemplates(box)
+	if err != nil {
+		fatalf("Error: can not read HTML templates from 'files/': %v", err)
+	}
+
 	// Open output file
 	fOutputFH := checkOutput(fOutput)
 
