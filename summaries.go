@@ -4,10 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"text/template"
+	"time"
 
 	tw "github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 )
+
+const summariesT = "summaries.html"
 
 type cmap struct {
 	elem string
@@ -80,16 +84,36 @@ func writeSummary(w io.Writer, keys []string, cntrs map[string]int) (err error) 
 	return errors.Wrap(err, "table")
 }
 
-func writeHTMLSummary(w io.Writer, keys []cmap, cntrs map[string]int) (err error) {
+func writeOneRow(keys []cmap, cntrs map[string]int) string {
 	var str bytes.Buffer
 
-	if len(keys) == 0 || len(cntrs) == 0 {
-		return nil
-	}
+	// Contruct the row with all possible keys
 	for _, cm := range keys {
 		str.WriteString(cm.fn(fmt.Sprintf("%d", cntrs[cm.elem])))
 		str.WriteString("\n")
 	}
-	w.Write(str.Bytes())
+	return str.String()
+}
+
+func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
+	tm, ok := tmpls[summariesT]
+	if !ok {
+		debug("%s: %s", summariesT, tm)
+		return fmt.Errorf("tmpl is empty")
+	}
+
+	t := template.Must(template.New(summariesT).Parse(tm))
+	date := time.Now().Format("2006-01") + "-01"
+	data := struct {
+		Date string
+		TLS  string
+		HTTP string
+	}{
+		Date: date,
+		TLS:  writeOneRow(ctlsmap, cntrs),
+		HTTP: writeOneRow(httpmap, https),
+	}
+	t.ExecuteTemplate(w, summariesT, data)
+
 	return nil
 }
