@@ -13,6 +13,7 @@ var (
 	fRefresh       bool
 	fType          string
 	fOutput        string
+	fSummary       string
 	fSiteName      string
 	fIgnoreImirhil bool
 	fIgnoreMozilla bool
@@ -24,7 +25,7 @@ var (
 
 const (
 	cliUsage = `%s version %s
-Usage: %s [-hvIMV] [-t text|csv|html] [-o file] [-wild] file[.json]
+Usage: %s [-hvIMV] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
 
 `
 )
@@ -37,6 +38,7 @@ var Usage = func() {
 
 func init() {
 	flag.StringVar(&fOutput, "o", "-", "Save into file (default stdout)")
+	flag.StringVar(&fSummary, "s", "summary", "Save summary there")
 	flag.StringVar(&fType, "t", "csv", "Type of report")
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
