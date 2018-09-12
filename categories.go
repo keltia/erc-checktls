@@ -58,6 +58,11 @@ var (
 func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
 	cntrs = make(map[string]int)
 
+	// Bail out early
+	if reports == nil {
+		return cntrs
+	}
+
 	baddies := 0
 	broken := 0
 	reals := 0
