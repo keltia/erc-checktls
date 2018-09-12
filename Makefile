@@ -19,13 +19,15 @@ main-packr.go: main.go files/templ.html files/sites-list.csv
 
 erc-checktls: ${SRCS}
 	${GO} build ${OPTS}
-	${GO} test -v
 
 install:
 	${GO} install ${OPTS}
 
 lint:
 	gometalinter .
+
+test: all
+	${GO} test .
 
 clean:
 	${GO} clean -v
