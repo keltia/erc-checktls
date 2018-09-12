@@ -102,6 +102,11 @@ func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
 func httpCounts(report *TLSReport) (cntrs map[string]int) {
 	cntrs = make(map[string]int)
 
+	// Bail out early
+	if report == nil {
+		return cntrs
+	}
+
 	baddies := 0
 	broken := 0
 	reals := 0
