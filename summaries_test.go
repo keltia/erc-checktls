@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gobuffalo/packr"
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -41,31 +41,74 @@ func TestWriteSummary2(t *testing.T) {
 }
 
 func TestWriteHTMLSummaryEmpty(t *testing.T) {
-	var buf strings.Builder
+	var (
+		buf strings.Builder
+		err error
+	)
+
+	box := packr.NewBox("./files")
+	tmpls, err = loadTemplates(box)
+	require.NoError(t, err)
 
 	cntrs := map[string]int{}
+	https := map[string]int{}
 
-	err := writeHTMLSummary(&buf, ctlsmap, cntrs)
+	err = writeHTMLSummary(&buf, cntrs, https)
 	assert.NoError(t, err)
+	assert.NotEmpty(t, buf)
+}
+
+func TestWriteHTMLSummaryEmptyT(t *testing.T) {
+	var (
+		buf strings.Builder
+		err error
+	)
+
+	tmpls = map[string]string{}
+
+	cntrs := map[string]int{}
+	https := map[string]int{}
+
+	err = writeHTMLSummary(&buf, cntrs, https)
+	assert.Error(t, err)
 	assert.Empty(t, buf)
 }
 
 func TestWriteHTMLSummary(t *testing.T) {
-	var buf strings.Builder
+	var (
+		buf strings.Builder
+		err error
+	)
+
+	box := packr.NewBox("./files")
+	tmpls, err = loadTemplates(box)
+	require.NoError(t, err)
 
 	cntrs := map[string]int{
 		"A": 666,
-		"B": 42,
+		"B": 1,
 	}
 
-	err := writeHTMLSummary(&buf, ctlsmap, cntrs)
+	https := map[string]int{
+		"A": 666,
+		"F": 42,
+	}
+
+	err = writeHTMLSummary(&buf, cntrs, https)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, buf)
 	t.Logf("buf=%s", buf.String())
 }
 
 func TestWriteHTMLSummary_1(t *testing.T) {
-	var buf strings.Builder
+	var (
+		buf strings.Builder
+		err error
+	)
+
+	box := packr.NewBox("./files")
+	tmpls, err = loadTemplates(box)
+	require.NoError(t, err)
 
 	cntrs := map[string]int{
 		"A": 666,
@@ -73,7 +116,13 @@ func TestWriteHTMLSummary_1(t *testing.T) {
 		"F": 1,
 	}
 
-	err := writeHTMLSummary(&buf, httpmap, cntrs)
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	err = writeHTMLSummary(&buf, cntrs, https)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, buf)
 	t.Logf("buf=%s", buf.String())
