@@ -27,7 +27,7 @@ var (
 	MyName = filepath.Base(os.Args[0])
 
 	contracts map[string]string
-	tmpl      string
+	tmpls     map[string]string
 
 	logLevel = 0
 )
@@ -57,13 +57,6 @@ func readContractFile(box packr.Box) (contracts map[string]string, err error) {
 	}
 	err = nil
 	return
-}
-
-// readTemplate gets the embedded template
-func readTemplate(box packr.Box) string {
-	debug("reading HTML template\n")
-	ht := box.Bytes(htmlTemplate)
-	return string(ht)
 }
 
 // checkOutput checks whether we want to specify an output file
@@ -189,16 +182,17 @@ func main() {
 			fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
 		}
 	case "html":
-		tmpl = readTemplate(box)
-		if tmpl == "" {
-			fatalf("Error: can not read HTML template %s: %v", htmlTemplate, err)
+		tmpls, err := loadTemplates(box)
+		if err != nil {
+			fatalf("Error: can not read HTML templates from 'files/': %v", err)
 		}
-		if err := final.ToHTML(fOutputFH, tmpl); err != nil {
+		debug("tmpls=%v\n", tmpls)
+		if err := final.ToHTML(fOutputFH, tmpls["templ"]); err != nil {
 			fatalf("Can not write HTML: %v", err)
 		}
 		if fSummary != "" {
 			fOutputFH = checkOutput(filepath.Join(fSummary, ".html"))
-			if err := writeHTMLSummary(fOutputFH, ctlsmap, https); err != nil {
+			if err := writeHTMLSummary(fOutputFH, cntrs, https); err != nil {
 				fatalf("summary failed: %v\n", err)
 			}
 		}
