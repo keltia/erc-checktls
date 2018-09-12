@@ -5,6 +5,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/keltia/cryptcheck"
+	"github.com/keltia/observatory"
+	"github.com/keltia/ssllabs"
 	"os"
 )
 
@@ -24,7 +27,8 @@ var (
 )
 
 const (
-	cliUsage = `%s version %s
+	cliUsage = `%s version %s - Imirhil/%s SSLLabs/%s Mozilla/%s
+
 Usage: %s [-hvIMV] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
 
 `
@@ -32,7 +36,9 @@ Usage: %s [-hvIMV] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
 
 // Usage string override.
 var Usage = func() {
-	fmt.Fprintf(os.Stderr, cliUsage, MyName, MyVersion, MyName)
+	fmt.Fprintf(os.Stderr, cliUsage, MyName,
+		MyVersion, cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion,
+		MyName)
 	flag.PrintDefaults()
 }
 
