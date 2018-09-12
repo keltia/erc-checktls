@@ -76,3 +76,35 @@ func TestHTTPCountsReport_1(t *testing.T) {
 	assert.NotEmpty(t, cntrs)
 	assert.EqualValues(t, map[string]int{"H": 1, "Total": 0, "Broken": 1}, cntrs)
 }
+
+func TestCategoryCountsNil(t *testing.T) {
+	cntrs := categoryCounts(nil)
+	assert.Empty(t, cntrs)
+}
+
+func TestCategoryCountsEmpty(t *testing.T) {
+	cntrs := categoryCounts([]ssllabs.Host{})
+	assert.NotEmpty(t, cntrs)
+	assert.EqualValues(t, map[string]int{"Total": 0, "X": 0, "Z": 0}, cntrs)
+}
+
+func TestCategoryCountsReport(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	good := map[string]int{
+		"OCSP": 1, "Total": 1, "X": 0, "": 1, "Issues": 1,
+		"HSTS": 1, "Z": 1, "A+": 1, "PFS": 1,
+	}
+
+	cntrs := categoryCounts(all)
+	assert.NotEmpty(t, cntrs)
+	assert.EqualValues(t, good, cntrs)
+}
