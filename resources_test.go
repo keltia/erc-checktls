@@ -42,6 +42,12 @@ func TestLoadTemplates_Good(t *testing.T) {
 
 	assert.NotNil(t, tmpls)
 	assert.NotEmpty(t, tmpls)
+	assert.Equal(t, 2, len(tmpls))
+
+	assert.NotEmpty(t, tmpls["templ.html"])
+	assert.NotEmpty(t, tmpls["summaries.html"])
+
+	assert.Equal(t, "<html>{{.Date}}</html>\n", tmpls["summaries.html"])
 }
 
 func TestLoadTemplates_GoodDebug(t *testing.T) {
