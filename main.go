@@ -198,7 +198,7 @@ func main() {
 		}
 		if fSummary != "" {
 			fOutputFH = checkOutput(filepath.Join(fSummary, ".html"))
-			if err := writeHTMLSummary(fOutputFH, []string{}, https); err != nil {
+			if err := writeHTMLSummary(fOutputFH, ctlsmap, https); err != nil {
 				fatalf("summary failed: %v\n", err)
 			}
 		}
