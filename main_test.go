@@ -59,3 +59,38 @@ func TestCheckOutput_1(t *testing.T) {
 	assert.NotNil(t, fi)
 	assert.NotEmpty(t, fi)
 }
+
+func TestWriteCSV(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	err := WriteCSV(os.Stderr, nil, cntrs, https)
+	assert.Error(t, err)
+}
+
+func TestWriteHTML(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	err := WriteHTML(os.Stderr, nil, cntrs, https)
+	assert.Error(t, err)
+
+}
