@@ -51,8 +51,6 @@ func TestLoadTemplates_Good(t *testing.T) {
 
 	assert.NotEmpty(t, tmpls["templ.html"])
 	assert.NotEmpty(t, tmpls["summaries.html"])
-
-	assert.Equal(t, "<html>{{.Date}}</html>\n", tmpls["summaries.html"])
 }
 
 func TestLoadTemplates_GoodDebug(t *testing.T) {
