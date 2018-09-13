@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/gobuffalo/packr"
@@ -42,7 +43,11 @@ func TestLoadTemplates_Good(t *testing.T) {
 
 	assert.NotNil(t, tmpls)
 	assert.NotEmpty(t, tmpls)
-	assert.Equal(t, 2, len(tmpls))
+
+	fl, err := filepath.Glob("files/*.html")
+	require.NoError(t, err)
+
+	assert.Equal(t, len(fl), len(tmpls))
 
 	assert.NotEmpty(t, tmpls["templ.html"])
 	assert.NotEmpty(t, tmpls["summaries.html"])
