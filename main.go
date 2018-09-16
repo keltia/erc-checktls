@@ -27,7 +27,7 @@ var (
 	MyName = filepath.Base(os.Args[0])
 
 	contracts map[string]string
-	tmpl      string
+	tmpls     map[string]string
 
 	logLevel = 0
 )
@@ -57,13 +57,6 @@ func readContractFile(box packr.Box) (contracts map[string]string, err error) {
 	}
 	err = nil
 	return
-}
-
-// readTemplate gets the embedded template
-func readTemplate(box packr.Box) string {
-	debug("reading HTML template\n")
-	ht := box.Bytes(htmlTemplate)
-	return string(ht)
 }
 
 // checkOutput checks whether we want to specify an output file
@@ -153,6 +146,11 @@ func main() {
 		fatalf("Error: can not read contract file %s: %v", contractFile, err)
 	}
 
+	tmpls, err = loadTemplates(box)
+	if err != nil {
+		fatalf("Error: can not read HTML templates from 'files/': %v", err)
+	}
+
 	// Open output file
 	fOutputFH := checkOutput(fOutput)
 
@@ -177,30 +175,14 @@ func main() {
 
 	switch fType {
 	case "csv":
-		if err = final.ToCSV(fOutputFH); err != nil {
-			fatalf("Error can not generate CSV: %v", err)
-		}
-		fmt.Printf("\nTLS Summary\n")
-		if err = writeSummary(os.Stdout, tlsKeys, cntrs); err != nil {
-			fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
-		}
-		fmt.Printf("\nHTTP Summary\n")
-		if err = writeSummary(os.Stdout, httpKeys, https); err != nil {
-			fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
+		err = WriteCSV(fOutputFH, final, cntrs, https)
+		if err != nil {
+			fatalf("WriteCSV failed: %v", err)
 		}
 	case "html":
-		tmpl = readTemplate(box)
-		if tmpl == "" {
-			fatalf("Error: can not read HTML template %s: %v", htmlTemplate, err)
-		}
-		if err := final.ToHTML(fOutputFH, tmpl); err != nil {
-			fatalf("Can not write HTML: %v", err)
-		}
-		if fSummary != "" {
-			fOutputFH = checkOutput(filepath.Join(fSummary, ".html"))
-			if err := writeHTMLSummary(fOutputFH, []string{}, https); err != nil {
-				fatalf("summary failed: %v\n", err)
-			}
+		err = WriteHTML(fOutputFH, final, cntrs, https)
+		if err != nil {
+			fatalf("WriteHTML failed: %v", err)
 		}
 	default:
 		// XXX Early debugging
@@ -208,4 +190,51 @@ func main() {
 		fmt.Printf("%s\n", displayCategories(cntrs))
 
 	}
+}
+
+func WriteCSV(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
+	var err error
+
+	debug("WriteCSV")
+	if final == nil {
+		return fmt.Errorf("nil final")
+	}
+	if len(final.Sites) == 0 {
+		return fmt.Errorf("empty final")
+	}
+
+	if err = final.ToCSV(fh); err != nil {
+		return errors.Wrap(err, "Error can not generate CSV")
+	}
+	fmt.Fprintf(fh, "\nTLS Summary\n")
+	if err := writeSummary(os.Stdout, tlsKeys, cntrs); err != nil {
+		fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
+	}
+	fmt.Fprintf(fh, "\nHTTP Summary\n")
+	if err := writeSummary(os.Stdout, httpKeys, https); err != nil {
+		fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
+	}
+	return nil
+}
+
+func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
+	var err error
+
+	debug("WriteHTML")
+	if final == nil {
+		return fmt.Errorf("nil final")
+	}
+	if len(final.Sites) == 0 {
+		return fmt.Errorf("empty final")
+	}
+
+	debug("tmpls=%v\n", tmpls)
+	if err = final.ToHTML(fh, tmpls["templ"]); err != nil {
+		return errors.Wrap(err, "Can not write HTML")
+	}
+	if fSummary != "" {
+		fh = checkOutput(filepath.Join(fSummary, ".html"))
+		err = writeHTMLSummary(fh, cntrs, https)
+	}
+	return err
 }
