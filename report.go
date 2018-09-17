@@ -8,6 +8,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"sort"
 	"sync"
 	"time"
 
@@ -68,6 +69,7 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 	pool.WaitAll()
 	verbose("got all %d sites\n", len(e.Sites))
 	verbose("all=%v\n", e.Sites)
+	sort.Sort(ByAlphabet(*e))
 	return e, nil
 }
 
