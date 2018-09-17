@@ -57,7 +57,7 @@ func initAPIs() {
 		client := cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.Host) string {
-			verbose("imirhil\n")
+			verbose("  imirhil\n")
 			score, err := client.GetScore(site.Host)
 			if err != nil {
 				verbose("can not get cryptcheck score: %v\n", err)
@@ -81,7 +81,7 @@ func initAPIs() {
 		}
 
 		fnMozilla = func(site ssllabs.Host) string {
-			verbose("observatory\n")
+			verbose("  observatory\n")
 			score, err := moz.GetGrade(site.Host)
 			if err != nil {
 				verbose("can not get Mozilla score: %v\n", err)
@@ -109,7 +109,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 		endp := site.Endpoints[0]
 		det := endp.Details
 
-		fmt.Printf("  Host: %s\n", site.Host)
+		fmt.Printf("Host: %s\n", site.Host)
 
 		protos := []string{}
 		for _, p := range det.Protocols {
