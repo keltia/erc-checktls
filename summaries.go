@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"text/template"
-	"time"
 
 	tw "github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
@@ -110,7 +109,7 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 	if len(cntrs) == 0 || len(https) == 0 {
 		return
 	}
-	date := time.Now().Format("2006-01") + "-01"
+	date := makeDate()
 	data := struct {
 		Date string
 		TLS  string
