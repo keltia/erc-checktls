@@ -4,7 +4,7 @@ require (
 	github.com/atotto/encoding v0.0.0-20140426205410-d964b8297408
 	github.com/gobuffalo/packr v1.13.3
 	github.com/ivpusic/grpool v0.0.0-20170804092134-28957a27c944
-	github.com/keltia/cryptcheck v1.5.1
+	github.com/keltia/cryptcheck v1.5.2
 	github.com/keltia/observatory v1.2.2
 	github.com/keltia/proxy v0.9.4 // indirect
 	github.com/keltia/ssllabs v0.10.0
