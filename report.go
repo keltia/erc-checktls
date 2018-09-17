@@ -67,7 +67,7 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 
 	pool.WaitAll()
 	verbose("got all %d sites\n", len(e.Sites))
-	verbose("all=%v\n", e.Sites)
+	debug("all=%v\n", e.Sites)
 	return e, nil
 }
 
