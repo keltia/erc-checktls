@@ -120,7 +120,10 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 		TLS:  writeOneRow(ctlsmap, cntrs),
 		HTTP: writeOneRow(httpmap, https),
 	}
-	t.ExecuteTemplate(w, summariesT, data)
+	err = t.ExecuteTemplate(w, summariesT, data)
+	if err != nil {
+		return errors.Wrap(err, "writeHTMLSummary")
+	}
 
 	return nil
 }
