@@ -234,7 +234,9 @@ func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error
 		return errors.Wrap(err, "Can not write HTML")
 	}
 	if fSummary != "" {
-		fh = checkOutput(fSummary + ".html")
+		fn := fSummary + makeDate() + ".html"
+		verbose("HTML summary: %s\n", fn)
+		fh = checkOutput(fn)
 		err = writeHTMLSummary(fh, cntrs, https)
 	}
 	return err
