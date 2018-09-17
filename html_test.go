@@ -1,14 +1,13 @@
 package main
 
 import (
-	"io/ioutil"
-	"strings"
-	"testing"
+    "io/ioutil"
+    "strings"
+    "testing"
 
-	"github.com/keltia/ssllabs"
-	"github.com/stretchr/testify/require"
-
-	"github.com/stretchr/testify/assert"
+    "github.com/keltia/ssllabs"
+    "github.com/stretchr/testify/assert"
+    "github.com/stretchr/testify/require"
 )
 
 func TestBooleanT(t *testing.T) {
@@ -42,9 +41,9 @@ func TestGrade(t *testing.T) {
 		{"B+", "<td class=xl63 align=center>B+</td>"},
 		{"B", "<td class=xl63 align=center>B</td>"},
 		{"B-", "<td class=xl63 align=center>B-</td>"},
-		{"C+", "<td class=xl63 align=center>C+</td>"},
-		{"C", "<td class=xl63 align=center>C</td>"},
-		{"C-", "<td class=xl63 align=center>C-</td>"},
+		{"C+", "<td class=xl64 align=center>C+</td>"},
+		{"C", "<td class=xl64 align=center>C</td>"},
+		{"C-", "<td class=xl64 align=center>C-</td>"},
 		{"D+", "<td class=xl64 align=center>D+</td>"},
 		{"D", "<td class=xl64 align=center>D</td>"},
 		{"D-", "<td class=xl64 align=center>D-</td>"},

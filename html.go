@@ -39,13 +39,13 @@ func grade(val string) string {
 	case "B":
 		fallthrough
 	case "B-":
-		fallthrough
+		return orange(val)
 	case "C+":
 		fallthrough
 	case "C":
 		fallthrough
 	case "C-":
-		return orange(val)
+		fallthrough
 	case "D+":
 		fallthrough
 	case "D":
