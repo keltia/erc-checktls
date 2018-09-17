@@ -46,7 +46,7 @@ var Usage = func() {
 
 func init() {
 	flag.StringVar(&fOutput, "o", "-", "Save into file (default stdout)")
-	flag.StringVar(&fSummary, "s", "summary", "Save summary there")
+	flag.StringVar(&fSummary, "s", "summaries", "Save summary there")
 	flag.StringVar(&fType, "t", "csv", "Type of report")
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
