@@ -50,7 +50,7 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 
 	// Now analyze each site
 	for _, site := range reports {
-		debug("queueing %s\n", site)
+		debug("queueing %s\n", site.Host)
 
 		current := site
 		pool.JobQueue <- func() {
