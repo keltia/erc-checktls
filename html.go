@@ -99,7 +99,7 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 
 	debug("ToHTML\n")
 	debug("tmpl=%s\n", tmpl)
-	t := template.Must(template.New("TLS sheet").Parse(tmpl))
+	t := template.Must(template.New("html-report").Parse(tmpl))
 
 	debug("t=%v\n", t)
 	debug("Sites=%#v\n", r.Sites)
