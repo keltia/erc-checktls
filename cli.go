@@ -5,15 +5,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
 	"github.com/keltia/ssllabs"
-	"os"
 )
 
 var (
 	fDebug         bool
-	fRefresh       bool
 	fType          string
 	fOutput        string
 	fSummary       string
@@ -50,7 +50,6 @@ func init() {
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
 	flag.BoolVar(&fIgnoreMozilla, "M", false, "Do not fetch Mozilla Observatory data")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
-	flag.BoolVar(&fRefresh, "R", false, "Force refresh")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
 	flag.BoolVar(&fReallyVerbose, "V", false, "More verbose mode")
 
