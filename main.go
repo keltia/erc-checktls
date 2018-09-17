@@ -119,7 +119,7 @@ func checkFlags() {
 // main is the the starting point
 func main() {
 	// Announce ourselves
-	fmt.Printf("%s version %s(-J%d) - Imirhil/%s SSLLabs/%s Mozilla/%s\n\n",
+	fmt.Printf("%s version %s/J%d - Imirhil/%s SSLLabs/%s Mozilla/%s\n\n",
 		filepath.Base(os.Args[0]), MyVersion, fJobs,
 		cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion)
 
