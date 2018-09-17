@@ -230,11 +230,11 @@ func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error
 	}
 
 	debug("tmpls=%v\n", tmpls)
-	if err = final.ToHTML(fh, tmpls["templ"]); err != nil {
+	if err = final.ToHTML(fh, tmpls["templ.html"]); err != nil {
 		return errors.Wrap(err, "Can not write HTML")
 	}
 	if fSummary != "" {
-		fh = checkOutput(filepath.Join(fSummary, ".html"))
+		fh = checkOutput(fSummary + ".html")
 		err = writeHTMLSummary(fh, cntrs, https)
 	}
 	return err
