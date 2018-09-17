@@ -7,7 +7,7 @@
 GO=		go
 GOBIN=   ${GOPATH}/bin
 
-SRCS= main.go categories.go cli.go html.go  report.go site.go utils.go types.go \
+SRCS= main.go categories.go cli.go html.go report.go resources.go site.go summaries.go utils.go types.go \
 	main-packr.go
 
 OPTS=	-ldflags="-s -w" -v
