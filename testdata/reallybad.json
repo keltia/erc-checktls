@@ -1,0 +1,410 @@
+[
+{
+  "host": "aircraftnoisemodel.org",
+  "port": 443,
+  "protocol": "http",
+  "isPublic": false,
+  "status": "READY",
+  "startTime": 1536571490575,
+  "testTime": 1536571559215,
+  "engineVersion": "1.32.5",
+  "criteriaVersion": "2009p",
+  "endpoints": [
+    {
+      "ipAddress": "192.93.21.17",
+      "serverName": "aircraftnoisemodel.org",
+      "statusMessage": "Ready",
+      "grade": "A+",
+      "gradeTrustIgnored": "A+",
+      "hasWarnings": false,
+      "isExceptional": true,
+      "progress": 100,
+      "duration": 67638,
+      "delegation": 1,
+      "details": {
+        "hostStartTime": 1536571490575,
+        "certChains": [
+          {
+            "id": "8910c842ff1172c090518e515398e0e9ee06477536477fc31836abf4aa2b030d",
+            "certIds": [
+              "9334024e12528e28de3455d08e2802f98bb8dbab0a1923255ed46145934ba6c5",
+              "cb3ccbb76031e5e0138f8dd39a23f9de47ffc35e43c1144cea27d46a5ab1cb5f",
+              "009871c3a4c607311e5ae92f01095f9bf76100b8794ab0a9a5210e6794c8607c"
+            ],
+            "trustPaths": [
+              {
+                "certIds": [
+                  "9334024e12528e28de3455d08e2802f98bb8dbab0a1923255ed46145934ba6c5",
+                  "009871c3a4c607311e5ae92f01095f9bf76100b8794ab0a9a5210e6794c8607c",
+                  "cb3ccbb76031e5e0138f8dd39a23f9de47ffc35e43c1144cea27d46a5ab1cb5f"
+                ],
+                "trust": [
+                  {
+                    "rootStore": "Mozilla",
+                    "isTrusted": true
+                  }
+                ]
+              },
+              {
+                "certIds": [
+                  "9334024e12528e28de3455d08e2802f98bb8dbab0a1923255ed46145934ba6c5",
+                  "009871c3a4c607311e5ae92f01095f9bf76100b8794ab0a9a5210e6794c8607c",
+                  "cb3ccbb76031e5e0138f8dd39a23f9de47ffc35e43c1144cea27d46a5ab1cb5f"
+                ],
+                "trust": [
+                  {
+                    "rootStore": "Apple",
+                    "isTrusted": true
+                  }
+                ]
+              },
+              {
+                "certIds": [
+                  "9334024e12528e28de3455d08e2802f98bb8dbab0a1923255ed46145934ba6c5",
+                  "009871c3a4c607311e5ae92f01095f9bf76100b8794ab0a9a5210e6794c8607c",
+                  "cb3ccbb76031e5e0138f8dd39a23f9de47ffc35e43c1144cea27d46a5ab1cb5f"
+                ],
+                "trust": [
+                  {
+                    "rootStore": "Android",
+                    "isTrusted": true
+                  }
+                ]
+              },
+              {
+                "certIds": [
+                  "9334024e12528e28de3455d08e2802f98bb8dbab0a1923255ed46145934ba6c5",
+                  "009871c3a4c607311e5ae92f01095f9bf76100b8794ab0a9a5210e6794c8607c",
+                  "cb3ccbb76031e5e0138f8dd39a23f9de47ffc35e43c1144cea27d46a5ab1cb5f"
+                ],
+                "trust": [
+                  {
+                    "rootStore": "Java",
+                    "isTrusted": true
+                  }
+                ]
+              },
+              {
+                "certIds": [
+                  "9334024e12528e28de3455d08e2802f98bb8dbab0a1923255ed46145934ba6c5",
+                  "009871c3a4c607311e5ae92f01095f9bf76100b8794ab0a9a5210e6794c8607c",
+                  "cb3ccbb76031e5e0138f8dd39a23f9de47ffc35e43c1144cea27d46a5ab1cb5f"
+                ],
+                "trust": [
+                  {
+                    "rootStore": "Windows",
+                    "isTrusted": true
+                  }
+                ]
+              }
+            ],
+            "issues": 24,
+            "noSni": false
+          }
+        ],
+        "protocols": [
+          {
+            "id": 771,
+            "name": "TLS",
+            "version": "1.2"
+          }
+        ],
+        "suites": [
+          {
+            "protocol": 771,
+            "list": [
+              {
+                "id": 49200,
+                "name": "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+                "cipherStrength": 256,
+                "kxType": "ECDH",
+                "kxStrength": 3072,
+                "namedGroupBits": 256,
+                "namedGroupId": 23,
+                "namedGroupName": "secp256r1"
+              },
+              {
+                "id": 159,
+                "name": "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384",
+                "cipherStrength": 256,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 49199,
+                "name": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+                "cipherStrength": 128,
+                "kxType": "ECDH",
+                "kxStrength": 3072,
+                "namedGroupBits": 256,
+                "namedGroupId": 23,
+                "namedGroupName": "secp256r1"
+              },
+              {
+                "id": 158,
+                "name": "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256",
+                "cipherStrength": 128,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 49192,
+                "name": "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+                "cipherStrength": 256,
+                "kxType": "ECDH",
+                "kxStrength": 3072,
+                "namedGroupBits": 256,
+                "namedGroupId": 23,
+                "namedGroupName": "secp256r1"
+              },
+              {
+                "id": 49172,
+                "name": "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+                "cipherStrength": 256,
+                "kxType": "ECDH",
+                "kxStrength": 3072,
+                "namedGroupBits": 256,
+                "namedGroupId": 23,
+                "namedGroupName": "secp256r1"
+              },
+              {
+                "id": 107,
+                "name": "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256",
+                "cipherStrength": 256,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 57,
+                "name": "TLS_DHE_RSA_WITH_AES_256_CBC_SHA",
+                "cipherStrength": 256,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 136,
+                "name": "TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA",
+                "cipherStrength": 256,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 49191,
+                "name": "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+                "cipherStrength": 128,
+                "kxType": "ECDH",
+                "kxStrength": 3072,
+                "namedGroupBits": 256,
+                "namedGroupId": 23,
+                "namedGroupName": "secp256r1"
+              },
+              {
+                "id": 49171,
+                "name": "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+                "cipherStrength": 128,
+                "kxType": "ECDH",
+                "kxStrength": 3072,
+                "namedGroupBits": 256,
+                "namedGroupId": 23,
+                "namedGroupName": "secp256r1"
+              },
+              {
+                "id": 103,
+                "name": "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
+                "cipherStrength": 128,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 51,
+                "name": "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
+                "cipherStrength": 128,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 69,
+                "name": "TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA",
+                "cipherStrength": 128,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              },
+              {
+                "id": 666,
+                "name": "TLS_3DES_SHA",
+                "cipherStrength": 112,
+                "kxType": "DH",
+                "kxStrength": 2048,
+                "dhBits": 256,
+                "dhP": 256,
+                "dhG": 1,
+                "dhYs": 256
+              }
+            ],
+            "preference": true
+          }
+        ],
+        "namedGroups": {
+          "list": [
+            {
+              "id": 23,
+              "name": "secp256r1",
+              "bits": 256,
+              "namedGroupType": "EC"
+            },
+            {
+              "id": 25,
+              "name": "secp521r1",
+              "bits": 521,
+              "namedGroupType": "EC"
+            },
+            {
+              "id": 24,
+              "name": "secp384r1",
+              "bits": 384,
+              "namedGroupType": "EC"
+            },
+            {
+              "id": 22,
+              "name": "secp256k1",
+              "bits": 256,
+              "namedGroupType": "EC"
+            }
+          ],
+          "preference": true
+        },
+        "serverSignature": "Apache",
+        "prefixDelegation": false,
+        "nonPrefixDelegation": true,
+        "vulnBeast": false,
+        "renegSupport": 2,
+        "sessionResumption": 2,
+        "compressionMethods": 0,
+        "supportsNpn": false,
+        "supportsAlpn": false,
+        "sessionTickets": 0,
+        "ocspStapling": true,
+        "staplingRevocationStatus": 2,
+        "sniRequired": false,
+        "httpStatusCode": 200,
+        "supportsRc4": false,
+        "rc4WithModern": false,
+        "rc4Only": false,
+        "forwardSecrecy": 4,
+        "supportsAead": true,
+        "protocolIntolerance": 0,
+        "miscIntolerance": 0,
+        "sims": {},
+        "heartbleed": false,
+        "heartbeat": true,
+        "openSslCcs": 1,
+        "openSSLLuckyMinus20": 1,
+        "ticketbleed": 1,
+        "bleichenbacher": 1,
+        "poodle": false,
+        "poodleTls": 1,
+        "freak": false,
+        "hasSct": 1,
+        "dhPrimes": [
+          "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aacaa68ffffffffffffffff"
+        ],
+        "dhUsesKnownPrimes": 0,
+        "dhYsReuse": false,
+        "ecdhParameterReuse": false,
+        "logjam": false,
+        "hstsPolicy": {
+          "LONG_MAX_AGE": 15552000,
+          "header": "max-age=15768000",
+          "status": "present",
+          "maxAge": 15768000,
+          "directives": {
+            "max-age": "15768000"
+          }
+        },
+        "hstsPreloads": [
+          {
+            "source": "Chrome",
+            "hostname": "aircraftnoisemodel.org",
+            "status": "absent",
+            "sourceTime": 1536570420833
+          },
+          {
+            "source": "Edge",
+            "hostname": "aircraftnoisemodel.org",
+            "status": "absent",
+            "sourceTime": 1536570421876
+          },
+          {
+            "source": "Firefox",
+            "hostname": "aircraftnoisemodel.org",
+            "status": "absent",
+            "sourceTime": 1536570421876
+          },
+          {
+            "source": "IE",
+            "hostname": "aircraftnoisemodel.org",
+            "status": "absent",
+            "sourceTime": 1536570421876
+          }
+        ],
+        "hpkpPolicy": {
+          "status": "absent",
+          "pins": [],
+          "matchedPins": [],
+          "directives": []
+        },
+        "hpkpRoPolicy": {
+          "status": "absent",
+          "pins": [],
+          "matchedPins": [],
+          "directives": []
+        },
+        "staticPkpPolicy": {
+          "status": "absent",
+          "pins": [],
+          "matchedPins": [],
+          "forbiddenPins": [],
+          "matchedForbiddenPins": []
+        },
+        "httpTransactions": [],
+        "drownHosts": [],
+        "drownErrors": false,
+        "drownVulnerable": false
+      }
+    }
+  ],
+  "certs": []
+}
+]

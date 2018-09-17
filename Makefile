@@ -5,29 +5,29 @@
 #
 
 GO=		go
-.PATH= ssllabs
 GOBIN=   ${GOPATH}/bin
 
-SRCS= main.go cli.go report.go utils.go \
-    ssllabs/ssllabs.go ssllabs/types.go \
-    main-packr.go
+SRCS= main.go categories.go cli.go html.go report.go resources.go site.go summaries.go utils.go types.go \
+	main-packr.go
 
 OPTS=	-ldflags="-s -w" -v
 
 all: erc-checktls
 
-main-packr.go:
+main-packr.go: main.go files/templ.html files/summaries.html files/sites-list.csv
 	packr
 
 erc-checktls: ${SRCS}
 	${GO} build ${OPTS}
-	${GO} test -v
 
 install:
 	${GO} install ${OPTS}
 
 lint:
 	gometalinter .
+
+test: all
+	${GO} test .
 
 clean:
 	${GO} clean -v

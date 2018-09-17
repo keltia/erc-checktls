@@ -9,7 +9,10 @@ branches:
   only:
   - develop
   - master
+env:
+  - GO111MODULE=on
 install:
   - go get github.com/gobuffalo/packr/...
 script:
-  - make GO111MODULE=on
+  - make
+  - make test

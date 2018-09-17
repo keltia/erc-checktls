@@ -26,15 +26,13 @@ type TLSSite struct {
 	DefSig bool
 	DefCA  bool
 
-	IsExpired bool
+	IsExpired  bool
+	PathIssues bool
 
 	Protocols string
+	PFS       bool
 
-	RC4     bool
-	PFS     bool
 	OCSP    bool
 	HSTS    bool
-	ALPN    bool
-	Drown   bool
 	Sweet32 bool
 }
