@@ -51,7 +51,8 @@ func initAPIs() {
 	if !fIgnoreImirhil {
 		cnf := cryptcheck.Config{
 			Log:     logLevel,
-			Refresh: fRefresh,
+			Refresh: true,
+			Timeout: 30,
 		}
 		client := cryptcheck.NewClient(cnf)
 
@@ -71,7 +72,8 @@ func initAPIs() {
 
 	if !fIgnoreMozilla {
 		cnf := observatory.Config{
-			Log: logLevel,
+			Log:     logLevel,
+			Timeout: 30,
 		}
 		moz, err := observatory.NewClient(cnf)
 		if err != nil {
