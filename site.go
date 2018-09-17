@@ -60,7 +60,7 @@ func initAPIs() {
 			verbose("  imirhil\n")
 			score, err := client.GetScore(site.Host)
 			if err != nil {
-				verbose("can not get cryptcheck score: %v\n", err)
+				verbose("can not get %s cryptcheck score: %v\n", site.Host, err)
 			}
 			return score
 		}
@@ -84,7 +84,7 @@ func initAPIs() {
 			verbose("  observatory\n")
 			score, err := moz.GetGrade(site.Host)
 			if err != nil {
-				verbose("can not get Mozilla score: %v\n", err)
+				verbose("can not get %s Mozilla score: %v\n", site.Host, err)
 			}
 			return score
 		}
