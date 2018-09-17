@@ -130,8 +130,10 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 		debug("h=%#v\n", h)
 	}
 	htmlVars := struct {
-		Sites []htmlvars
-	}{Sites}
+		Date    string
+		Version string
+		Sites   []htmlvars
+	}{makeDate(), r.SSLLabs, Sites}
 	err = t.ExecuteTemplate(w, "html-report", htmlVars)
 	return errors.Wrap(err, "can not write HTML file")
 }
