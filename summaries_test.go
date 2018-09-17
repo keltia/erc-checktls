@@ -55,7 +55,7 @@ func TestWriteHTMLSummaryEmpty(t *testing.T) {
 
 	err = writeHTMLSummary(&buf, cntrs, https)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, buf)
+	assert.Empty(t, buf)
 }
 
 func TestWriteHTMLSummaryEmptyT(t *testing.T) {
