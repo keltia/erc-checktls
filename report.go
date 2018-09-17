@@ -8,11 +8,17 @@ package main
 import (
 	"fmt"
 	"io"
+	"sync"
 	"time"
 
 	"github.com/atotto/encoding/csv"
+	"github.com/ivpusic/grpool"
 	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
+)
+
+var (
+	lock sync.Mutex
 )
 
 // Private functions
@@ -35,11 +41,33 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 
 	verbose("%d sites found.\n", len(reports))
 
+	pool := grpool.NewPool(fJobs, len(reports))
+
+	// release resources used by pool
+	defer pool.Release()
+
+	pool.WaitCount(len(reports))
+
 	// Now analyze each site
 	for _, site := range reports {
-		current := NewTLSSite(site)
-		e.Sites = append(e.Sites, current)
+		debug("queueing %s\n", site)
+
+		current := site
+		pool.JobQueue <- func() {
+			completed := NewTLSSite(current)
+
+			// Block on mutex
+			lock.Lock()
+			e.Sites = append(e.Sites, completed)
+			lock.Unlock()
+
+			defer pool.JobDone()
+		}
 	}
+
+	pool.WaitAll()
+	verbose("got all %d sites\n", len(e.Sites))
+	verbose("all=%v\n", e.Sites)
 	return e, nil
 }
 
