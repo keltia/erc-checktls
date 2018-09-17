@@ -31,7 +31,7 @@ var (
 const (
 	cliUsage = `%s version %s - Imirhil/%s SSLLabs/%s Mozilla/%s
 
-Usage: %s [-hvIMV] [-J n] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
+Usage: %s [-hvIMV] [-j n] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
 
 `
 )
@@ -45,12 +45,12 @@ var Usage = func() {
 }
 
 func init() {
+	flag.IntVar(&fJobs, "j", runtime.NumCPU(), "# of parallel jobs")
 	flag.StringVar(&fOutput, "o", "-", "Save into file (default stdout)")
 	flag.StringVar(&fSummary, "s", "summaries", "Save summary there")
 	flag.StringVar(&fType, "t", "csv", "Type of report")
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
-	flag.IntVar(&fJobs, "J", runtime.NumCPU(), "# of parallel jobs")
 	flag.BoolVar(&fIgnoreMozilla, "M", false, "Do not fetch Mozilla Observatory data")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
