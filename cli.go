@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
@@ -14,6 +15,7 @@ import (
 
 var (
 	fDebug         bool
+	fJobs          int
 	fType          string
 	fOutput        string
 	fSummary       string
@@ -29,7 +31,7 @@ var (
 const (
 	cliUsage = `%s version %s - Imirhil/%s SSLLabs/%s Mozilla/%s
 
-Usage: %s [-hvIMV] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
+Usage: %s [-hvIMV] [-J n] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
 
 `
 )
@@ -48,6 +50,7 @@ func init() {
 	flag.StringVar(&fType, "t", "csv", "Type of report")
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
+	flag.IntVar(&fJobs, "J", runtime.NumCPU(), "# of parallel jobs")
 	flag.BoolVar(&fIgnoreMozilla, "M", false, "Do not fetch Mozilla Observatory data")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
