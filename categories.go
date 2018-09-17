@@ -68,7 +68,7 @@ func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
 	reals := 0
 
 	for _, r := range reports {
-		if r.Endpoints != nil {
+		if r.Endpoints != nil && len(r.Endpoints) != 0 {
 			endp := r.Endpoints[0]
 			det := endp.Details
 
