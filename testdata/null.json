@@ -1,0 +1,15 @@
+[
+{
+  "host": "aircraftnoisemodel.org",
+  "port": 443,
+  "protocol": "http",
+  "isPublic": false,
+  "status": "READY",
+  "startTime": 1536571490575,
+  "testTime": 1536571559215,
+  "engineVersion": "1.32.5",
+  "criteriaVersion": "2009p",
+  "endpoints": [],
+  "certs": []
+}
+]
