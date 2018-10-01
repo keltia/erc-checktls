@@ -25,6 +25,19 @@ You need to install three of my modules if you are using Go 1.10.x or earlier.
     go get github.com/keltia/cryptcheck
     go get github.com/keltia/observatory
 
+I also use a number of external modules:
+
+	github.com/atotto/encoding/csv
+	github.com/gobuffalo/packr
+	github.com/ivpusic/grpool
+	github.com/pkg/errors
+	github.com/olekukonko/tablewriter
+
+If you want to run `make test`` you will need these:
+
+	github.com/stretchr/testify/assert
+	github.com/stretchr/testify/require
+
 With Go 1.11+ and its modules support, it should work out of the box with
 
     go get github.com/keltia.erc-checktls
@@ -33,7 +46,7 @@ With Go 1.11+ and its modules support, it should work out of the box with
 
 SYNOPSIS
 ```
-erc-checktls [-IMvV] [-t csv|text|html] [-o file] [-s file] [-S site] <json file>
+erc-checktls [-vDIMV] [-j N] [-t csv|text|html] [-o file] [-s file] [-S site] <json file>
   
   -D	Debug mode
   -I	Do not fetch tls.imirhil.fr grade
@@ -41,7 +54,7 @@ erc-checktls [-IMvV] [-t csv|text|html] [-o file] [-s file] [-S site] <json file
   -R	Force refresh
   -S string
     	Display that site
-  -V	More verbose mode
+  -j    Set the # of parallel jobs to run (default # of cores)
   -o string
     	Save into file (default stdout) (default "-")
   -s string
@@ -49,6 +62,9 @@ erc-checktls [-IMvV] [-t csv|text|html] [-o file] [-s file] [-S site] <json file
   -t string
     	Type of report (default "csv")
   -v	Verbose mode
+  
+If you just want to find all wildcard certificates use this:
+
   -wild
     	Display wildcards
 ```
@@ -68,11 +84,11 @@ OPTIONS
 | -M      | false   | Do not fetch Mozilla Observatory data |
 | -R      | false   | Force refresh |
 | -S      | none    | Displays that site info only |
+| -j      | # cores | Set level of parallelism (default # of CPU cores |
 | -o      | -       | Output into that file (default stdout) |
-| -s      | none    | Save summary in that file |
+| -s      | summary | Save summary in that file (default summary.html) |
 | -t      | csv     | Output plain text, html or csv |
 | -v      | false   | Be verbose |
-| -V      | false   | More verbose: displays ciphers info |
 | -wild   |         | Report wildcard certificates |
 
 ## Using behind a web Proxy
@@ -109,7 +125,11 @@ and it should be picked up. On Windows, the file will be located at
 
 ## License
 
-The [BSD 2-Clause license][bsd].
+The [BSD 2-Clause license](https://github.com/keltia/erc-checktls/blob/master/LICENSE).
+
+# Contributing
+
+This project is an open Open Source project, please read `CONTRIBUTING.md`.
 
 # Feedback
 
