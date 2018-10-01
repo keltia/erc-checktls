@@ -99,10 +99,10 @@ func init() {
 	flag.Parse()
 }
 
-func checkFlags() {
+func checkFlags(a []string) error {
 	// Basic argument check
-	if len(flag.Args()) != 1 {
-		fatalf("Error: you must specify an input file!")
+	if a == nil || len(a) != 1 {
+		return fmt.Errorf("Error: you must specify an input file!")
 	}
 
 	// Set logging level
@@ -115,6 +115,7 @@ func checkFlags() {
 		logLevel = 2
 		debug("debug mode\n")
 	}
+	return nil
 }
 
 // main is the the starting point
@@ -124,7 +125,10 @@ func main() {
 		filepath.Base(os.Args[0]), MyVersion, fJobs,
 		cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion)
 
-	checkFlags()
+	err := checkFlags(flag.Args())
+	if err != nil {
+		fatalf("Error: %v", err.Error())
+	}
 
 	file := flag.Arg(0)
 

@@ -205,3 +205,34 @@ func TestWriteHTML3(t *testing.T) {
 	err = WriteHTML(null, final, cntrs, https)
 	assert.NoError(t, err)
 }
+
+func TestCheckFlags_Empty(t *testing.T) {
+	err := checkFlags([]string{})
+	require.Error(t, err)
+}
+
+func TestCheckFlags_Nil(t *testing.T) {
+	err := checkFlags(nil)
+	require.Error(t, err)
+}
+
+func TestCheckFlags_Good(t *testing.T) {
+	err := checkFlags([]string{"foo"})
+	require.NoError(t, err)
+}
+
+func TestCheckFlags_GoodVerbose(t *testing.T) {
+	fVerbose = true
+	err := checkFlags([]string{"foo"})
+	require.NoError(t, err)
+	assert.Equal(t, 1, logLevel)
+	fVerbose = false
+}
+
+func TestCheckFlags_GoodDebug(t *testing.T) {
+	fDebug = true
+	err := checkFlags([]string{"foo"})
+	require.NoError(t, err)
+	assert.Equal(t, 2, logLevel)
+	fDebug = false
+}
