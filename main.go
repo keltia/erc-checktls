@@ -7,16 +7,15 @@ and generating a csv file.
 package main // import "github.com/keltia/erc-checktls"
 
 import (
-	"flag"
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
+    "flag"
+    "fmt"
+    "os"
+    "path/filepath"
 
-	"github.com/keltia/cryptcheck"
-	"github.com/keltia/observatory"
-	"github.com/keltia/ssllabs"
-	"github.com/pkg/errors"
+    "github.com/keltia/cryptcheck"
+    "github.com/keltia/observatory"
+    "github.com/keltia/ssllabs"
+    "github.com/pkg/errors"
 )
 
 var (
@@ -53,18 +52,6 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 	}
 	debug("output=%v\n", fOutputFH)
 	return
-}
-
-// getResults read the JSON array generated and gone through jq
-func getResults(file string) (res []byte, err error) {
-	fh, err := os.Open(file)
-	if err != nil {
-		return res, errors.Wrapf(err, "can not open %s", file)
-	}
-	defer fh.Close()
-
-	res, err = ioutil.ReadAll(fh)
-	return res, errors.Wrapf(err, "can not read json %s", file)
 }
 
 // init is for pg connection and stuff
@@ -161,31 +148,6 @@ func main() {
 		fmt.Printf("%s\n", displayCategories(cntrs))
 
 	}
-}
-
-func WriteCSV(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
-	var err error
-
-	debug("WriteCSV")
-	if final == nil {
-		return fmt.Errorf("nil final")
-	}
-	if len(final.Sites) == 0 {
-		return fmt.Errorf("empty final")
-	}
-
-	if err = final.ToCSV(fh); err != nil {
-		return errors.Wrap(err, "Error can not generate CSV")
-	}
-	fmt.Fprintf(fh, "\nTLS Summary\n")
-	if err := writeSummary(os.Stdout, tlsKeys, cntrs); err != nil {
-		fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
-	}
-	fmt.Fprintf(fh, "\nHTTP Summary\n")
-	if err := writeSummary(os.Stdout, httpKeys, https); err != nil {
-		fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
-	}
-	return nil
 }
 
 func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
