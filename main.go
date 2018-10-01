@@ -33,8 +33,9 @@ var (
 )
 
 const (
-	contractFile = "sites-list.csv"
-	htmlTemplate = "templ.html"
+	contractFile  = "sites-list.csv"
+	resourcesPath = "./files"
+
 	// MyVersion uses semantic versioning.
 	MyVersion = "0.62.0"
 )
@@ -138,18 +139,9 @@ func main() {
 		fatalf("Can't parse %s: %v", file, err.Error())
 	}
 
-	// We embed the file now
-	box := packr.NewBox("./files")
-
-	// We need that for the reports
-	contracts, err = readContractFile(box)
+	err = loadResources(resourcesPath)
 	if err != nil {
-		fatalf("Error: can not read contract file %s: %v", contractFile, err)
-	}
-
-	tmpls, err = loadTemplates(box)
-	if err != nil {
-		fatalf("Error: can not read HTML templates from 'files/': %v", err)
+		fatalf("Can't load resources %s: %v", resourcesPath, err)
 	}
 
 	// Open output file

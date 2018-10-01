@@ -28,3 +28,19 @@ func loadTemplates(box packr.Box) (Templ, error) {
 
 	return list, nil
 }
+
+func loadResources(path string) error {
+	var err error
+
+	// We embed the file now
+	box := packr.NewBox(path)
+
+	// We need that for the reports
+	contracts, err = readContractFile(box)
+	if err != nil {
+		return errors.Wrapf(err, "readContractFile/%s", contractFile)
+	}
+
+	tmpls, err = loadTemplates(box)
+	return errors.Wrapf(err, "loadTemplates/%s", path)
+}
