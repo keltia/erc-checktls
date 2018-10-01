@@ -31,25 +31,6 @@ func TestGetResultsNothing(t *testing.T) {
 	require.Empty(t, buf)
 }
 
-func TestReadContractFile(t *testing.T) {
-	// We embed the file now
-	box := packr.NewBox("./files")
-
-	cntrs, err := readContractFile(box)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, cntrs)
-}
-
-func TestLoadTemplates(t *testing.T) {
-	// We embed the file now
-	box := packr.NewBox("./files")
-
-	str, err := loadTemplates(box)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, str)
-	assert.Equal(t, 2, len(str))
-}
-
 func TestCheckOutput(t *testing.T) {
 	fh := checkOutput("")
 	assert.NotEmpty(t, fh)

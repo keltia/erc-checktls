@@ -7,15 +7,12 @@ and generating a csv file.
 package main // import "github.com/keltia/erc-checktls"
 
 import (
-	"bytes"
-	"encoding/csv"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
 	"github.com/keltia/ssllabs"
@@ -33,32 +30,9 @@ var (
 )
 
 const (
-	contractFile  = "sites-list.csv"
-	resourcesPath = "./files"
-
 	// MyVersion uses semantic versioning.
 	MyVersion = "0.62.0"
 )
-
-// getContract retrieve the site's contract from the DB
-func readContractFile(box packr.Box) (contracts map[string]string, err error) {
-	debug("reading contracts\n")
-	cf := box.Bytes(contractFile)
-	fh := bytes.NewBuffer(cf)
-
-	all := csv.NewReader(fh)
-	allSites, err := all.ReadAll()
-	if err != nil {
-		return nil, errors.Wrap(err, "ReadAll")
-	}
-
-	contracts = make(map[string]string)
-	for _, site := range allSites {
-		contracts[site[0]] = site[1]
-	}
-	err = nil
-	return
-}
 
 // checkOutput checks whether we want to specify an output file
 func checkOutput(fOutput string) (fOutputFH *os.File) {
