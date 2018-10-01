@@ -6,6 +6,8 @@ import (
 	"path"
 	"testing"
 
+	"github.com/keltia/ssllabs"
+
 	"github.com/gobuffalo/packr"
 
 	"github.com/stretchr/testify/assert"
@@ -104,6 +106,37 @@ func TestWriteCSV2(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestWriteCSV3(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	file := "testdata/site.json"
+	raw, err := getResults(file)
+	require.NoError(t, err)
+
+	allSites, err := ssllabs.ParseResults(raw)
+	require.NoError(t, err)
+
+	fIgnoreImirhil = true
+	fIgnoreMozilla = true
+
+	final, err := NewTLSReport(allSites)
+	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
+	require.NoError(t, err)
+
+	err = WriteCSV(null, final, cntrs, https)
+	assert.NoError(t, err)
+}
+
 func TestWriteHTML(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
@@ -136,4 +169,39 @@ func TestWriteHTML2(t *testing.T) {
 
 	err := WriteHTML(os.Stderr, &TLSReport{}, cntrs, https)
 	assert.Error(t, err)
+}
+
+func TestWriteHTML3(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	file := "testdata/site.json"
+	raw, err := getResults(file)
+	require.NoError(t, err)
+
+	allSites, err := ssllabs.ParseResults(raw)
+	require.NoError(t, err)
+
+	box := packr.NewBox("./files")
+	tmpls, err = loadTemplates(box)
+	require.NoError(t, err)
+
+	fIgnoreImirhil = true
+	fIgnoreMozilla = true
+
+	final, err := NewTLSReport(allSites)
+	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
+	require.NoError(t, err)
+
+	err = WriteHTML(null, final, cntrs, https)
+	assert.NoError(t, err)
 }
