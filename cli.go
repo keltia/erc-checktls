@@ -32,6 +32,7 @@ const (
 
 Usage: %s [-hvDIM] [-j n] [-t text|csv|html] [-s file] [-S site] [-o file] file[.json]
        %s [-vD] -wild file[.json]
+
 `
 )
 
