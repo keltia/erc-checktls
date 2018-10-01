@@ -36,7 +36,7 @@ const (
 	contractFile = "sites-list.csv"
 	htmlTemplate = "templ.html"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.61.0"
+	MyVersion = "0.62.0"
 )
 
 // getContract retrieve the site's contract from the DB

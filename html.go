@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"strings"
 	"text/template"
@@ -39,13 +40,13 @@ func grade(val string) string {
 	case "B":
 		fallthrough
 	case "B-":
-		fallthrough
+		return orange(val)
 	case "C+":
 		fallthrough
 	case "C":
 		fallthrough
 	case "C-":
-		return orange(val)
+		fallthrough
 	case "D+":
 		fallthrough
 	case "D":
@@ -92,6 +93,29 @@ func proto(val string) string {
 	return white(val)
 }
 
+const (
+	hstsNone = -1				// red
+
+	hstsLow  = 86400 * 90		// orange
+	hstsGood = 86400 * 180		// yellow
+								// green
+)
+
+func hsts(age int64) string {
+	if age == hstsNone {
+		return red("NO")
+	}
+
+	if age >= 0 && age < hstsLow {
+		return orange(fmt.Sprintf("%d", age))
+	}
+
+	if age >= hstsLow && age < hstsGood {
+		return yellow(fmt.Sprintf("%d", age))
+	}
+	return green(fmt.Sprintf("%d", age))
+}
+
 func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 	var (
 		err error
@@ -123,15 +147,17 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 
 			PFS:     booleanT(s.PFS),
 			OCSP:    booleanT(s.OCSP),
-			HSTS:    booleanT(s.HSTS),
+			HSTS:    hsts(s.HSTS),
 			Sweet32: booleanF(s.Sweet32),
 		}
 		Sites = append(Sites, h)
 		debug("h=%#v\n", h)
 	}
 	htmlVars := struct {
-		Sites []htmlvars
-	}{Sites}
+		Date    string
+		Version string
+		Sites   []htmlvars
+	}{makeDate(), r.SSLLabs, Sites}
 	err = t.ExecuteTemplate(w, "html-report", htmlVars)
 	return errors.Wrap(err, "can not write HTML file")
 }

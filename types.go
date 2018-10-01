@@ -33,6 +33,6 @@ type TLSSite struct {
 	PFS       bool
 
 	OCSP    bool
-	HSTS    bool
+	HSTS    int64
 	Sweet32 bool
 }

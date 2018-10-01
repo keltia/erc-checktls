@@ -129,3 +129,23 @@ func TestCategoryCountsReportDES(t *testing.T) {
 	assert.NotEmpty(t, cntrs)
 	assert.EqualValues(t, good, cntrs)
 }
+
+func TestCategoryCountsReportNull(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/null.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	good := map[string]int{
+		"X": 1, "Z": 0, "Total": 0,
+	}
+
+	cntrs := categoryCounts(all)
+	assert.NotEmpty(t, cntrs)
+	assert.EqualValues(t, good, cntrs)
+}

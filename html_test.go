@@ -6,9 +6,8 @@ import (
 	"testing"
 
 	"github.com/keltia/ssllabs"
-	"github.com/stretchr/testify/require"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBooleanT(t *testing.T) {
@@ -42,9 +41,9 @@ func TestGrade(t *testing.T) {
 		{"B+", "<td class=xl63 align=center>B+</td>"},
 		{"B", "<td class=xl63 align=center>B</td>"},
 		{"B-", "<td class=xl63 align=center>B-</td>"},
-		{"C+", "<td class=xl63 align=center>C+</td>"},
-		{"C", "<td class=xl63 align=center>C</td>"},
-		{"C-", "<td class=xl63 align=center>C-</td>"},
+		{"C+", "<td class=xl64 align=center>C+</td>"},
+		{"C", "<td class=xl64 align=center>C</td>"},
+		{"C-", "<td class=xl64 align=center>C-</td>"},
 		{"D+", "<td class=xl64 align=center>D+</td>"},
 		{"D", "<td class=xl64 align=center>D</td>"},
 		{"D-", "<td class=xl64 align=center>D-</td>"},
@@ -77,6 +76,22 @@ func TestProto(t *testing.T) {
 	}
 	for _, tst := range td {
 		assert.Equal(t, tst.HTML, proto(tst.In))
+	}
+}
+
+func TestHSTS(t *testing.T) {
+	td := []struct {
+		In   int64
+		HTML string
+	}{
+		{-1, "<td class=xl64 align=center>NO</td>"},
+		{3600, "<td class=xl63 align=center>3600</td>"},
+		{5184100, "<td class=xl63 align=center>5184100</td>"},
+		{15550000, "<td class=xl631 align=center>15550000</td>"},
+		{15552000, "<td class=xl65 align=center>15552000</td>"},
+	}
+	for _, tst := range td {
+		assert.Equal(t, tst.HTML, hsts(tst.In))
 	}
 }
 

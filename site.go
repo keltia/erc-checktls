@@ -126,7 +126,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 			Protocols:  strings.Join(protos, ","),
 			PFS:        det.ForwardSecrecy >= 2,
 			OCSP:       det.OcspStapling,
-			HSTS:       det.HstsPolicy.Status == "present",
+			HSTS:       checkHSTS(det),
 			Sweet32:    checkSweet32(det),
 		}
 
@@ -149,6 +149,13 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 
 func checkIssuer(cert ssllabs.Cert, ours string) bool {
 	return cert.IssuerSubject == ours
+}
+
+func checkHSTS(det ssllabs.EndpointDetails) int64 {
+	if det.HstsPolicy.Status == "present" {
+		return det.HstsPolicy.MaxAge
+	}
+	return -1
 }
 
 func displayWildcards(all []ssllabs.Host) string {

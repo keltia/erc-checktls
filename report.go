@@ -19,6 +19,7 @@ import (
 )
 
 var (
+	// this is to protect the Sites array
 	lock sync.Mutex
 )
 
@@ -62,7 +63,7 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 			e.Sites = append(e.Sites, completed)
 			lock.Unlock()
 
-			defer pool.JobDone()
+			pool.JobDone()
 		}
 	}
 
