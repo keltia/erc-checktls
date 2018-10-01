@@ -15,7 +15,6 @@ import (
     "github.com/keltia/cryptcheck"
     "github.com/keltia/observatory"
     "github.com/keltia/ssllabs"
-    "github.com/pkg/errors"
 )
 
 var (
@@ -150,26 +149,3 @@ func main() {
 	}
 }
 
-func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
-	var err error
-
-	debug("WriteHTML")
-	if final == nil {
-		return fmt.Errorf("nil final")
-	}
-	if len(final.Sites) == 0 {
-		return fmt.Errorf("empty final")
-	}
-
-	debug("tmpls=%v\n", tmpls)
-	if err = final.ToHTML(fh, tmpls["templ.html"]); err != nil {
-		return errors.Wrap(err, "Can not write HTML")
-	}
-	if fSummary != "" {
-		fn := fSummary + "-" + makeDate() + ".html"
-		verbose("HTML summary: %s\n", fn)
-		fh = checkOutput(fn)
-		err = writeHTMLSummary(fh, cntrs, https)
-	}
-	return err
-}
