@@ -62,7 +62,7 @@ func init() {
 func checkFlags(a []string) error {
 	// Basic argument check
 	if a == nil || len(a) != 1 {
-		return fmt.Errorf("Error: you must specify an input file!")
+		return fmt.Errorf("you must specify an input file!")
 	}
 
 	// Set logging level
