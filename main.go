@@ -7,14 +7,14 @@ and generating a csv file.
 package main // import "github.com/keltia/erc-checktls"
 
 import (
-    "flag"
-    "fmt"
-    "os"
-    "path/filepath"
+	"flag"
+	"fmt"
+	"os"
+	"path/filepath"
 
-    "github.com/keltia/cryptcheck"
-    "github.com/keltia/observatory"
-    "github.com/keltia/ssllabs"
+	"github.com/keltia/cryptcheck"
+	"github.com/keltia/observatory"
+	"github.com/keltia/ssllabs"
 )
 
 var (
@@ -148,4 +148,3 @@ func main() {
 
 	}
 }
-
