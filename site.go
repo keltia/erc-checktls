@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -77,10 +76,7 @@ func initAPIs() {
 			Log:     logLevel,
 			Timeout: 30,
 		}
-		moz, err := observatory.NewClient(cnf)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "can not create observatory client: %v", err)
-		}
+		moz, _ := observatory.NewClient(cnf)
 
 		fnMozilla = func(site ssllabs.Host) string {
 			verbose("  observatory\n")
