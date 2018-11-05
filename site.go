@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -14,13 +15,14 @@ import (
 const (
 	DefaultKeySize = 2048
 	DefaultAlg     = "RSA"
-	DefaultIssuer  = "CN=GlobalSign Organization Validation CA - SHA256 - G2, O=GlobalSign nv-sa, C=BE"
 	DefaultSig     = "SHA256withRSA"
 )
 
 var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
+
+	DefaultIssuer = regexp.MustCompile(`(?i:GlobalSign)`)
 )
 
 func fixTimestamp(ts int64) (int64, int64) {
@@ -147,8 +149,8 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 	return current
 }
 
-func checkIssuer(cert ssllabs.Cert, ours string) bool {
-	return cert.IssuerSubject == ours
+func checkIssuer(cert ssllabs.Cert, ours *regexp.Regexp) bool {
+	return ours.MatchString(cert.IssuerSubject)
 }
 
 func checkHSTS(det ssllabs.EndpointDetails) int64 {
