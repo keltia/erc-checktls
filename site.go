@@ -58,10 +58,10 @@ func initAPIs() {
 		client := cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.Host) string {
-			verbose("  imirhil\n")
+			debug("  imirhil\n")
 			score, err := client.GetScore(site.Host)
 			if err != nil {
-				verbose("can not get cryptcheck score: %v\n", err)
+				verbose("cryptcheck error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
@@ -79,10 +79,10 @@ func initAPIs() {
 		moz, _ := observatory.NewClient(cnf)
 
 		fnMozilla = func(site ssllabs.Host) string {
-			verbose("  observatory\n")
+			debug("  observatory\n")
 			score, err := moz.GetGrade(site.Host)
 			if err != nil {
-				verbose("can not get Mozilla score: %v\n", err)
+				verbose("Mozilla error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
