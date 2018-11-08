@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -14,13 +14,14 @@ import (
 const (
 	DefaultKeySize = 2048
 	DefaultAlg     = "RSA"
-	DefaultIssuer  = "CN=GlobalSign Organization Validation CA - SHA256 - G2, O=GlobalSign nv-sa, C=BE"
 	DefaultSig     = "SHA256withRSA"
 )
 
 var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
+
+	DefaultIssuer = regexp.MustCompile(`(?i:GlobalSign)`)
 )
 
 func fixTimestamp(ts int64) (int64, int64) {
@@ -57,10 +58,10 @@ func initAPIs() {
 		client := cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.Host) string {
-			verbose("  imirhil\n")
+			debug("  imirhil\n")
 			score, err := client.GetScore(site.Host)
 			if err != nil {
-				verbose("can not get cryptcheck score: %v\n", err)
+				verbose("cryptcheck error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
@@ -75,16 +76,13 @@ func initAPIs() {
 			Log:     logLevel,
 			Timeout: 30,
 		}
-		moz, err := observatory.NewClient(cnf)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "can not create observatory client: %v", err)
-		}
+		moz, _ := observatory.NewClient(cnf)
 
 		fnMozilla = func(site ssllabs.Host) string {
-			verbose("  observatory\n")
+			debug("  observatory\n")
 			score, err := moz.GetGrade(site.Host)
 			if err != nil {
-				verbose("can not get Mozilla score: %v\n", err)
+				verbose("Mozilla error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
@@ -147,8 +145,8 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 	return current
 }
 
-func checkIssuer(cert ssllabs.Cert, ours string) bool {
-	return cert.IssuerSubject == ours
+func checkIssuer(cert ssllabs.Cert, ours *regexp.Regexp) bool {
+	return ours.MatchString(cert.IssuerSubject)
 }
 
 func checkHSTS(det ssllabs.EndpointDetails) int64 {
