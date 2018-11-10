@@ -27,7 +27,7 @@ You need to install three of my modules if you are using Go 1.10.x or earlier.
 
 With Go 1.11+ and its modules support, it should work out of the box with
 
-    go get github.com/keltia.erc-checktls
+    go get github.com/keltia/erc-checktls
 
 ## Usage
 
