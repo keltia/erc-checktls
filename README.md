@@ -40,7 +40,7 @@ If you want to run `make test`` you will need these:
 
 With Go 1.11+ and its modules support, it should work out of the box with
 
-    go get github.com/keltia.erc-checktls
+    go get github.com/keltia/erc-checktls
 
 ## Usage
 
