@@ -107,3 +107,10 @@ func TestSweet32(t *testing.T) {
 
 	assert.True(t, checkSweet32(bad[0].Endpoints[0].Details))
 }
+
+const (
+	mozURL = "https://http-observatory.security.mozilla.org/api/v1"
+)
+
+func TestFindServerType(t *testing.T) {
+}

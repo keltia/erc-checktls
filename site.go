@@ -51,6 +51,19 @@ func hasExpired(t int64) bool {
 	return time.Now().After(time.Unix(fixTimestamp(t)))
 }
 
+func findServerType(site ssllabs.Host) int {
+	// Should be obvious, 2nd field is only present if no valid cert is found
+	if len(site.Certs) == 0 || len(site.CertHostnames) != 0 {
+		return TypeHTTP
+	}
+
+	// Check the Mozilla report
+	if yes, _ := moz.IsHTTPSonly(site.Host); yes {
+		return TypeHTTPSok
+	}
+	return TypeHTTPSnok
+}
+
 func initAPIs() {
 	if !fIgnoreImirhil {
 		cnf := cryptcheck.Config{
@@ -129,6 +142,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 			OCSP:       det.OcspStapling,
 			HSTS:       checkHSTS(det),
 			Sweet32:    checkSweet32(det),
+			Type:       findServerType(site),
 		}
 
 		// Handle case where we have a DNS entry but no connection
