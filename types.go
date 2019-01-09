@@ -13,6 +13,19 @@ type TLSReport struct {
 	Sites   []TLSSite
 }
 
+const (
+	// 1, 2, 3 are the main categories 1=green, 2=yellow, 3=red
+	CatGreen = 1 + iota
+	CatYellow
+	CatRed
+
+	// 1 is for correct https w/ redirection, 2 is https&http, 3 is http only
+	TypeError = 1 + iota
+	TypeHTTPSok
+	TypeHTTPSnok
+	TypeHTTP
+)
+
 // TLSSite is a summary for each site
 type TLSSite struct {
 	Name     string
@@ -35,4 +48,8 @@ type TLSSite struct {
 	OCSP    bool
 	HSTS    int64
 	Sweet32 bool
+
+	Type    int
+	CatHTTP int
+	CatTLS  int
 }
