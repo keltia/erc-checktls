@@ -21,6 +21,9 @@ var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
 
+	moz  *observatory.Client
+	irml *cryptcheck.Client
+
 	DefaultIssuer = regexp.MustCompile(`(?i:GlobalSign)`)
 )
 
@@ -55,11 +58,11 @@ func initAPIs() {
 			Refresh: true,
 			Timeout: 30,
 		}
-		client := cryptcheck.NewClient(cnf)
+		irml = cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.Host) string {
 			debug("  imirhil\n")
-			score, err := client.GetScore(site.Host)
+			score, err := irml.GetScore(site.Host)
 			if err != nil {
 				verbose("cryptcheck error: %s (%s)\n", site.Host, err.Error())
 			}
@@ -76,7 +79,7 @@ func initAPIs() {
 			Log:     logLevel,
 			Timeout: 30,
 		}
-		moz, _ := observatory.NewClient(cnf)
+		moz, _ = observatory.NewClient(cnf)
 
 		fnMozilla = func(site ssllabs.Host) string {
 			debug("  observatory\n")
