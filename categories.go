@@ -140,3 +140,21 @@ func displayCategories(cntrs map[string]int) string {
 	}
 	return str
 }
+
+func selectColours(grade string) string {
+	switch grade {
+	case "A+":
+		fallthrough
+	case "A":
+		return "green"
+	case "A-":
+		fallthrough
+	case "B+":
+		fallthrough
+	case "B":
+		fallthrough
+	case "B-":
+		return "orange"
+	}
+	return "red"
+}
