@@ -88,6 +88,32 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 	return e, nil
 }
 
+type Types struct {
+	Corrects map[string]int
+	Insecure int
+	ToFix    int
+}
+
+func (r *TLSReport) ColourMap(criteria string) Types {
+	var (
+		insecure, tofix int
+	)
+
+	t := Types{Corrects: map[string]int{}}
+
+	for _, site := range r.Sites {
+		switch site.Type {
+		case TypeHTTPSok:
+			t.Corrects[selectColours(criteria)]++
+		case TypeHTTPSnok:
+			tofix++
+		case TypeHTTP:
+			insecure++
+		}
+	}
+	return t
+}
+
 // ToCSV output a CSV file from a report
 func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)

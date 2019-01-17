@@ -190,6 +190,8 @@ func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error
 	if err = final.ToHTML(fh, tmpls["templ.html"]); err != nil {
 		return errors.Wrap(err, "Can not write HTML")
 	}
+	// Generate colour map
+	//cm := final.ColourMap()
 	if fSummary != "" {
 		fn := fSummary + "-" + makeDate() + ".html"
 		verbose("HTML summary: %s\n", fn)
