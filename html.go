@@ -16,6 +16,7 @@ type htmlvars struct {
 	Grade      string
 	Cryptcheck string
 	Mozilla    string
+	Redir      string
 	DefKey     string
 	DefSig     string
 	DefCA      string
@@ -117,6 +118,16 @@ func hsts(age int64) string {
 	return green(fmt.Sprintf("%d", age))
 }
 
+func servertype(t int) string {
+	if t == TypeHTTPSok {
+		return green("HTTPS")
+	} else if t == TypeHTTPSnok {
+		return orange("MIXED")
+	} else {
+		return red("HTTP")
+	}
+}
+
 func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 	var (
 		err error
@@ -138,6 +149,7 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 			Cryptcheck: grade(s.CryptCheck),
 			Mozilla:    grade(s.Mozilla),
 
+			Redir:     servertype(s.Type),
 			DefKey:    booleanT(s.DefKey),
 			DefSig:    booleanT(s.DefSig),
 			DefCA:     booleanT(s.DefCA),
