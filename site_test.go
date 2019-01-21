@@ -112,5 +112,22 @@ const (
 	mozURL = "https://http-observatory.security.mozilla.org/api/v1"
 )
 
+func TestFindServerTypeEmpty(t *testing.T) {
+	tt := findServerType(ssllabs.Host{})
+	require.Equal(t, TypeHTTP, tt)
+}
+
 func TestFindServerType(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	tt := findServerType(all[0])
+	require.Equal(t, TypeHTTP, tt)
 }
