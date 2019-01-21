@@ -57,9 +57,11 @@ func findServerType(site ssllabs.Host) int {
 		return TypeHTTP
 	}
 
-	// Check the Mozilla report
-	if yes, _ := moz.IsHTTPSonly(site.Host); yes {
-		return TypeHTTPSok
+	if !fIgnoreMozilla {
+		// Check the Mozilla report
+		if yes, _ := moz.IsHTTPSonly(site.Host); yes {
+			return TypeHTTPSok
+		}
 	}
 	return TypeHTTPSnok
 }
