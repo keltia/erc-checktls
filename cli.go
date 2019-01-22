@@ -23,7 +23,6 @@ var (
 	fIgnoreImirhil bool
 	fIgnoreMozilla bool
 	fVerbose       bool
-	fReallyVerbose bool
 
 	fCmdWild bool
 )
@@ -31,7 +30,8 @@ var (
 const (
 	cliUsage = `%s version %s - Imirhil/%s SSLLabs/%s Mozilla/%s
 
-Usage: %s [-hvIMV] [-j n] [-t text|csv|html] [-s file] [-o file] [-wild] file[.json]
+Usage: %s [-hvDIM] [-j n] [-t text|csv|html] [-s file] [-S site] [-o file] file[.json]
+       %s [-vD] -wild file[.json]
 
 `
 )
@@ -40,7 +40,7 @@ Usage: %s [-hvIMV] [-j n] [-t text|csv|html] [-s file] [-o file] [-wild] file[.j
 var Usage = func() {
 	fmt.Fprintf(os.Stderr, cliUsage, MyName,
 		MyVersion, cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion,
-		MyName)
+		MyName, MyName)
 	flag.PrintDefaults()
 }
 
@@ -54,7 +54,6 @@ func init() {
 	flag.BoolVar(&fIgnoreMozilla, "M", false, "Do not fetch Mozilla Observatory data")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
-	flag.BoolVar(&fReallyVerbose, "V", false, "More verbose mode")
 
 	flag.BoolVar(&fCmdWild, "wild", false, "Display wildcards")
 }

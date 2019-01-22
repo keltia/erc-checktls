@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 	"text/template"
 
@@ -15,6 +16,7 @@ type htmlvars struct {
 	Grade      string
 	Cryptcheck string
 	Mozilla    string
+	Redir      string
 	DefKey     string
 	DefSig     string
 	DefCA      string
@@ -94,11 +96,11 @@ func proto(val string) string {
 }
 
 const (
-	hstsNone = -1				// red
+	hstsNone = -1 // red
 
-	hstsLow  = 86400 * 90		// orange
-	hstsGood = 86400 * 180		// yellow
-								// green
+	hstsLow  = 86400 * 90  // orange
+	hstsGood = 86400 * 180 // yellow
+	// green
 )
 
 func hsts(age int64) string {
@@ -114,6 +116,16 @@ func hsts(age int64) string {
 		return yellow(fmt.Sprintf("%d", age))
 	}
 	return green(fmt.Sprintf("%d", age))
+}
+
+func servertype(t int) string {
+	if t == TypeHTTPSok {
+		return green("HTTPS")
+	} else if t == TypeHTTPSnok {
+		return orange("MIXED")
+	} else {
+		return red("HTTP")
+	}
 }
 
 func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
@@ -137,6 +149,7 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 			Cryptcheck: grade(s.CryptCheck),
 			Mozilla:    grade(s.Mozilla),
 
+			Redir:     servertype(s.Type),
 			DefKey:    booleanT(s.DefKey),
 			DefSig:    booleanT(s.DefSig),
 			DefCA:     booleanT(s.DefCA),
@@ -160,6 +173,32 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 	}{makeDate(), r.SSLLabs, Sites}
 	err = t.ExecuteTemplate(w, "html-report", htmlVars)
 	return errors.Wrap(err, "can not write HTML file")
+}
+
+func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
+	var err error
+
+	debug("WriteHTML")
+	if final == nil {
+		return fmt.Errorf("nil final")
+	}
+	if len(final.Sites) == 0 {
+		return fmt.Errorf("empty final")
+	}
+
+	debug("tmpls=%v\n", tmpls)
+	if err = final.ToHTML(fh, tmpls["templ.html"]); err != nil {
+		return errors.Wrap(err, "Can not write HTML")
+	}
+	// Generate colour map
+	//cm := final.ColourMap()
+	if fSummary != "" {
+		fn := fSummary + "-" + makeDate() + ".html"
+		verbose("HTML summary: %s\n", fn)
+		fh = checkOutput(fn)
+		err = writeHTMLSummary(fh, cntrs, https)
+	}
+	return err
 }
 
 func red(str string) string {

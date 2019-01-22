@@ -5,7 +5,7 @@ require (
 	github.com/gobuffalo/packr v1.13.3
 	github.com/ivpusic/grpool v0.0.0-20170804092134-28957a27c944
 	github.com/keltia/cryptcheck v1.5.2
-	github.com/keltia/observatory v1.2.3
+	github.com/keltia/observatory v1.2.4
 	github.com/keltia/proxy v0.9.4 // indirect
 	github.com/keltia/ssllabs v0.10.0
 	github.com/mattn/go-runewidth v0.0.3 // indirect

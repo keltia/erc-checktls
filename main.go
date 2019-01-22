@@ -7,19 +7,14 @@ and generating a csv file.
 package main // import "github.com/keltia/erc-checktls"
 
 import (
-	"bytes"
-	"encoding/csv"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/gobuffalo/packr"
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
 	"github.com/keltia/ssllabs"
-	"github.com/pkg/errors"
 )
 
 var (
@@ -33,31 +28,9 @@ var (
 )
 
 const (
-	contractFile = "sites-list.csv"
-	htmlTemplate = "templ.html"
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.62.0"
+	MyVersion = "0.63.0"
 )
-
-// getContract retrieve the site's contract from the DB
-func readContractFile(box packr.Box) (contracts map[string]string, err error) {
-	debug("reading contracts\n")
-	cf := box.Bytes(contractFile)
-	fh := bytes.NewBuffer(cf)
-
-	all := csv.NewReader(fh)
-	allSites, err := all.ReadAll()
-	if err != nil {
-		return nil, errors.Wrap(err, "ReadAll")
-	}
-
-	contracts = make(map[string]string)
-	for _, site := range allSites {
-		contracts[site[0]] = site[1]
-	}
-	err = nil
-	return
-}
 
 // checkOutput checks whether we want to specify an output file
 func checkOutput(fOutput string) (fOutputFH *os.File) {
@@ -80,28 +53,16 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 	return
 }
 
-// getResults read the JSON array generated and gone through jq
-func getResults(file string) (res []byte, err error) {
-	fh, err := os.Open(file)
-	if err != nil {
-		return res, errors.Wrapf(err, "can not open %s", file)
-	}
-	defer fh.Close()
-
-	res, err = ioutil.ReadAll(fh)
-	return res, errors.Wrapf(err, "can not read json %s", file)
-}
-
 // init is for pg connection and stuff
 func init() {
 	flag.Usage = Usage
 	flag.Parse()
 }
 
-func checkFlags() {
+func checkFlags(a []string) error {
 	// Basic argument check
-	if len(flag.Args()) != 1 {
-		fatalf("Error: you must specify an input file!")
+	if a == nil || len(a) != 1 {
+		return fmt.Errorf("you must specify an input file!")
 	}
 
 	// Set logging level
@@ -114,6 +75,7 @@ func checkFlags() {
 		logLevel = 2
 		debug("debug mode\n")
 	}
+	return nil
 }
 
 // main is the the starting point
@@ -123,7 +85,10 @@ func main() {
 		filepath.Base(os.Args[0]), MyVersion, fJobs,
 		cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion)
 
-	checkFlags()
+	err := checkFlags(flag.Args())
+	if err != nil {
+		fatalf("Error: %v", err.Error())
+	}
 
 	file := flag.Arg(0)
 
@@ -138,18 +103,9 @@ func main() {
 		fatalf("Can't parse %s: %v", file, err.Error())
 	}
 
-	// We embed the file now
-	box := packr.NewBox("./files")
-
-	// We need that for the reports
-	contracts, err = readContractFile(box)
+	err = loadResources(resourcesPath)
 	if err != nil {
-		fatalf("Error: can not read contract file %s: %v", contractFile, err)
-	}
-
-	tmpls, err = loadTemplates(box)
-	if err != nil {
-		fatalf("Error: can not read HTML templates from 'files/': %v", err)
+		fatalf("Can't load resources %s: %v", resourcesPath, err)
 	}
 
 	// Open output file
@@ -191,53 +147,4 @@ func main() {
 		fmt.Printf("%s\n", displayCategories(cntrs))
 
 	}
-}
-
-func WriteCSV(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
-	var err error
-
-	debug("WriteCSV")
-	if final == nil {
-		return fmt.Errorf("nil final")
-	}
-	if len(final.Sites) == 0 {
-		return fmt.Errorf("empty final")
-	}
-
-	if err = final.ToCSV(fh); err != nil {
-		return errors.Wrap(err, "Error can not generate CSV")
-	}
-	fmt.Fprintf(fh, "\nTLS Summary\n")
-	if err := writeSummary(os.Stdout, tlsKeys, cntrs); err != nil {
-		fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
-	}
-	fmt.Fprintf(fh, "\nHTTP Summary\n")
-	if err := writeSummary(os.Stdout, httpKeys, https); err != nil {
-		fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
-	}
-	return nil
-}
-
-func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
-	var err error
-
-	debug("WriteHTML")
-	if final == nil {
-		return fmt.Errorf("nil final")
-	}
-	if len(final.Sites) == 0 {
-		return fmt.Errorf("empty final")
-	}
-
-	debug("tmpls=%v\n", tmpls)
-	if err = final.ToHTML(fh, tmpls["templ.html"]); err != nil {
-		return errors.Wrap(err, "Can not write HTML")
-	}
-	if fSummary != "" {
-		fn := fSummary + "-" + makeDate() + ".html"
-		verbose("HTML summary: %s\n", fn)
-		fh = checkOutput(fn)
-		err = writeHTMLSummary(fh, cntrs, https)
-	}
-	return err
 }

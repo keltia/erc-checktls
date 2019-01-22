@@ -11,6 +11,25 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestReadContractFile(t *testing.T) {
+	// We embed the file now
+	box := packr.NewBox("./files")
+
+	cntrs, err := readContractFile(box)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, cntrs)
+}
+
+func TestLoadTemplates(t *testing.T) {
+	// We embed the file now
+	box := packr.NewBox("./files")
+
+	str, err := loadTemplates(box)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, str)
+	assert.Equal(t, 2, len(str))
+}
+
 func TestLoadTemplates_None(t *testing.T) {
 	box := packr.NewBox("/nonexistent")
 	require.NotNil(t, box)
@@ -63,4 +82,20 @@ func TestLoadTemplates_GoodDebug(t *testing.T) {
 	assert.NotEmpty(t, tmpls)
 
 	fDebug = false
+}
+
+func TestLoadResources_GoodDebug(t *testing.T) {
+	err := loadResources(resourcesPath)
+	assert.NoError(t, err)
+
+	assert.NotEmpty(t, tmpls)
+	assert.NotEmpty(t, contracts)
+}
+
+func TestLoadResources_None(t *testing.T) {
+	err := loadResources("/nonexistent")
+	assert.Error(t, err)
+
+	assert.Empty(t, tmpls)
+	assert.Empty(t, contracts)
 }

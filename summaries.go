@@ -63,6 +63,12 @@ var httpmap = []cmap{
 	{"Broken", white},
 }
 
+var cltlsmap = []cmap{
+	{"green", green},
+	{"orange", orange},
+	{"red", red},
+}
+
 func writeSummary(w io.Writer, keys []string, cntrs map[string]int) (err error) {
 	table := tw.NewWriter(w)
 	table.SetHeader(keys)
@@ -110,14 +116,17 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 		return
 	}
 	date := makeDate()
+
 	data := struct {
-		Date string
-		TLS  string
-		HTTP string
+		Date        string
+		TLS         string
+		HTTP        string
+		ColoursHTTP string
 	}{
 		Date: date,
 		TLS:  writeOneRow(ctlsmap, cntrs),
 		HTTP: writeOneRow(httpmap, https),
+		//	ColoursHTTP: writeOneRow(cltlsmap, all.Corrects),
 	}
 	err = t.ExecuteTemplate(w, summariesT, data)
 	if err != nil {

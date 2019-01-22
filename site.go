@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -14,13 +14,17 @@ import (
 const (
 	DefaultKeySize = 2048
 	DefaultAlg     = "RSA"
-	DefaultIssuer  = "CN=GlobalSign Organization Validation CA - SHA256 - G2, O=GlobalSign nv-sa, C=BE"
 	DefaultSig     = "SHA256withRSA"
 )
 
 var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
+
+	moz  *observatory.Client
+	irml *cryptcheck.Client
+
+	DefaultIssuer = regexp.MustCompile(`(?i:GlobalSign)`)
 )
 
 func fixTimestamp(ts int64) (int64, int64) {
@@ -47,6 +51,21 @@ func hasExpired(t int64) bool {
 	return time.Now().After(time.Unix(fixTimestamp(t)))
 }
 
+func findServerType(site ssllabs.Host) int {
+	// Should be obvious, 2nd field is only present if no valid cert is found
+	if len(site.Certs) == 0 || len(site.CertHostnames) != 0 {
+		return TypeHTTP
+	}
+
+	if !fIgnoreMozilla {
+		// Check the Mozilla report
+		if yes, _ := moz.IsHTTPSonly(site.Host); yes {
+			return TypeHTTPSok
+		}
+	}
+	return TypeHTTPSnok
+}
+
 func initAPIs() {
 	if !fIgnoreImirhil {
 		cnf := cryptcheck.Config{
@@ -54,13 +73,13 @@ func initAPIs() {
 			Refresh: true,
 			Timeout: 30,
 		}
-		client := cryptcheck.NewClient(cnf)
+		irml = cryptcheck.NewClient(cnf)
 
 		fnImirhil = func(site ssllabs.Host) string {
-			verbose("  imirhil\n")
-			score, err := client.GetScore(site.Host)
+			debug("  imirhil\n")
+			score, err := irml.GetScore(site.Host)
 			if err != nil {
-				verbose("can not get %s cryptcheck score: %v\n", site.Host, err)
+				verbose("cryptcheck error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
@@ -75,16 +94,13 @@ func initAPIs() {
 			Log:     logLevel,
 			Timeout: 30,
 		}
-		moz, err := observatory.NewClient(cnf)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "can not create observatory client: %v", err)
-		}
+		moz, _ = observatory.NewClient(cnf)
 
 		fnMozilla = func(site ssllabs.Host) string {
-			verbose("  observatory\n")
+			debug("  observatory\n")
 			score, err := moz.GetGrade(site.Host)
 			if err != nil {
-				verbose("can not get %s Mozilla score: %v\n", site.Host, err)
+				verbose("Mozilla error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
@@ -128,6 +144,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 			OCSP:       det.OcspStapling,
 			HSTS:       checkHSTS(det),
 			Sweet32:    checkSweet32(det),
+			Type:       findServerType(site),
 		}
 
 		// Handle case where we have a DNS entry but no connection
@@ -147,8 +164,8 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 	return current
 }
 
-func checkIssuer(cert ssllabs.Cert, ours string) bool {
-	return cert.IssuerSubject == ours
+func checkIssuer(cert ssllabs.Cert, ours *regexp.Regexp) bool {
+	return ours.MatchString(cert.IssuerSubject)
 }
 
 func checkHSTS(det ssllabs.EndpointDetails) int64 {

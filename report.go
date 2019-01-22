@@ -8,6 +8,8 @@ package main
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 	"sort"
 	"sync"
 	"time"
@@ -24,6 +26,18 @@ var (
 )
 
 // Private functions
+
+// getResults read the JSON array generated and gone through jq
+func getResults(file string) (res []byte, err error) {
+	fh, err := os.Open(file)
+	if err != nil {
+		return res, errors.Wrapf(err, "can not open %s", file)
+	}
+	defer fh.Close()
+
+	res, err = ioutil.ReadAll(fh)
+	return res, errors.Wrapf(err, "can not read json %s", file)
+}
 
 func getSSLablsVersion(site ssllabs.Host) string {
 	debug("%#v", site)
@@ -74,6 +88,32 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 	return e, nil
 }
 
+type Types struct {
+	Corrects map[string]int
+	Insecure int
+	ToFix    int
+}
+
+func (r *TLSReport) ColourMap(criteria string) Types {
+	var (
+		insecure, tofix int
+	)
+
+	t := Types{Corrects: map[string]int{}}
+
+	for _, site := range r.Sites {
+		switch site.Type {
+		case TypeHTTPSok:
+			t.Corrects[selectColours(criteria)]++
+		case TypeHTTPSnok:
+			tofix++
+		case TypeHTTP:
+			insecure++
+		}
+	}
+	return t
+}
+
 // ToCSV output a CSV file from a report
 func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)
@@ -84,4 +124,29 @@ func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 
 	err = wh.WriteStructAll(r.Sites)
 	return errors.Wrap(err, "can not write csv file")
+}
+
+func WriteCSV(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
+	var err error
+
+	debug("WriteCSV")
+	if final == nil {
+		return fmt.Errorf("nil final")
+	}
+	if len(final.Sites) == 0 {
+		return fmt.Errorf("empty final")
+	}
+
+	if err = final.ToCSV(fh); err != nil {
+		return errors.Wrap(err, "Error can not generate CSV")
+	}
+	fmt.Fprintf(fh, "\nTLS Summary\n")
+	if err := writeSummary(os.Stdout, tlsKeys, cntrs); err != nil {
+		fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
+	}
+	fmt.Fprintf(fh, "\nHTTP Summary\n")
+	if err := writeSummary(os.Stdout, httpKeys, https); err != nil {
+		fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
+	}
+	return nil
 }
