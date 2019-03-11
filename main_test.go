@@ -62,3 +62,18 @@ func TestCheckFlags_GoodDebug(t *testing.T) {
 	assert.Equal(t, 2, logLevel)
 	fDebug = false
 }
+
+func TestRealmain(t *testing.T) {
+	ret := realmain([]string{flag.Arg(0)})
+	assert.Equal(t, 1, ret)
+}
+
+func TestCheckInput(t *testing.T) {
+	err := checkInput("")
+	assert.Error(t, err)
+}
+
+func TestCheckInput2(t *testing.T) {
+	err := checkInput("/nonexistent")
+	assert.Error(t, err)
+}
