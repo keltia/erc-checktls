@@ -20,12 +20,6 @@ func verbose(str string, a ...interface{}) {
 	}
 }
 
-// fatalf is like log.Fatalf()
-func fatalf(str string, a ...interface{}) {
-	fmt.Fprintf(os.Stderr, str, a...)
-	os.Exit(1)
-}
-
 // makeDate for month tagging.
 func makeDate() string {
 	return time.Now().Format("2006-01") + "-01"
