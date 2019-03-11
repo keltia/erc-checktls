@@ -15,6 +15,7 @@ import (
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
 	"github.com/keltia/ssllabs"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -78,6 +79,15 @@ func checkFlags(a []string) error {
 	return nil
 }
 
+func checkInput(file string) error {
+	if file == "" {
+		return errors.New("No file found\n")
+	}
+
+	_, err := os.Stat(file)
+	return errors.Wrap(err, "checkInput")
+}
+
 // Most of the work is here
 func realmain(args []string) int {
 	// Announce ourselves
@@ -91,6 +101,10 @@ func realmain(args []string) int {
 	}
 
 	file := args[0]
+	if err := checkInput(file); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v", err)
+		return 1
+	}
 
 	raw, err := getResults(file)
 	if err != nil {
