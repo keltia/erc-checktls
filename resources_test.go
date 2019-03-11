@@ -85,7 +85,7 @@ func TestLoadTemplates_GoodDebug(t *testing.T) {
 }
 
 func TestLoadResources_GoodDebug(t *testing.T) {
-	err := loadResources(resourcesPath)
+	tmpls, err := loadResources(resourcesPath)
 	assert.NoError(t, err)
 
 	assert.NotEmpty(t, tmpls)
@@ -93,7 +93,7 @@ func TestLoadResources_GoodDebug(t *testing.T) {
 }
 
 func TestLoadResources_None(t *testing.T) {
-	err := loadResources("/nonexistent")
+	tmpls, err := loadResources("/nonexistent")
 	assert.Error(t, err)
 
 	assert.Empty(t, tmpls)
