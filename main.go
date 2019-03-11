@@ -140,6 +140,7 @@ func realmain(args []string) int {
 	final, err := NewTLSReport(allSites)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error analyzing report: %v", err)
+		return 1
 	}
 
 	// Gather statistics for summaries
