@@ -11,8 +11,6 @@ branches:
   - master
 env:
   - GO111MODULE=on
-install:
-  - go get github.com/gobuffalo/packr/...
 script:
   - make
   - make test
