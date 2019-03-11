@@ -43,10 +43,11 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 	if fOutput != "" {
 		verbose("Output file is %s\n", fOutput)
 
-		if fOutput != "-" {
+		if fOutput != "-" && fOutput != "" {
 			fOutputFH, err = os.Create(fOutput)
 			if err != nil {
-				fatalf("Error creating %s\n", fOutput)
+				fmt.Fprintf(os.Stderr, "Error creating %s\n", fOutput)
+				return nil
 			}
 		}
 	}

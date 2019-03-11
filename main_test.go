@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"io/ioutil"
 	"os"
 	"path"
@@ -30,6 +31,11 @@ func TestCheckOutput_1(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, fi)
 	assert.NotEmpty(t, fi)
+}
+
+func TestCheckOutput_2(t *testing.T) {
+	fh := checkOutput("/nonexistent")
+	assert.Nil(t, fh)
 }
 
 func TestCheckFlags_Empty(t *testing.T) {
