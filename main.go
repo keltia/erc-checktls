@@ -103,7 +103,7 @@ func main() {
 		fatalf("Can't parse %s: %v", file, err.Error())
 	}
 
-	err = loadResources(resourcesPath)
+	tmpls, err = loadResources(resourcesPath)
 	if err != nil {
 		fatalf("Can't load resources %s: %v", resourcesPath, err)
 	}
