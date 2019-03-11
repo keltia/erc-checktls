@@ -135,14 +135,12 @@ func realmain(args []string) int {
 
 	switch fType {
 	case "csv":
-		err = WriteCSV(fOutputFH, final, cntrs, https)
-		if err != nil {
+		if err := WriteCSV(fOutputFH, final, cntrs, https); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v", err)
 			return 1
 		}
 	case "html":
-		err = WriteHTML(fOutputFH, final, cntrs, https)
-		if err != nil {
+		if err := WriteHTML(fOutputFH, final, cntrs, https); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v", err)
 			return 1
 		}
