@@ -126,6 +126,28 @@ func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	return errors.Wrap(err, "can not write csv file")
 }
 
+func (r *TLSReport) WriteCSV(fh *os.File, cntrs, https map[string]int) error {
+	var err error
+
+	debug("WriteCSV")
+	if len(r.Sites) == 0 {
+		return fmt.Errorf("empty r")
+	}
+
+	if err = r.ToCSV(fh); err != nil {
+		return errors.Wrap(err, "Error can not generate CSV")
+	}
+	fmt.Fprintf(fh, "\nTLS Summary\n")
+	if err := writeSummary(os.Stdout, tlsKeys, cntrs); err != nil {
+		fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
+	}
+	fmt.Fprintf(fh, "\nHTTP Summary\n")
+	if err := writeSummary(os.Stdout, httpKeys, https); err != nil {
+		fmt.Fprintf(os.Stderr, "can not generate HTTP summary: %v", err)
+	}
+	return nil
+}
+
 func WriteCSV(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
 	var err error
 

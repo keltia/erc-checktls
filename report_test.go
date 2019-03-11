@@ -69,6 +69,25 @@ func TestGetResultsNothing(t *testing.T) {
 	require.Empty(t, buf)
 }
 
+func TestTLSReport_WriteCSV(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	r := &TLSReport{}
+	err := r.WriteCSV(os.Stderr, cntrs, https)
+	assert.Error(t, err)
+
+}
+
 func TestWriteCSV(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
