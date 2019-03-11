@@ -78,34 +78,37 @@ func checkFlags(a []string) error {
 	return nil
 }
 
-// main is the the starting point
-func main() {
+// Most of the work is here
+func realmain(args []string) int {
 	// Announce ourselves
 	fmt.Printf("%s version %s/j%d - Imirhil/%s SSLLabs/%s Mozilla/%s\n\n",
-		filepath.Base(os.Args[0]), MyVersion, fJobs,
+		filepath.Base, args[0], MyVersion, fJobs,
 		cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion)
 
-	err := checkFlags(flag.Args())
-	if err != nil {
-		fatalf("Error: %v", err.Error())
+	if err := checkFlags(args); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v", err.Error())
+		return 1
 	}
 
-	file := flag.Arg(0)
+	file := args[0]
 
 	raw, err := getResults(file)
 	if err != nil {
-		fatalf("Can't read %s: %v", file, err.Error())
+		fmt.Fprintf(os.Stderr, "Can't read %s: %v", file, err.Error())
+		return 1
 	}
 
 	// raw is the []byte array to be deserialized into Hosts
 	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
-		fatalf("Can't parse %s: %v", file, err.Error())
+		fmt.Fprintf(os.Stderr, "Can't parse %s: %v", file, err.Error())
+		return 1
 	}
 
 	tmpls, err = loadResources(resourcesPath)
 	if err != nil {
-		fatalf("Can't load resources %s: %v", resourcesPath, err)
+		fmt.Fprintf(os.Stderr, "Can't load resources %s: %v", resourcesPath, err)
+		return 1
 	}
 
 	// Open output file
@@ -115,13 +118,13 @@ func main() {
 		str := displayWildcards(allSites)
 		debug("str=%s\n", str)
 		fmt.Fprintf(fOutputFH, "All wildcards certs:\n%s", str)
-		os.Exit(0)
+		return 0
 	}
 
 	// generate the final report & summary
 	final, err := NewTLSReport(allSites)
 	if err != nil {
-		fatalf("error analyzing report: %v", err)
+		fmt.Fprintf(os.Stderr, "error analyzing report: %v", err)
 	}
 
 	// Gather statistics for summaries
@@ -134,17 +137,24 @@ func main() {
 	case "csv":
 		err = WriteCSV(fOutputFH, final, cntrs, https)
 		if err != nil {
-			fatalf("WriteCSV failed: %v", err)
+			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v", err)
+			return 1
 		}
 	case "html":
 		err = WriteHTML(fOutputFH, final, cntrs, https)
 		if err != nil {
-			fatalf("WriteHTML failed: %v", err)
+			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v", err)
+			return 1
 		}
 	default:
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
 		fmt.Printf("%s\n", displayCategories(cntrs))
-
 	}
+	return 0
+}
+
+// main is the the starting point
+func main() {
+	os.Exit(realmain(flag.Args()))
 }
