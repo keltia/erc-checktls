@@ -33,7 +33,7 @@ I also use a number of external modules:
 	github.com/pkg/errors
 	github.com/olekukonko/tablewriter
 
-If you want to run `make test`` you will need these:
+If you want to run `make test` you will need these:
 
 	github.com/stretchr/testify/assert
 	github.com/stretchr/testify/require
@@ -41,6 +41,8 @@ If you want to run `make test`` you will need these:
 With Go 1.11+ and its modules support, it should work out of the box with
 
     go get github.com/keltia/erc-checktls
+
+if you have `GO111MODULE` set to `on`.
 
 ## Usage
 
