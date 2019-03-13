@@ -88,23 +88,6 @@ func TestTLSReport_WriteCSV(t *testing.T) {
 
 }
 
-func TestWriteCSV(t *testing.T) {
-	cntrs := map[string]int{
-		"A": 666,
-		"B": 42,
-		"F": 1,
-	}
-
-	https := map[string]int{
-		"A":  666,
-		"B+": 37,
-		"F":  42,
-	}
-
-	err := WriteCSV(os.Stderr, nil, cntrs, https)
-	assert.Error(t, err)
-}
-
 func TestWriteCSV2(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
@@ -118,7 +101,8 @@ func TestWriteCSV2(t *testing.T) {
 		"F":  42,
 	}
 
-	err := WriteCSV(os.Stderr, &TLSReport{}, cntrs, https)
+	r := &TLSReport{}
+	err := r.WriteCSV(os.Stderr, cntrs, https)
 	assert.Error(t, err)
 }
 
@@ -149,6 +133,6 @@ func TestWriteCSV3(t *testing.T) {
 	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
 	require.NoError(t, err)
 
-	err = WriteCSV(null, final, cntrs, https)
+	err = final.WriteCSV(null, cntrs, https)
 	assert.NoError(t, err)
 }
