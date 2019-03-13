@@ -151,7 +151,7 @@ func realmain(args []string) int {
 
 	switch fType {
 	case "csv":
-		if err := WriteCSV(fOutputFH, final, cntrs, https); err != nil {
+		if err := final.WriteCSV(fOutputFH, cntrs, https); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v", err)
 			return 1
 		}
