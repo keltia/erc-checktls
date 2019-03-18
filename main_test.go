@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"io/ioutil"
 	"os"
 	"path"
@@ -70,8 +69,26 @@ func TestCheckFlags_GoodDebug(t *testing.T) {
 }
 
 func TestRealmain(t *testing.T) {
-	ret := realmain([]string{flag.Arg(0)})
+	ret := realmain([]string{})
 	assert.Equal(t, 1, ret)
+}
+
+func TestRealmain2(t *testing.T) {
+	ret := realmain([]string{"/dev/null"})
+	assert.Equal(t, 1, ret)
+}
+
+func TestRealmain3(t *testing.T) {
+	ret := realmain([]string{"/nonexistent"})
+	assert.Equal(t, 1, ret)
+}
+
+func TestRealmain4(t *testing.T) {
+	file := "testdata/site.json"
+	require.NoError(t, os.Chmod(file, 0600))
+	err := checkInput(file)
+	assert.NoError(t, err)
+	require.NoError(t, os.Chmod(file, 0644))
 }
 
 func TestCheckInput(t *testing.T) {
