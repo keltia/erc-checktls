@@ -100,3 +100,8 @@ func TestCheckInput2(t *testing.T) {
 	err := checkInput("/nonexistent")
 	assert.Error(t, err)
 }
+
+func TestCheckInput3(t *testing.T) {
+	err := checkInput("testdata/site.json")
+	assert.NoError(t, err)
+}
