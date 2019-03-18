@@ -97,7 +97,7 @@ func realmain(args []string) int {
 		cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion)
 
 	if err := checkFlags(args); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v", err.Error())
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err.Error())
 		return 1
 	}
 
@@ -109,20 +109,20 @@ func realmain(args []string) int {
 
 	raw, err := getResults(file)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Can't read %s: %v", file, err.Error())
+		fmt.Fprintf(os.Stderr, "Can't read %s: %v\n", file, err)
 		return 1
 	}
 
 	// raw is the []byte array to be deserialized into Hosts
 	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Can't parse %s: %v", file, err.Error())
+		fmt.Fprintf(os.Stderr, "Can't parse %s: %v\n", file, err)
 		return 1
 	}
 
 	tmpls, err = loadResources(resourcesPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Can't load resources %s: %v", resourcesPath, err)
+		fmt.Fprintf(os.Stderr, "Can't load resources %s: %v\n", resourcesPath, err)
 		return 1
 	}
 
@@ -139,7 +139,7 @@ func realmain(args []string) int {
 	// generate the final report & summary
 	final, err := NewTLSReport(allSites)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error analyzing report: %v", err)
+		fmt.Fprintf(os.Stderr, "error analyzing report: %v\n", err)
 		return 1
 	}
 
@@ -152,12 +152,12 @@ func realmain(args []string) int {
 	switch fType {
 	case "csv":
 		if err := final.WriteCSV(fOutputFH, cntrs, https); err != nil {
-			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v", err)
+			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v\n", err)
 			return 1
 		}
 	case "html":
 		if err := WriteHTML(fOutputFH, final, cntrs, https); err != nil {
-			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v", err)
+			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
 			return 1
 		}
 	default:
