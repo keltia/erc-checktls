@@ -93,7 +93,7 @@ func checkInput(file string) error {
 func realmain(args []string) int {
 	// Announce ourselves
 	fmt.Printf("%s version %s/j%d - Imirhil/%s SSLLabs/%s Mozilla/%s\n\n",
-		filepath.Base(args[0]), MyVersion, fJobs,
+		filepath.Base(MyName), MyVersion, fJobs,
 		cryptcheck.MyVersion, ssllabs.MyVersion, observatory.MyVersion)
 
 	if err := checkFlags(args); err != nil {
