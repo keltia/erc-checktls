@@ -58,7 +58,6 @@ func checkOutput(fOutput string) (fOutputFH *os.File) {
 // init is for pg connection and stuff
 func init() {
 	flag.Usage = Usage
-	flag.Parse()
 }
 
 func checkFlags(a []string) error {
@@ -170,5 +169,7 @@ func realmain(args []string) int {
 
 // main is the the starting point
 func main() {
-	os.Exit(realmain(flag.Args()))
+	flag.Parse()
+
+	_ = realmain(flag.Args())
 }
