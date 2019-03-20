@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-
 func TestTLSReport_ToHTML(t *testing.T) {
 	var buf strings.Builder
 
@@ -38,23 +37,6 @@ func TestTLSReport_ToHTML(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestWriteHTML(t *testing.T) {
-	cntrs := map[string]int{
-		"A": 666,
-		"B": 42,
-		"F": 1,
-	}
-
-	https := map[string]int{
-		"A":  666,
-		"B+": 37,
-		"F":  42,
-	}
-
-	err := WriteHTML(os.Stderr, nil, cntrs, https)
-	assert.Error(t, err)
-}
-
 func TestWriteHTML2(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
@@ -68,7 +50,8 @@ func TestWriteHTML2(t *testing.T) {
 		"F":  42,
 	}
 
-	err := WriteHTML(os.Stderr, &TLSReport{}, cntrs, https)
+	r := &TLSReport{}
+	err := r.WriteHTML(os.Stderr, cntrs, https)
 	assert.Error(t, err)
 }
 
@@ -103,6 +86,6 @@ func TestWriteHTML3(t *testing.T) {
 	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
 	require.NoError(t, err)
 
-	err = WriteHTML(null, final, cntrs, https)
+	err = final.WriteHTML(null, cntrs, https)
 	assert.NoError(t, err)
 }

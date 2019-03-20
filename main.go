@@ -155,7 +155,7 @@ func realmain(args []string) int {
 			return 1
 		}
 	case "html":
-		if err := WriteHTML(fOutputFH, final, cntrs, https); err != nil {
+		if err := final.WriteHTML(fOutputFH, cntrs, https); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
 			return 1
 		}

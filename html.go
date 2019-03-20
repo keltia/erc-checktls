@@ -74,19 +74,16 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 	return errors.Wrap(err, "can not write HTML file")
 }
 
-func WriteHTML(w io.Writer, final *TLSReport, cntrs, https map[string]int) error {
+func (r *TLSReport) WriteHTML(w io.Writer, cntrs, https map[string]int) error {
 	var err error
 
 	debug("WriteHTML")
-	if final == nil {
-		return fmt.Errorf("nil final")
-	}
-	if len(final.Sites) == 0 {
+	if len(r.Sites) == 0 {
 		return fmt.Errorf("empty final")
 	}
 
 	debug("tmpls=%v\n", tmpls)
-	if err = final.ToHTML(w, tmpls["templ.html"]); err != nil {
+	if err = r.ToHTML(w, tmpls["templ.html"]); err != nil {
 		return errors.Wrap(err, "Can not write HTML")
 	}
 	// Generate colour map
@@ -99,4 +96,3 @@ func WriteHTML(w io.Writer, final *TLSReport, cntrs, https map[string]int) error
 	}
 	return err
 }
-
