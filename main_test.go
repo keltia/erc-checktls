@@ -68,6 +68,21 @@ func TestCheckFlags_GoodDebug(t *testing.T) {
 	fDebug = false
 }
 
+func TestCheckInput(t *testing.T) {
+	err := checkInput("")
+	assert.Error(t, err)
+}
+
+func TestCheckInput2(t *testing.T) {
+	err := checkInput("/nonexistent")
+	assert.Error(t, err)
+}
+
+func TestCheckInput3(t *testing.T) {
+	err := checkInput("testdata/site.json")
+	assert.NoError(t, err)
+}
+
 func TestRealmain(t *testing.T) {
 	ret := realmain([]string{})
 	assert.Equal(t, 1, ret)
@@ -89,19 +104,4 @@ func TestRealmain4(t *testing.T) {
 	err := checkInput(file)
 	assert.NoError(t, err)
 	require.NoError(t, os.Chmod(file, 0644))
-}
-
-func TestCheckInput(t *testing.T) {
-	err := checkInput("")
-	assert.Error(t, err)
-}
-
-func TestCheckInput2(t *testing.T) {
-	err := checkInput("/nonexistent")
-	assert.Error(t, err)
-}
-
-func TestCheckInput3(t *testing.T) {
-	err := checkInput("testdata/site.json")
-	assert.NoError(t, err)
 }
