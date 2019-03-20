@@ -175,7 +175,7 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 	return errors.Wrap(err, "can not write HTML file")
 }
 
-func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error {
+func WriteHTML(w io.Writer, final *TLSReport, cntrs, https map[string]int) error {
 	var err error
 
 	debug("WriteHTML")
@@ -187,7 +187,7 @@ func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error
 	}
 
 	debug("tmpls=%v\n", tmpls)
-	if err = final.ToHTML(fh, tmpls["templ.html"]); err != nil {
+	if err = final.ToHTML(w, tmpls["templ.html"]); err != nil {
 		return errors.Wrap(err, "Can not write HTML")
 	}
 	// Generate colour map
@@ -195,8 +195,8 @@ func WriteHTML(fh *os.File, final *TLSReport, cntrs, https map[string]int) error
 	if fSummary != "" {
 		fn := fSummary + "-" + makeDate() + ".html"
 		verbose("HTML summary: %s\n", fn)
-		fh = checkOutput(fn)
-		err = writeHTMLSummary(fh, cntrs, https)
+		w = checkOutput(fn)
+		err = writeHTMLSummary(w, cntrs, https)
 	}
 	return err
 }
