@@ -105,3 +105,48 @@ func TestRealmain3(t *testing.T) {
 	ret := realmain([]string{"/nonexistent"})
 	assert.Equal(t, 1, ret)
 }
+
+func TestRealmain4(t *testing.T) {
+	ret := realmain([]string{"testdata/site.json"})
+	assert.Equal(t, 0, ret)
+}
+
+func TestRealmain5(t *testing.T) {
+	fType = "html"
+	ret := realmain([]string{"testdata/site.json"})
+	assert.Equal(t, 0, ret)
+	fType = ""
+}
+
+func TestRealmain6(t *testing.T) {
+	fType = "html"
+	fOutput = "/nonexistent"
+	ret := realmain([]string{"testdata/site.json"})
+	assert.Equal(t, 1, ret)
+	fType = ""
+	fOutput = ""
+}
+
+func TestRealmain7(t *testing.T) {
+	file := "testdata/site.json"
+	require.NoError(t, os.Chmod(file, 0600))
+	ret := realmain([]string{file})
+	assert.Equal(t, 0, ret)
+	require.NoError(t, os.Chmod(file, 0644))
+}
+
+func TestRealmain8(t *testing.T) {
+	fType = "csv"
+	ret := realmain([]string{"testdata/site.json"})
+	assert.Equal(t, 0, ret)
+	fType = ""
+}
+
+func TestRealmain9(t *testing.T) {
+	fType = "csv"
+	fOutput = "/nonexistent"
+	ret := realmain([]string{"testdata/site.json"})
+	assert.Equal(t, 1, ret)
+	fType = ""
+	fOutput = ""
+}
