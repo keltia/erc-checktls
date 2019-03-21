@@ -108,6 +108,20 @@ func TestSweet32(t *testing.T) {
 	assert.True(t, checkSweet32(bad[0].Endpoints[0].Details))
 }
 
+func TestCheckKey(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	good, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	assert.True(t, checkKey(good[0].Certs[0]))
+}
+
 const (
 	mozURL = "https://http-observatory.security.mozilla.org/api/v1"
 )

@@ -14,6 +14,7 @@ import (
 const (
 	DefaultKeySize = 2048
 	DefaultAlg     = "RSA"
+	DefaultECAlg   = "EC"
 	DefaultSig     = "SHA256withRSA"
 )
 
@@ -150,7 +151,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 		// Handle case where we have a DNS entry but no connection
 		if len(site.Certs) != 0 {
 			cert := site.Certs[0]
-			current.DefKey = cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg
+			current.DefKey = checkKey(cert)
 
 			current.DefCA = checkIssuer(cert, DefaultIssuer)
 			current.DefSig = cert.SigAlg == DefaultSig
@@ -162,6 +163,10 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 		}
 	}
 	return current
+}
+
+func checkKey(cert ssllabs.Cert) bool {
+	return (cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg || cert.KeyAlg == DefaultECAlg)
 }
 
 func checkIssuer(cert ssllabs.Cert, ours *regexp.Regexp) bool {
