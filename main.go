@@ -34,25 +34,25 @@ const (
 )
 
 // checkOutput checks whether we want to specify an output file
-func checkOutput(fOutput string) (fOutputFH *os.File) {
+func checkOutput(fOutput string) *os.File {
 	var err error
 
-	fOutputFH = os.Stdout
+	OutputFH := os.Stdout
 
 	// Open output file
 	if fOutput != "" {
 		verbose("Output file is %s\n", fOutput)
 
 		if fOutput != "-" && fOutput != "" {
-			fOutputFH, err = os.Create(fOutput)
+			OutputFH, err = os.Create(fOutput)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error creating %s\n", fOutput)
 				return nil
 			}
 		}
 	}
-	debug("output=%v\n", fOutputFH)
-	return
+	debug("output=%v\n", OutputFH)
+	return OutputFH
 }
 
 // init is for pg connection and stuff
@@ -126,12 +126,16 @@ func realmain(args []string) int {
 	}
 
 	// Open output file
-	fOutputFH := checkOutput(fOutput)
+	OutputFH := checkOutput(fOutput)
+	if OutputFH == nil {
+		fmt.Fprintf(os.Stderr, "error output: %v\n", err)
+		return 1
+	}
 
 	if fCmdWild {
 		str := displayWildcards(allSites)
 		debug("str=%s\n", str)
-		fmt.Fprintf(fOutputFH, "All wildcards certs:\n%s", str)
+		fmt.Fprintf(OutputFH, "All wildcards certs:\n%s", str)
 		return 0
 	}
 
@@ -150,12 +154,12 @@ func realmain(args []string) int {
 
 	switch fType {
 	case "csv":
-		if err := final.WriteCSV(fOutputFH, cntrs, https); err != nil {
+		if err := final.WriteCSV(OutputFH, cntrs, https); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v\n", err)
 			return 1
 		}
 	case "html":
-		if err := final.WriteHTML(fOutputFH, cntrs, https); err != nil {
+		if err := final.WriteHTML(OutputFH, cntrs, https); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
 			return 1
 		}
