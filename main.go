@@ -102,7 +102,7 @@ func realmain(args []string) int {
 
 	file := args[0]
 	if err := checkInput(file); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v", err)
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		return 1
 	}
 
