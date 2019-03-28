@@ -23,7 +23,7 @@ func loadTemplates(box *packr.Box) (Templ, error) {
 	err := box.Walk(func(s string, file packr.File) error {
 		ext := filepath.Ext(s)
 		if ext == ".html" {
-			t := box.String(s)
+			t, _ := box.FindString(s)
 			list[filepath.Base(s)] = t
 		}
 		return nil
@@ -37,23 +37,26 @@ func loadTemplates(box *packr.Box) (Templ, error) {
 }
 
 // getContract retrieve the site's contract from the DB
-func readContractFile(box *packr.Box) (contracts map[string]string, err error) {
+func readContractFile(box *packr.Box) (map[string]string, error) {
 	debug("reading contracts\n")
-	cf := box.Bytes(contractFile)
-	fh := bytes.NewBuffer(cf)
+	cf, err := box.Find(contractFile)
+	if err != nil {
+		return nil, errors.Wrap(err, "readContract/find")
+	}
 
+	fh := bytes.NewBuffer(cf)
 	all := csv.NewReader(fh)
+
 	allSites, err := all.ReadAll()
 	if err != nil {
 		return nil, errors.Wrap(err, "ReadAll")
 	}
 
-	contracts = make(map[string]string)
+	contracts := make(map[string]string)
 	for _, site := range allSites {
 		contracts[site[0]] = site[1]
 	}
-	err = nil
-	return
+	return contracts, nil
 }
 
 // Load all resources
