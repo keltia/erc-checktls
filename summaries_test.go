@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -46,7 +46,7 @@ func TestWriteHTMLSummaryEmpty(t *testing.T) {
 		err error
 	)
 
-	box := packr.NewBox("./files")
+	box := packr.New("files", "./files")
 	tmpls, err = loadTemplates(box)
 	require.NoError(t, err)
 
@@ -80,7 +80,7 @@ func TestWriteHTMLSummary(t *testing.T) {
 		err error
 	)
 
-	box := packr.NewBox("./files")
+	box := packr.New("files", "./files")
 	tmpls, err = loadTemplates(box)
 	require.NoError(t, err)
 
@@ -106,7 +106,7 @@ func TestWriteHTMLSummary_1(t *testing.T) {
 		err error
 	)
 
-	box := packr.NewBox("./files")
+	box := packr.New("files", "./files")
 	tmpls, err = loadTemplates(box)
 	require.NoError(t, err)
 

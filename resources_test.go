@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -55,7 +55,7 @@ func TestLoadTemplates_Empty(t *testing.T) {
 }
 
 func TestLoadTemplates_Good(t *testing.T) {
-	box := packr.NewBox("./files")
+	box := packr.New("test", "./files")
 
 	tmpls, err := loadTemplates(box)
 	require.NoError(t, err)
@@ -74,7 +74,7 @@ func TestLoadTemplates_Good(t *testing.T) {
 
 func TestLoadTemplates_GoodDebug(t *testing.T) {
 	fDebug = true
-	box := packr.NewBox("./files")
+	box := packr.New("test", "./files")
 
 	tmpls, err := loadTemplates(box)
 	require.NoError(t, err)

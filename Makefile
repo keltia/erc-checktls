@@ -16,7 +16,7 @@ OPTS=	-ldflags="-s -w" -v
 all: erc-checktls
 
 main-packr.go: main.go files/templ.html files/summaries.html files/sites-list.csv
-	packr
+	packr2
 
 erc-checktls: ${SRCS}
 	${GO} build ${OPTS}
@@ -32,7 +32,7 @@ test: all
 
 clean:
 	${GO} clean -v
-	packr clean
+	packr2 clean
 
 push:
 	git push --all

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/keltia/ssllabs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -75,7 +75,7 @@ func TestWriteHTML3(t *testing.T) {
 	allSites, err := ssllabs.ParseResults(raw)
 	require.NoError(t, err)
 
-	box := packr.NewBox("./files")
+	box := packr.New("test", "./files")
 	tmpls, err = loadTemplates(box)
 	require.NoError(t, err)
 

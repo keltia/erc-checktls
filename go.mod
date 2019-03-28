@@ -2,7 +2,7 @@ module github.com/keltia/erc-checktls
 
 require (
 	github.com/atotto/encoding v0.0.0-20140426205410-d964b8297408
-	github.com/gobuffalo/packr v1.13.3
+	github.com/gobuffalo/packr/v2 v2.0.8
 	github.com/h2non/gock v1.0.12 // indirect
 	github.com/ivpusic/grpool v0.0.0-20170804092134-28957a27c944
 	github.com/keltia/cryptcheck v1.5.2
@@ -13,5 +13,4 @@ require (
 	github.com/olekukonko/tablewriter v0.0.0-20180506121414-d4647c9c7a84
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.3.0
-	golang.org/x/net v0.0.0-20190119204137-ed066c81e75e // indirect
 )

@@ -28,7 +28,7 @@ You need to install three of my modules if you are using Go 1.10.x or earlier.
 I also use a number of external modules:
 
 	github.com/atotto/encoding/csv
-	github.com/gobuffalo/packr
+	github.com/gobuffalo/packr2
 	github.com/ivpusic/grpool
 	github.com/pkg/errors
 	github.com/olekukonko/tablewriter
