@@ -12,7 +12,7 @@ branches:
 env:
   - GO111MODULE=on
 install:
-  - go get github.com/gobuffalo/packr/...
+  - go get github.com/gobuffalo/packr/v2/packr2
 script:
   - make
   - make test
