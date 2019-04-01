@@ -20,6 +20,15 @@ func TestReadContractFile(t *testing.T) {
 	assert.NotEmpty(t, cntrs)
 }
 
+func TestReadContractFile_None(t *testing.T) {
+	// We embed the file now
+	box := packr.New("foo", "/nonexistent")
+
+	cntrs, err := readContractFile(box)
+	assert.Error(t, err)
+	assert.Empty(t, cntrs)
+}
+
 func TestLoadTemplates(t *testing.T) {
 	// We embed the file now
 	box := packr.New("test", "./files")
