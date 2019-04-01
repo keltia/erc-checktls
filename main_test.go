@@ -150,3 +150,10 @@ func TestRealmain9(t *testing.T) {
 	fType = ""
 	fOutput = ""
 }
+
+func TestWild(t *testing.T) {
+	fCmdWild = true
+	ret := realmain([]string{"testdata/site.json"})
+	assert.Equal(t, 0, ret)
+	fCmdWild = false
+}
