@@ -13,7 +13,7 @@ import (
 
 func TestReadContractFile(t *testing.T) {
 	// We embed the file now
-	box := packr.NewBox("./files")
+	box := packr.New("test", "./files")
 
 	cntrs, err := readContractFile(box)
 	assert.NoError(t, err)
@@ -22,7 +22,7 @@ func TestReadContractFile(t *testing.T) {
 
 func TestLoadTemplates(t *testing.T) {
 	// We embed the file now
-	box := packr.NewBox("./files")
+	box := packr.New("test", "./files")
 
 	str, err := loadTemplates(box)
 	assert.NoError(t, err)
@@ -31,11 +31,11 @@ func TestLoadTemplates(t *testing.T) {
 }
 
 func TestLoadTemplates_None(t *testing.T) {
-	box := packr.NewBox("/nonexistent")
+	box := packr.New("testnone", "/nonexistent")
 	require.NotNil(t, box)
 
 	tmpls, err := loadTemplates(box)
-	require.Error(t, err)
+	require.NoError(t, err)
 	assert.Empty(t, tmpls)
 }
 
@@ -45,7 +45,7 @@ func TestLoadTemplates_Empty(t *testing.T) {
 
 	defer os.RemoveAll(tmpdir)
 
-	box := packr.NewBox(tmpdir)
+	box := packr.New("testempty", tmpdir)
 	require.NotNil(t, box)
 
 	tmpls, err := loadTemplates(box)
@@ -55,7 +55,7 @@ func TestLoadTemplates_Empty(t *testing.T) {
 }
 
 func TestLoadTemplates_Good(t *testing.T) {
-	box := packr.New("test", "./files")
+	box := packr.New("testgood", "./files")
 
 	tmpls, err := loadTemplates(box)
 	require.NoError(t, err)
@@ -85,17 +85,19 @@ func TestLoadTemplates_GoodDebug(t *testing.T) {
 }
 
 func TestLoadResources_GoodDebug(t *testing.T) {
-	tmpls, err := loadResources(resourcesPath)
+	fDebug = true
+	tmpls, err := loadResources()
 	assert.NoError(t, err)
 
 	assert.NotEmpty(t, tmpls)
 	assert.NotEmpty(t, contracts)
+	fDebug = false
 }
 
-func TestLoadResources_None(t *testing.T) {
-	tmpls, err := loadResources("/nonexistent")
-	assert.Error(t, err)
+func TestLoadResources_Good(t *testing.T) {
+	tmpls, err := loadResources()
+	assert.NoError(t, err)
 
-	assert.Empty(t, tmpls)
-	assert.Empty(t, contracts)
+	assert.NotEmpty(t, tmpls)
+	assert.NotEmpty(t, contracts)
 }
