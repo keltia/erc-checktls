@@ -119,7 +119,7 @@ func realmain(args []string) int {
 		return 1
 	}
 
-	tmpls, err = loadResources()
+	contracts, tmpls, err = loadResources()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Can't load resources %s: %v\n", resourcesPath, err)
 		return 1

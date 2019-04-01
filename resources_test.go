@@ -86,18 +86,18 @@ func TestLoadTemplates_GoodDebug(t *testing.T) {
 
 func TestLoadResources_GoodDebug(t *testing.T) {
 	fDebug = true
-	tmpls, err := loadResources()
+	c, tt, err := loadResources()
 	assert.NoError(t, err)
 
-	assert.NotEmpty(t, tmpls)
-	assert.NotEmpty(t, contracts)
+	assert.NotEmpty(t, tt)
+	assert.NotEmpty(t, c)
 	fDebug = false
 }
 
 func TestLoadResources_Good(t *testing.T) {
-	tmpls, err := loadResources()
+	c, tt, err := loadResources()
 	assert.NoError(t, err)
 
-	assert.NotEmpty(t, tmpls)
-	assert.NotEmpty(t, contracts)
+	assert.NotEmpty(t, tt)
+	assert.NotEmpty(t, c)
 }

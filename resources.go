@@ -60,7 +60,7 @@ func readContractFile(box *packr.Box) (map[string]string, error) {
 }
 
 // Load all resources
-func loadResources() (map[string]string, error) {
+func loadResources() (map[string]string, map[string]string, error) {
 	var err error
 
 	// We embed the file now
@@ -69,12 +69,12 @@ func loadResources() (map[string]string, error) {
 	debug("list=%v\n", box.List())
 	debug("box=%#v\n", box)
 
-	// We need that for the reports
-	contracts, err = readContractFile(box)
+		// We need that for the reports
+	contracts, err := readContractFile(box)
 	if err != nil {
-		return nil, errors.Wrapf(err, "readContractFile/%s", contractFile)
+		return nil, nil, errors.Wrapf(err, "readContractFile/%s", contractFile)
 	}
 
-	tmpls, err = loadTemplates(box)
-	return tmpls, errors.Wrapf(err, "loadTemplates/%s", resourcesPath)
+	tmpls, err := loadTemplates(box)
+	return contracts, tmpls, errors.Wrap(err, "loadTemplates")
 }
