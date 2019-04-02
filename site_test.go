@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
+	"github.com/h2non/gock"
 	"github.com/keltia/ssllabs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -141,7 +142,31 @@ func TestFindServerType(t *testing.T) {
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
+	require.NotEmpty(t, all)
+	require.NotEmpty(t, all[0].CertHostnames)
 
 	tt := findServerType(all[0])
 	require.Equal(t, TypeHTTP, tt)
+}
+
+func TestFindServerType2(t *testing.T) {
+	defer gock.Off()
+
+	ji, err := ioutil.ReadFile("testdata/ectl.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	fIgnoreMozilla = false
+
+	initAPIs()
+
+	tt := findServerType(all[0])
+	require.Equal(t, TypeHTTP, tt)
+	fIgnoreImirhil = false
 }
