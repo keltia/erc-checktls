@@ -149,3 +149,18 @@ func TestCategoryCountsReportNull(t *testing.T) {
 	assert.NotEmpty(t, cntrs)
 	assert.EqualValues(t, good, cntrs)
 }
+
+func TestSelectColours(t *testing.T) {
+	var td = []struct{ in, out string }{
+		{"A+", "green"},
+		{"A", "green"},
+		{"A-", "orange"},
+		{"B", "orange"},
+		{"C", "red"},
+		{"D", "red"},
+	}
+
+	for _, e := range td {
+		assert.EqualValues(t, e.out, selectColours(e.in))
+	}
+}
