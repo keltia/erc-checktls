@@ -65,7 +65,7 @@ func loadResources() (map[string]string, map[string]string, error) {
 	debug("list=%v\n", box.List())
 	debug("box=%#v\n", box)
 
-		// We need that for the reports
+	// We need that for the reports
 	contracts, err := readContractFile(box)
 	if err != nil {
 		return nil, nil, errors.Wrapf(err, "readContractFile/%s", contractFile)
