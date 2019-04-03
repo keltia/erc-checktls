@@ -151,6 +151,15 @@ func TestRealmain9(t *testing.T) {
 	fOutput = ""
 }
 
+func TestRealmain10(t *testing.T) {
+	fType = "csv"
+	fOutput = "/dev/null"
+	ret := realmain([]string{"testdata/emptysite.json"})
+	assert.Equal(t, 0, ret)
+	fType = ""
+	fOutput = ""
+}
+
 func TestWild(t *testing.T) {
 	fCmdWild = true
 	ret := realmain([]string{"testdata/site.json"})
