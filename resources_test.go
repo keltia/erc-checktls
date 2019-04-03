@@ -93,6 +93,15 @@ func TestLoadTemplates_GoodDebug(t *testing.T) {
 	fDebug = false
 }
 
+func TestLoadTemplates_Bad(t *testing.T) {
+	box := &packr.Box{}
+
+	tmpls, err := loadTemplates(box)
+	require.Error(t, err)
+
+	assert.Empty(t, tmpls)
+}
+
 func TestLoadResources_GoodDebug(t *testing.T) {
 	fDebug = true
 	c, tt, err := loadResources()
