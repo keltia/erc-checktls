@@ -1,0 +1,20 @@
+[
+{
+  "host": "airm.aero",
+  "port": 443,
+  "protocol": "http",
+  "isPublic": false,
+  "status": "READY",
+  "startTime": 1536571491677,
+  "testTime": 1536571498794,
+  "engineVersion": "1.32.5",
+  "criteriaVersion": "2009p",
+  "cacheExpiryTime": 1536572098794,
+  "certHostnames": [
+    "*.devcloud.acquia-sites.com",
+    "devcloud.acquia-sites.com"
+  ],
+  "endpoints": null,
+  "certs": []
+}
+]
