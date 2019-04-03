@@ -28,12 +28,8 @@ func loadTemplates(box *packr.Box) (Templ, error) {
 		}
 		return nil
 	})
-	if err != nil {
-		debug("got an error")
-		return Templ{}, errors.Wrap(err, "loadTemplates")
-	}
 
-	return list, nil
+	return list, err
 }
 
 // getContract retrieve the site's contract from the DB
