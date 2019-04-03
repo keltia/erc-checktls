@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/h2non/gock"
 	"github.com/keltia/ssllabs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -149,8 +148,27 @@ func TestFindServerType(t *testing.T) {
 	require.Equal(t, TypeHTTP, tt)
 }
 
+type Fmoz struct{}
+
+func (f *Fmoz) GetGrade(site string) (string, error) {
+	return "A+", nil
+}
+
+func (f *Fmoz) IsHTTPSonly(site string) (bool, error) {
+	return true, nil
+}
+
+type Firml struct{}
+
+func (c *Firml) GetScore(site string) (string, error) {
+	return "A+", nil
+}
+
 func TestFindServerType2(t *testing.T) {
-	defer gock.Off()
+	var (
+		fmoz  *Fmoz
+		firml *Firml
+	)
 
 	ji, err := ioutil.ReadFile("testdata/ectl.json")
 	require.NoError(t, err)
@@ -164,9 +182,14 @@ func TestFindServerType2(t *testing.T) {
 
 	fIgnoreMozilla = false
 
-	initAPIs()
+	omoz := moz
+	oirml := irml
+	moz = fmoz
+	irml = firml
 
 	tt := findServerType(all[0])
-	require.Equal(t, TypeHTTP, tt)
+	require.Equal(t, TypeHTTPSok, tt)
 	fIgnoreImirhil = false
+	moz = omoz
+	irml = oirml
 }
