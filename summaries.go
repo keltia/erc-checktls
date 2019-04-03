@@ -108,9 +108,6 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 	}
 
 	t := template.Must(template.New(summariesT).Parse(tm))
-	if t == nil {
-		return fmt.Errorf("bad template")
-	}
 
 	if len(cntrs) == 0 || len(https) == 0 {
 		return
