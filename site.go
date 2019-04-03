@@ -18,12 +18,22 @@ const (
 	DefaultSig     = "SHA256withRSA"
 )
 
+// Use an interface to enable better tests
+type Mapi interface {
+	GetGrade(string) (string, error)
+	IsHTTPSonly(string) (bool, error)
+}
+
+type Capi interface {
+	GetScore(string) (string, error)
+}
+
 var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
 
-	moz  *observatory.Client
-	irml *cryptcheck.Client
+	moz  Mapi
+	irml Capi
 
 	DefaultIssuer = regexp.MustCompile(`(?i:GlobalSign)`)
 )
