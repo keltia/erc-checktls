@@ -123,7 +123,8 @@ func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 }
 
 func (r *TLSReport) WriteCSV(w io.Writer, cntrs, https map[string]int) error {
-	debug("WriteCSV")
+	debug("WriteCSV\n")
+	debug("r=%#v\n", r)
 	if len(r.Sites) == 0 {
 		return fmt.Errorf("empty r")
 	}
