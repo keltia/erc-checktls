@@ -136,3 +136,26 @@ func TestWriteCSV3(t *testing.T) {
 	err = final.WriteCSV(null, cntrs, https)
 	assert.NoError(t, err)
 }
+
+func TestTLSReport_ColourMap(t *testing.T) {
+	r := &TLSReport{Sites: []TLSSite{}}
+	tt := r.ColourMap("A")
+	assert.NotEmpty(t, tt)
+	assert.Empty(t, tt.Corrects)
+}
+
+func TestTLSReport_ColourMap2(t *testing.T) {
+	r := &TLSReport{
+		Sites: []TLSSite{
+			{Type: TypeHTTPSok},
+			{Type: TypeHTTP},
+			{Type: TypeHTTPSnok},
+		},
+	}
+	tt := r.ColourMap("A")
+	assert.NotEmpty(t, tt)
+	assert.NotEmpty(t, tt.Corrects)
+	assert.EqualValues(t, map[string]int{"green": 1}, tt.Corrects)
+	assert.Equal(t, 1, tt.Insecure)
+	assert.Equal(t, 1, tt.ToFix)
+}
