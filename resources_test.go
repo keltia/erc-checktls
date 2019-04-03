@@ -97,8 +97,7 @@ func TestLoadTemplates_Bad(t *testing.T) {
 	box := &packr.Box{}
 
 	tmpls, err := loadTemplates(box)
-	require.Error(t, err)
-
+	assert.NoError(t, err)
 	assert.Empty(t, tmpls)
 }
 
