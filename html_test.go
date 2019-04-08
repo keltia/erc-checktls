@@ -51,7 +51,10 @@ func TestWriteHTML2(t *testing.T) {
 	}
 
 	r := &TLSReport{}
-	err := r.WriteHTML(os.Stderr, cntrs, https)
+	r.cntrs = cntrs
+	r.https = https
+
+	err := r.WriteHTML(os.Stderr)
 	assert.Error(t, err)
 }
 
@@ -83,9 +86,14 @@ func TestWriteHTML3(t *testing.T) {
 	fIgnoreMozilla = true
 
 	final, err := NewTLSReport(allSites)
+	require.NoError(t, err)
+
+	final.cntrs = cntrs
+	final.https = https
+
 	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
 	require.NoError(t, err)
 
-	err = final.WriteHTML(null, cntrs, https)
+	err = final.WriteHTML(null)
 	assert.NoError(t, err)
 }

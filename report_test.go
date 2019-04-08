@@ -83,7 +83,10 @@ func TestTLSReport_WriteCSV(t *testing.T) {
 	}
 
 	r := &TLSReport{}
-	err := r.WriteCSV(os.Stderr, cntrs, https)
+	r.cntrs = cntrs
+	r.https = https
+
+	err := r.WriteCSV(os.Stderr)
 	assert.Error(t, err)
 
 }
@@ -102,7 +105,10 @@ func TestWriteCSV2(t *testing.T) {
 	}
 
 	r := &TLSReport{}
-	err := r.WriteCSV(os.Stderr, cntrs, https)
+	r.cntrs = cntrs
+	r.https = https
+
+	err := r.WriteCSV(os.Stderr)
 	assert.Error(t, err)
 }
 
@@ -130,10 +136,14 @@ func TestWriteCSV3(t *testing.T) {
 	fIgnoreMozilla = true
 
 	final, err := NewTLSReport(allSites)
-	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
 	require.NoError(t, err)
 
-	err = final.WriteCSV(null, cntrs, https)
+	final.cntrs = cntrs
+	final.https = https
+
+	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
+
+	err = final.WriteCSV(null)
 	assert.NoError(t, err)
 }
 

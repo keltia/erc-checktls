@@ -11,6 +11,10 @@ type TLSReport struct {
 	SSLLabs string
 	Date    time.Time
 	Sites   []TLSSite
+
+	// Statistics
+	cntrs map[string]int
+	https map[string]int
 }
 
 const (

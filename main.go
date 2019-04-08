@@ -147,26 +147,26 @@ func realmain(args []string) int {
 	}
 
 	// Gather statistics for summaries
-	cntrs := categoryCounts(allSites)
-	https := httpCounts(final)
+	final.cntrs = categoryCounts(allSites)
+	final.https = httpCounts(final)
 
 	verbose("SSLabs engine: %s\n", final.SSLLabs)
 
 	switch fType {
 	case "csv":
-		if err := final.WriteCSV(OutputFH, cntrs, https); err != nil {
+		if err := final.WriteCSV(OutputFH); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v\n", err)
 			return 1
 		}
 	case "html":
-		if err := final.WriteHTML(OutputFH, cntrs, https); err != nil {
+		if err := final.WriteHTML(OutputFH); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
 			return 1
 		}
 	default:
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
-		fmt.Printf("%s\n", displayCategories(cntrs))
+		fmt.Printf("%s\n", displayCategories(final.cntrs))
 	}
 	return 0
 }

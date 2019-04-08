@@ -74,7 +74,7 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 	return errors.Wrap(err, "can not write HTML file")
 }
 
-func (r *TLSReport) WriteHTML(w io.Writer, cntrs, https map[string]int) error {
+func (r *TLSReport) WriteHTML(w io.Writer) error {
 	var err error
 
 	debug("WriteHTML")
@@ -92,7 +92,7 @@ func (r *TLSReport) WriteHTML(w io.Writer, cntrs, https map[string]int) error {
 		fn := fSummary + "-" + makeDate() + ".html"
 		verbose("HTML summary: %s\n", fn)
 		w = checkOutput(fn)
-		err = writeHTMLSummary(w, cntrs, https)
+		err = writeHTMLSummary(w, r.cntrs, r.https)
 	}
 	return err
 }
