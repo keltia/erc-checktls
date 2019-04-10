@@ -41,7 +41,7 @@ type TLSSite struct {
 
 	DefKey bool
 	DefSig bool
-	DefCA  bool
+	DefCA  string
 
 	IsExpired  bool
 	PathIssues bool
