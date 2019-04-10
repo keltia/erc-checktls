@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBooleanT(t *testing.T) {
@@ -88,5 +89,19 @@ func TestHSTS(t *testing.T) {
 	}
 	for _, tst := range td {
 		assert.Equal(t, tst.HTML, hsts(tst.In))
+	}
+}
+
+func TestCertCA(t *testing.T) {
+	td := []struct {
+		In   string
+		HTML string
+	}{
+		{"TRUE", "<td class=xl65 align=center>TRUE</td>"},
+		{"FALSE", "<td class=xl64 align=center>FALSE</td>"},
+		{"SELF", "<td class=xl64 align=center>SELF</td>"},
+	}
+	for _, tst := range td {
+		require.Equal(t, tst.HTML, certCA(tst.In))
 	}
 }
