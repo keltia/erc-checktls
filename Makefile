@@ -21,7 +21,7 @@ main-packr.go: main.go files/templ.html files/summaries.html files/sites-list.cs
 erc-checktls: ${SRCS}
 	${GO} build ${OPTS}
 
-install:
+install: all
 	${GO} install ${OPTS}
 
 lint:
