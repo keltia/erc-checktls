@@ -20,11 +20,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	// this is to protect the Sites array
-	lock sync.Mutex
-)
-
 // Private functions
 
 // getResults read the JSON array generated and gone through jq
@@ -46,6 +41,9 @@ func getSSLablsVersion(site ssllabs.Host) string {
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
+	// this is to protect the Sites array
+	var lock sync.Mutex
+
 	if len(reports) == 0 {
 		return nil, fmt.Errorf("empty list")
 	}
@@ -70,10 +68,10 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 
 		current := site
 		pool.JobQueue <- func() {
-			completed := NewTLSSite(current)
-
 			// Block on mutex
 			lock.Lock()
+			completed := NewTLSSite(current)
+
 			e.Sites = append(e.Sites, completed)
 			lock.Unlock()
 
