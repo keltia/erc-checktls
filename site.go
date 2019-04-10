@@ -179,8 +179,14 @@ func checkKey(cert ssllabs.Cert) bool {
 	return (cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg || cert.KeyAlg == DefaultECAlg)
 }
 
-func checkIssuer(cert ssllabs.Cert, ours *regexp.Regexp) bool {
-	return ours.MatchString(cert.IssuerSubject)
+func checkIssuer(cert ssllabs.Cert, ours *regexp.Regexp) string {
+	if ours.MatchString(cert.IssuerSubject) {
+		return "TRUE"
+	}
+	if (cert.Issues ^ 0x40) == 0 {
+		return "SELF"
+	}
+	return "FALSE"
 }
 
 func checkHSTS(det ssllabs.EndpointDetails) int64 {

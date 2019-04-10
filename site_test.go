@@ -193,3 +193,34 @@ func TestFindServerType2(t *testing.T) {
 	moz = omoz
 	irml = oirml
 }
+
+func TestCheckIssuer_Ok(t *testing.T) {
+	cert := new(ssllabs.Cert)
+	cert.IssuerSubject = "foo GlobalSign bar"
+
+	require.Equal(t, "TRUE", checkIssuer(*cert, DefaultIssuer))
+}
+
+func TestCheckIssuer_StillOk(t *testing.T) {
+	cert := new(ssllabs.Cert)
+	cert.IssuerSubject = "foo GlobalSign bar"
+	cert.Issues = 65
+
+	require.Equal(t, "TRUE", checkIssuer(*cert, DefaultIssuer))
+}
+
+func TestCheckIssuer_NotOk(t *testing.T) {
+	cert := new(ssllabs.Cert)
+	cert.IssuerSubject = "foo DigiCert bar"
+
+	require.Equal(t, "FALSE", checkIssuer(*cert, DefaultIssuer))
+}
+
+func TestCheckIssuer_Self(t *testing.T) {
+	cert := new(ssllabs.Cert)
+	cert.IssuerSubject = "foo ECTL bar"
+	cert.Issues = 64
+
+	t.Logf("issues=%d", cert.Issues&0x40)
+	require.Equal(t, "SELF", checkIssuer(*cert, DefaultIssuer))
+}
