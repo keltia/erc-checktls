@@ -51,7 +51,7 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 			Redir:     servertype(s.Type),
 			DefKey:    booleanT(s.DefKey),
 			DefSig:    booleanT(s.DefSig),
-			DefCA:     booleanT(s.DefCA),
+			DefCA:     certCA(s.DefCA),
 			IsExpired: booleanF(s.IsExpired),
 			Issues:    booleanF(s.PathIssues),
 

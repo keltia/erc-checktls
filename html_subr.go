@@ -105,6 +105,13 @@ func servertype(t int) string {
 	}
 }
 
+func certCA(s string) string {
+	if s == "TRUE" {
+		return green(s)
+	}
+	return red(s)
+}
+
 func red(str string) string {
 	var buf strings.Builder
 
