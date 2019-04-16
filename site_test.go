@@ -79,21 +79,6 @@ func TestTLSSite_HasExpiredFalse(t *testing.T) {
 	assert.False(t, hasExpired(tm))
 }
 
-func TestDisplayWildcards(t *testing.T) {
-	ji, err := ioutil.ReadFile("testdata/site.json")
-	require.NoError(t, err)
-
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
-
-	all, err := ssllabs.ParseResults(ji)
-	require.NoError(t, err)
-
-	str := displayWildcards(all)
-	assert.NotEmpty(t, str)
-}
-
 func TestSweet32(t *testing.T) {
 	ji, err := ioutil.ReadFile("testdata/reallybad.json")
 	require.NoError(t, err)
