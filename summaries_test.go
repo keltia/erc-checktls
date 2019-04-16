@@ -97,7 +97,6 @@ func TestWriteHTMLSummary(t *testing.T) {
 	err = writeHTMLSummary(&buf, cntrs, https)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, buf)
-	t.Logf("buf=%s", buf.String())
 }
 
 func TestWriteHTMLSummary_1(t *testing.T) {
@@ -125,5 +124,4 @@ func TestWriteHTMLSummary_1(t *testing.T) {
 	err = writeHTMLSummary(&buf, cntrs, https)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, buf)
-	t.Logf("buf=%s", buf.String())
 }
