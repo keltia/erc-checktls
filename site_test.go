@@ -167,16 +167,15 @@ func TestFindServerType2(t *testing.T) {
 
 	fIgnoreMozilla = false
 
-	omoz := moz
-	oirml := irml
-	moz = fmoz
-	irml = firml
+	// Save & swap
+	omoz, oirml := moz, irml
+	moz, irml = fmoz, firml
 
 	tt := findServerType(all[0])
 	require.Equal(t, TypeHTTPSok, tt)
 	fIgnoreImirhil = false
-	moz = omoz
-	irml = oirml
+
+	moz, irml = omoz, oirml
 }
 
 func TestCheckIssuer_Ok(t *testing.T) {
