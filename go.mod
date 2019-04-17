@@ -2,7 +2,7 @@ module github.com/keltia/erc-checktls
 
 require (
 	github.com/atotto/encoding v0.0.0-20140426205410-d964b8297408
-	github.com/gobuffalo/packr/v2 v2.0.8
+	github.com/gobuffalo/packr/v2 v2.2.0
 	github.com/ivpusic/grpool v1.0.0
 	github.com/keltia/cryptcheck v1.5.2
 	github.com/keltia/observatory v1.2.4
