@@ -4,8 +4,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/keltia/ssllabs"
 )
 
 var (
@@ -54,84 +52,6 @@ var (
 		"Broken",
 	}
 )
-
-func categoryCounts(reports []ssllabs.Host) (cntrs map[string]int) {
-	cntrs = make(map[string]int)
-
-	// Bail out early
-	if reports == nil {
-		return cntrs
-	}
-
-	baddies := 0
-	broken := 0
-	reals := 0
-
-	for _, r := range reports {
-		if r.Endpoints != nil && len(r.Endpoints) != 0 {
-			endp := r.Endpoints[0]
-			det := endp.Details
-
-			if r.Endpoints[0].Grade != "" && r.Endpoints[0].Grade != "Z" {
-				reals++
-			} else {
-				baddies++
-			}
-			cntrs[r.Endpoints[0].Grade]++
-			if det.ForwardSecrecy >= 2 {
-				cntrs["PFS"]++
-			}
-			if checkSweet32(det) {
-				cntrs["Sweet32"]++
-			}
-			if len(det.CertChains) == 0 ||
-				det.CertChains[0].Issues != 0 {
-				cntrs["Issues"]++
-			}
-			if det.OcspStapling {
-				cntrs["OCSP"]++
-			}
-			if det.HstsPolicy.Status == "present" {
-				cntrs["HSTS"]++
-			}
-		} else {
-			broken++
-		}
-	}
-	cntrs["Total"] = reals
-	cntrs["X"] = broken
-	cntrs["Z"] = baddies
-	return cntrs
-}
-
-func httpCounts(report *TLSReport) (cntrs map[string]int) {
-	cntrs = make(map[string]int)
-
-	// Bail out early
-	if report == nil {
-		return cntrs
-	}
-
-	baddies := 0
-	broken := 0
-	reals := 0
-
-	for _, r := range report.Sites {
-		if r.Mozilla != "" {
-			if r.Mozilla >= "G" {
-				baddies++
-			} else {
-				reals++
-			}
-			cntrs[r.Mozilla]++
-		} else {
-			broken++
-		}
-	}
-	cntrs["Total"] = reals
-	cntrs["Broken"] = broken
-	return
-}
 
 func displayCategories(cntrs map[string]int) string {
 	str := ""
