@@ -40,7 +40,7 @@ func getSSLablsVersion(site ssllabs.Host) string {
 }
 
 // NewTLSReport generates everything we need for display/export
-func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
+func NewTLSReport(reports []ssllabs.Host) (r *TLSReport, err error) {
 	// this is to protect the Sites array
 	var lock sync.Mutex
 
@@ -48,7 +48,7 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 		return nil, fmt.Errorf("empty list")
 	}
 
-	e = &TLSReport{
+	r = &TLSReport{
 		Date:    time.Now(),
 		SSLLabs: getSSLablsVersion(reports[0]),
 	}
@@ -70,7 +70,7 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 		pool.JobQueue <- func() {
 			// Block on mutex
 			lock.Lock()
-			completed := NewTLSSite(current)
+			s := NewTLSSite(current)
 
 			e.Sites = append(e.Sites, completed)
 			lock.Unlock()
@@ -80,10 +80,10 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 	}
 
 	pool.WaitAll()
-	verbose("got all %d sites\n", len(e.Sites))
-	debug("all=%v\n", e.Sites)
-	sort.Sort(ByAlphabet(*e))
-	return e, nil
+	verbose("got all %d sites\n", len(r.Sites))
+	debug("all=%v\n", r.Sites)
+	sort.Sort(ByAlphabet(*r))
+	return r, nil
 }
 
 type Types struct {
