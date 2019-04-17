@@ -106,3 +106,24 @@ func TestTLSReport_HTTPCountsReport_2(t *testing.T) {
 	assert.NotEmpty(t, r.cntrs)
 	assert.EqualValues(t, map[string]int{"A+": 1, "HSTS": 1, "Issues": 1, "OCSP": 1, "PFS": 1, "Sweet32": 1, "Total": 1}, r.cntrs)
 }
+
+func TestCategoryCountsReportNull(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/null.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	r, err := NewTLSReport(all)
+	require.NoError(t, err)
+	assert.NotEmpty(t, r)
+
+	good := map[string]int{"X": 1}
+
+	assert.NotEmpty(t, r.cntrs)
+	assert.EqualValues(t, good, r.cntrs)
+}
