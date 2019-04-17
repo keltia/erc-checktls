@@ -8,7 +8,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"sort"
 	"sync"
@@ -19,25 +18,6 @@ import (
 	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
 )
-
-// Private functions
-
-// getResults read the JSON array generated and gone through jq
-func getResults(file string) (res []byte, err error) {
-	fh, err := os.Open(file)
-	if err != nil {
-		return res, errors.Wrapf(err, "can not open %s", file)
-	}
-	defer fh.Close()
-
-	res, err = ioutil.ReadAll(fh)
-	return res, errors.Wrapf(err, "can not read json %s", file)
-}
-
-func getSSLablsVersion(site ssllabs.Host) string {
-	debug("%#v", site)
-	return fmt.Sprintf("%s/%s", site.EngineVersion, site.CriteriaVersion)
-}
 
 // NewTLSReport generates everything we need for display/export
 func NewTLSReport(reports []ssllabs.Host) (r *TLSReport, err error) {
@@ -51,6 +31,8 @@ func NewTLSReport(reports []ssllabs.Host) (r *TLSReport, err error) {
 	r = &TLSReport{
 		Date:    time.Now(),
 		SSLLabs: getSSLablsVersion(reports[0]),
+		cntrs:   map[string]int{},
+		https:   map[string]int{},
 	}
 
 	verbose("%d sites found.\n", len(reports))
@@ -72,7 +54,9 @@ func NewTLSReport(reports []ssllabs.Host) (r *TLSReport, err error) {
 			lock.Lock()
 			s := NewTLSSite(current)
 
-			e.Sites = append(e.Sites, completed)
+			r.categoryCounts(current)
+			r.httpCounts()
+			r.Sites = append(r.Sites, s)
 			lock.Unlock()
 
 			pool.JobDone()
@@ -140,3 +124,4 @@ func (r *TLSReport) WriteCSV(w io.Writer) error {
 	}
 	return nil
 }
+

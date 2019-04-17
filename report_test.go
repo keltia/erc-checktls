@@ -53,22 +53,6 @@ func TestTLSReport_ToCSV(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestGetResults(t *testing.T) {
-	ji, err := ioutil.ReadFile("testdata/site.json")
-	require.NoError(t, err)
-
-	buf, err := getResults("testdata/site.json")
-	require.NoError(t, err)
-
-	assert.Equal(t, ji, buf)
-}
-
-func TestGetResultsNothing(t *testing.T) {
-	buf, err := getResults("testdata/site.nowhere")
-	require.Error(t, err)
-	require.Empty(t, buf)
-}
-
 func TestTLSReport_WriteCSV(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
@@ -169,3 +153,4 @@ func TestTLSReport_ColourMap2(t *testing.T) {
 	assert.Equal(t, 1, tt.Insecure)
 	assert.Equal(t, 1, tt.ToFix)
 }
+
