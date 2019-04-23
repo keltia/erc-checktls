@@ -146,10 +146,6 @@ func realmain(args []string) int {
 		return 1
 	}
 
-	// Gather statistics for summaries
-	final.cntrs = categoryCounts(allSites)
-	final.https = httpCounts(final)
-
 	verbose("SSLabs engine: %s\n", final.SSLLabs)
 
 	switch fType {

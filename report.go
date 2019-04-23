@@ -8,7 +8,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"sort"
 	"sync"
@@ -20,27 +19,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Private functions
-
-// getResults read the JSON array generated and gone through jq
-func getResults(file string) (res []byte, err error) {
-	fh, err := os.Open(file)
-	if err != nil {
-		return res, errors.Wrapf(err, "can not open %s", file)
-	}
-	defer fh.Close()
-
-	res, err = ioutil.ReadAll(fh)
-	return res, errors.Wrapf(err, "can not read json %s", file)
-}
-
-func getSSLablsVersion(site ssllabs.Host) string {
-	debug("%#v", site)
-	return fmt.Sprintf("%s/%s", site.EngineVersion, site.CriteriaVersion)
-}
-
 // NewTLSReport generates everything we need for display/export
-func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
+func NewTLSReport(reports []ssllabs.Host) (r *TLSReport, err error) {
 	// this is to protect the Sites array
 	var lock sync.Mutex
 
@@ -48,9 +28,11 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 		return nil, fmt.Errorf("empty list")
 	}
 
-	e = &TLSReport{
+	r = &TLSReport{
 		Date:    time.Now(),
 		SSLLabs: getSSLablsVersion(reports[0]),
+		cntrs:   map[string]int{},
+		https:   map[string]int{},
 	}
 
 	verbose("%d sites found.\n", len(reports))
@@ -70,9 +52,11 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 		pool.JobQueue <- func() {
 			// Block on mutex
 			lock.Lock()
-			completed := NewTLSSite(current)
+			s := NewTLSSite(current)
 
-			e.Sites = append(e.Sites, completed)
+			r.categoryCounts(current)
+			r.httpCounts()
+			r.Sites = append(r.Sites, s)
 			lock.Unlock()
 
 			pool.JobDone()
@@ -80,10 +64,10 @@ func NewTLSReport(reports []ssllabs.Host) (e *TLSReport, err error) {
 	}
 
 	pool.WaitAll()
-	verbose("got all %d sites\n", len(e.Sites))
-	debug("all=%v\n", e.Sites)
-	sort.Sort(ByAlphabet(*e))
-	return e, nil
+	verbose("got all %d sites\n", len(r.Sites))
+	debug("all=%v\n", r.Sites)
+	sort.Sort(ByAlphabet(*r))
+	return r, nil
 }
 
 type Types struct {
@@ -140,3 +124,4 @@ func (r *TLSReport) WriteCSV(w io.Writer) error {
 	}
 	return nil
 }
+

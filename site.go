@@ -126,7 +126,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 	var current TLSSite
 
 	initAPIs()
-	if site.Endpoints == nil {
+	if site.Endpoints == nil || len(site.Endpoints) == 0 {
 		verbose("Site %s has no endpoint\n", site.Host)
 		current = TLSSite{
 			Name:     site.Host,
