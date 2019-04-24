@@ -32,7 +32,7 @@ var ctlsmap = []cmap{
 	{"Total", white},
 	{"Issues", white},
 	{"PFS", white},
-	{"OCSP", white},
+	{"OCSPStapling", white},
 	{"HSTS", white},
 	{"Sweet32", white},
 }

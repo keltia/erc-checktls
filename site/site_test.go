@@ -1,4 +1,4 @@
-package main
+package site
 
 import (
 	"io/ioutil"
@@ -9,83 +9,95 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewTLSSite(t *testing.T) {
-	ji, err := ioutil.ReadFile("testdata/site.json")
+var f = Flags{
+	IgnoreImirhil: true,
+	IgnoreMozilla: true,
+	Contracts:     map[string]string{},
+}
+
+func Setup() {
+	Init(f)
+}
+
+func TestNew(t *testing.T) {
+	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
+	Setup()
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	tls := NewTLSSite(all[0])
+	tls := NewFromHost(all[0])
 	require.NotEmpty(t, tls)
 }
 
-func TestNewTLSSite1(t *testing.T) {
-	tls := NewTLSSite(ssllabs.Host{})
+func TestNew1(t *testing.T) {
+	Setup()
+
+	tls := NewFromHost(ssllabs.Host{})
 	require.Empty(t, tls)
 }
 
-func TestInitAPI(t *testing.T) {
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
-	initAPIs()
+func TestInit(t *testing.T) {
+	Setup()
+
 	assert.Empty(t, fnMozilla(ssllabs.Host{}))
 	assert.Empty(t, fnImirhil(ssllabs.Host{}))
 }
 
-func TestInitAPI1(t *testing.T) {
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = false
-	initAPIs()
+func TestInit1(t *testing.T) {
+	Init(Flags{
+		IgnoreImirhil: false,
+		IgnoreMozilla: true,
+		Contracts:     map[string]string{},
+	})
+
 	assert.Empty(t, fnMozilla(ssllabs.Host{}))
 	g := fnImirhil(ssllabs.Host{})
 	assert.NotEmpty(t, g)
 	assert.Equal(t, "Z", g)
 }
 
-func TestInitAPI2(t *testing.T) {
-	// Simulate
-	fIgnoreMozilla = false
-	fIgnoreImirhil = true
-	initAPIs()
+func TestInit2(t *testing.T) {
+	Init(Flags{
+		IgnoreImirhil: true,
+		IgnoreMozilla: false,
+		Contracts:     map[string]string{},
+	})
+
 	assert.Empty(t, fnMozilla(ssllabs.Host{}))
 	assert.Empty(t, fnImirhil(ssllabs.Host{}))
 }
 
-func TestInitAPI3(t *testing.T) {
-	// Simulate
-	fIgnoreMozilla = false
-	fIgnoreImirhil = false
-	initAPIs()
+func TestInit3(t *testing.T) {
+	Init(Flags{
+		IgnoreImirhil: false,
+		IgnoreMozilla: false,
+		Contracts:     map[string]string{},
+	})
+
 	assert.Empty(t, fnMozilla(ssllabs.Host{}))
 	g := fnImirhil(ssllabs.Host{})
 	assert.NotEmpty(t, g)
 	assert.Equal(t, "Z", g)
 }
 
-func TestTLSSite_HasExpiredTrue(t *testing.T) {
+func Test_HasExpiredTrue(t *testing.T) {
 	tm := int64(1536423013000)
 	assert.True(t, hasExpired(tm))
 }
 
-func TestTLSSite_HasExpiredFalse(t *testing.T) {
+func Test_HasExpiredFalse(t *testing.T) {
 	tm := int64(1855828800000)
 	assert.False(t, hasExpired(tm))
 }
 
 func TestSweet32(t *testing.T) {
-	ji, err := ioutil.ReadFile("testdata/reallybad.json")
+	ji, err := ioutil.ReadFile("../testdata/reallybad.json")
 	require.NoError(t, err)
 
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
+	Setup()
 
 	bad, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -94,12 +106,10 @@ func TestSweet32(t *testing.T) {
 }
 
 func TestCheckKey(t *testing.T) {
-	ji, err := ioutil.ReadFile("testdata/site.json")
+	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
+	Setup()
 
 	good, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -107,22 +117,16 @@ func TestCheckKey(t *testing.T) {
 	assert.True(t, checkKey(good[0].Certs[0]))
 }
 
-const (
-	mozURL = "https://http-observatory.security.mozilla.org/api/v1"
-)
-
 func TestFindServerTypeEmpty(t *testing.T) {
 	tt := findServerType(ssllabs.Host{})
 	require.Equal(t, TypeHTTP, tt)
 }
 
 func TestFindServerType(t *testing.T) {
-	ji, err := ioutil.ReadFile("testdata/site.json")
+	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
+	Setup()
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -155,12 +159,10 @@ func TestFindServerType2(t *testing.T) {
 		firml *Firml
 	)
 
-	ji, err := ioutil.ReadFile("testdata/ectl.json")
+	ji, err := ioutil.ReadFile("../testdata/ectl.json")
 	require.NoError(t, err)
 
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
+	Setup()
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)

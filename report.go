@@ -17,6 +17,8 @@ import (
 	"github.com/ivpusic/grpool"
 	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
+
+	"github.com/keltia/erc-checktls/site"
 )
 
 // NewTLSReport generates everything we need for display/export
@@ -44,18 +46,25 @@ func NewTLSReport(reports []ssllabs.Host) (r *TLSReport, err error) {
 
 	pool.WaitCount(len(reports))
 
-	// Now analyze each site
-	for _, site := range reports {
-		debug("queueing %s\n", site.Host)
+	// Setup our env.
+	site.Init(site.Flags{
+		LogLevel:      logLevel,
+		IgnoreMozilla: fIgnoreMozilla,
+		IgnoreImirhil: fIgnoreImirhil,
+		Contracts:     contracts,
+	})
 
-		current := site
+	// Now analyze each site
+	for _, s := range reports {
+		debug("queueing %s\n", s.Host)
+
+		current := s
 		pool.JobQueue <- func() {
 			// Block on mutex
 			lock.Lock()
-			s := NewTLSSite(current)
+			s := site.NewFromHost(current)
 
-			r.categoryCounts(current)
-			r.httpCounts()
+			r.GatherStats(s)
 			r.Sites = append(r.Sites, s)
 			lock.Unlock()
 
@@ -124,4 +133,3 @@ func (r *TLSReport) WriteCSV(w io.Writer) error {
 	}
 	return nil
 }
-

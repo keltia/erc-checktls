@@ -7,6 +7,8 @@ import (
 	"github.com/keltia/ssllabs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/keltia/erc-checktls/site"
 )
 
 func TestGetResults(t *testing.T) {
@@ -28,10 +30,9 @@ func TestGetResultsNothing(t *testing.T) {
 func TestTLSReport_HTTPCountsEmpty(t *testing.T) {
 	r := &TLSReport{
 		https: map[string]int{},
-		Sites: []TLSSite{},
+		Sites: []site.TLSSite{},
 	}
 
-	r.httpCounts()
 	assert.Empty(t, r.cntrs)
 	assert.Empty(t, r.https)
 }
@@ -55,10 +56,9 @@ func TestTLSReport_HTTPCountsReport(t *testing.T) {
 	r.Sites[0].Mozilla = "A+"
 
 	t.Logf("r=%#v", r)
-	r.httpCounts()
 	t.Logf("r=%#v", r)
 	assert.NotEmpty(t, r.cntrs)
-	assert.EqualValues(t, map[string]int{"": 1, "A+": 1, "HSTS": 1, "Issues": 1, "OCSP": 1, "PFS": 1, "Total": 1, "Z": 1}, r.cntrs)
+	assert.EqualValues(t, map[string]int{"": 1, "A+": 1, "HSTS": 1, "Issues": 1, "OCSPStapling": 1, "PFS": 1, "Total": 1, "Z": 1}, r.cntrs)
 }
 
 func TestTLSReport_HTTPCountsReport_1(t *testing.T) {
@@ -79,9 +79,8 @@ func TestTLSReport_HTTPCountsReport_1(t *testing.T) {
 	// Fake it
 	r.Sites[0].Mozilla = "H"
 
-	r.httpCounts()
 	assert.NotEmpty(t, r.cntrs)
-	assert.EqualValues(t, map[string]int{"": 1, "A+": 1, "HSTS": 1, "Issues": 1, "OCSP": 1, "PFS": 1, "Total": 1, "Z": 1}, r.cntrs)
+	assert.EqualValues(t, map[string]int{"": 1, "A+": 1, "HSTS": 1, "Issues": 1, "OCSPStapling": 1, "PFS": 1, "Total": 1, "Z": 1}, r.cntrs)
 }
 
 func TestTLSReport_HTTPCountsReport_2(t *testing.T) {
@@ -102,9 +101,8 @@ func TestTLSReport_HTTPCountsReport_2(t *testing.T) {
 	// Fake it
 	r.Sites[0].Mozilla = "H"
 
-	r.httpCounts()
 	assert.NotEmpty(t, r.cntrs)
-	assert.EqualValues(t, map[string]int{"A+": 1, "HSTS": 1, "Issues": 1, "OCSP": 1, "PFS": 1, "Sweet32": 1, "Total": 1}, r.cntrs)
+	assert.EqualValues(t, map[string]int{"A+": 1, "HSTS": 1, "Issues": 1, "OCSPStapling": 1, "PFS": 1, "Sweet32": 1, "Total": 1}, r.cntrs)
 }
 
 func TestCategoryCountsReportNull(t *testing.T) {

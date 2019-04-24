@@ -7,6 +7,8 @@ import (
 
 	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
+
+	"github.com/keltia/erc-checktls/site"
 )
 
 // Private functions
@@ -28,40 +30,30 @@ func getSSLablsVersion(site ssllabs.Host) string {
 	return fmt.Sprintf("%s/%s", site.EngineVersion, site.CriteriaVersion)
 }
 
-func (r *TLSReport) categoryCounts(s ssllabs.Host) {
-	if s.Endpoints != nil && len(s.Endpoints) != 0 {
-		endp := s.Endpoints[0]
-		det := endp.Details
-
-		if s.Endpoints[0].Grade != "" && s.Endpoints[0].Grade != "Z" {
+func (r *TLSReport) GatherStats(s site.TLSSite) {
+	if !s.Empty {
+		if s.Grade != "" && s.Grade != "Z" {
 			r.cntrs["Total"]++
 		} else {
 			r.cntrs["Z"]++
 		}
-		r.cntrs[s.Endpoints[0].Grade]++
-		if det.ForwardSecrecy >= 2 {
+		r.cntrs[s.Grade]++
+		if s.PFS {
 			r.cntrs["PFS"]++
 		}
-		if checkSweet32(det) {
+		if s.Sweet32 {
 			r.cntrs["Sweet32"]++
 		}
-		if len(det.CertChains) == 0 ||
-			det.CertChains[0].Issues != 0 {
+		if s.Issues {
 			r.cntrs["Issues"]++
 		}
-		if det.OcspStapling {
-			r.cntrs["OCSP"]++
+		if s.OCSPStapling {
+			r.cntrs["OCSPStapling"]++
 		}
-		if det.HstsPolicy.Status == "present" {
+		if s.HSTS > 0 {
 			r.cntrs["HSTS"]++
 		}
-	} else {
-		r.cntrs["X"]++
-	}
-}
 
-func (r *TLSReport) httpCounts() {
-	for _, s := range r.Sites {
 		if s.Mozilla != "" {
 			if s.Mozilla >= "G" {
 				r.https["Bad"]++
@@ -72,6 +64,7 @@ func (r *TLSReport) httpCounts() {
 		} else {
 			r.https["Broken"]++
 		}
+	} else {
+		r.cntrs["X"]++
 	}
-	return
 }

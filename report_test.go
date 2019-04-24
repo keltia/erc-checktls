@@ -9,6 +9,8 @@ import (
 	"github.com/keltia/ssllabs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/keltia/erc-checktls/site"
 )
 
 func TestNewTLSReport(t *testing.T) {
@@ -132,7 +134,7 @@ func TestWriteCSV3(t *testing.T) {
 }
 
 func TestTLSReport_ColourMap(t *testing.T) {
-	r := &TLSReport{Sites: []TLSSite{}}
+	r := &TLSReport{Sites: []site.TLSSite{}}
 	tt := r.ColourMap("A")
 	assert.NotEmpty(t, tt)
 	assert.Empty(t, tt.Corrects)
@@ -140,7 +142,7 @@ func TestTLSReport_ColourMap(t *testing.T) {
 
 func TestTLSReport_ColourMap2(t *testing.T) {
 	r := &TLSReport{
-		Sites: []TLSSite{
+		Sites: []site.TLSSite{
 			{Type: TypeHTTPSok},
 			{Type: TypeHTTP},
 			{Type: TypeHTTPSnok},
@@ -153,4 +155,3 @@ func TestTLSReport_ColourMap2(t *testing.T) {
 	assert.Equal(t, 1, tt.Insecure)
 	assert.Equal(t, 1, tt.ToFix)
 }
-

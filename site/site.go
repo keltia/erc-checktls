@@ -1,4 +1,4 @@
-package main
+package site
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
 	"github.com/keltia/ssllabs"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -32,10 +33,19 @@ var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
 
+	contracts map[string]string
+
 	moz  Mapi
 	irml Capi
 
 	DefaultIssuer = regexp.MustCompile(`(?i:GlobalSign)`)
+
+	fIgnoreMozilla bool
+	fIgnoreImirhil bool
+	fVerbose       bool
+	fDebug         bool
+
+	fLogLevel int
 )
 
 func fixTimestamp(ts int64) (int64, int64) {
@@ -77,10 +87,19 @@ func findServerType(site ssllabs.Host) int {
 	return TypeHTTPSnok
 }
 
-func initAPIs() {
+func Init(f Flags) {
+	contracts = f.Contracts
+
+	fDebug = f.LogLevel >= 2
+	fVerbose = f.LogLevel >= 1
+	fLogLevel = f.LogLevel
+
+	fIgnoreImirhil = f.IgnoreImirhil
+	fIgnoreMozilla = f.IgnoreMozilla
+
 	if !fIgnoreImirhil {
 		cnf := cryptcheck.Config{
-			Log:     logLevel,
+			Log:     f.LogLevel,
 			Refresh: true,
 			Timeout: 30,
 		}
@@ -102,7 +121,7 @@ func initAPIs() {
 
 	if !fIgnoreMozilla {
 		cnf := observatory.Config{
-			Log:     logLevel,
+			Log:     f.LogLevel,
 			Timeout: 30,
 		}
 		moz, _ = observatory.NewClient(cnf)
@@ -122,15 +141,31 @@ func initAPIs() {
 	}
 }
 
-func NewTLSSite(site ssllabs.Host) TLSSite {
+func New(site string) (TLSSite, error) {
+	if site == "" {
+		return TLSSite{}, errors.New("Empty site")
+	}
+
+	c, err := ssllabs.NewClient(ssllabs.Config{
+		Log: fLogLevel,
+	})
+	if err != nil {
+		return TLSSite{}, errors.Wrap(err, "New")
+	}
+
+	r, err := c.GetDetailedReport(site)
+	return NewFromHost(r), errors.Wrap(err, "New")
+}
+
+func NewFromHost(site ssllabs.Host) TLSSite {
 	var current TLSSite
 
-	initAPIs()
 	if site.Endpoints == nil || len(site.Endpoints) == 0 {
 		verbose("Site %s has no endpoint\n", site.Host)
 		current = TLSSite{
 			Name:     site.Host,
 			Contract: contracts[site.Host],
+			Empty:    true,
 		}
 	} else {
 		endp := site.Endpoints[0]
@@ -145,17 +180,17 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 
 		// FIll in all details
 		current = TLSSite{
-			Name:       site.Host,
-			Contract:   contracts[site.Host],
-			Grade:      endp.Grade,
-			CryptCheck: getGrade(site, fnImirhil),
-			Mozilla:    getGrade(site, fnMozilla),
-			Protocols:  strings.Join(protos, ","),
-			PFS:        det.ForwardSecrecy >= 2,
-			OCSP:       det.OcspStapling,
-			HSTS:       checkHSTS(det),
-			Sweet32:    checkSweet32(det),
-			Type:       findServerType(site),
+			Name:         site.Host,
+			Contract:     contracts[site.Host],
+			Grade:        endp.Grade,
+			CryptCheck:   getGrade(site, fnImirhil),
+			Mozilla:      getGrade(site, fnMozilla),
+			Protocols:    strings.Join(protos, ","),
+			PFS:          det.ForwardSecrecy >= 2,
+			OCSPStapling: det.OcspStapling,
+			HSTS:         checkHSTS(det),
+			Sweet32:      checkSweet32(det),
+			Type:         findServerType(site),
 		}
 
 		// Handle case where we have a DNS entry but no connection
@@ -169,7 +204,7 @@ func NewTLSSite(site ssllabs.Host) TLSSite {
 		}
 
 		if len(det.CertChains) != 0 {
-			current.PathIssues = det.CertChains[0].Issues != 0
+			current.Issues = det.CertChains[0].Issues != 0
 		}
 	}
 	return current
