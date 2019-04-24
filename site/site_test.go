@@ -41,7 +41,8 @@ func TestNewFromHost2(t *testing.T) {
 	Setup(t)
 
 	tls := NewFromHost(ssllabs.Host{})
-	require.Empty(t, tls)
+	require.NotEmpty(t, tls)
+	require.True(t, tls.Empty)
 }
 
 func TestInit(t *testing.T) {
