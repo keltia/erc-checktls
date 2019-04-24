@@ -24,7 +24,7 @@ func Setup(t *testing.T) {
 	require.NoError(t, os.Unsetenv("all_proxy"))
 }
 
-func TestNew(t *testing.T) {
+func TestNewFromHost(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
@@ -37,8 +37,8 @@ func TestNew(t *testing.T) {
 	require.NotEmpty(t, tls)
 }
 
-func TestNew1(t *testing.T) {
-	Setup()
+func TestNewFromHost2(t *testing.T) {
+	Setup(t)
 
 	tls := NewFromHost(ssllabs.Host{})
 	require.Empty(t, tls)
