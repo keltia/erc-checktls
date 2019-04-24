@@ -52,6 +52,38 @@ func TestInit(t *testing.T) {
 	assert.Empty(t, fnImirhil(ssllabs.Host{}))
 }
 
+type Fssl struct{}
+
+func (f *Fssl) GetDetailedReport(site string, opts ...map[string]string) (ssllabs.Host, error) {
+	return ssllabs.Host{}, nil
+}
+
+func TestNew(t *testing.T) {
+	Setup(t)
+
+	var (
+		fssl *Fssl
+	)
+
+	// Save & swap
+	ossl := sslc
+	sslc = fssl
+
+	host, err := New("ssllabs.com")
+	require.NoError(t, err)
+	require.NotEmpty(t, host)
+
+	assert.True(t, host.Empty)
+
+	sslc = ossl
+}
+
+func TestNew2(t *testing.T) {
+	host, err := New("")
+	require.Error(t, err)
+	require.Empty(t, host)
+}
+
 func TestInit1(t *testing.T) {
 	Init(Flags{
 		IgnoreImirhil: false,
