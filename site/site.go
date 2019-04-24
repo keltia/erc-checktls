@@ -29,12 +29,17 @@ type Capi interface {
 	GetScore(string) (string, error)
 }
 
+type Sapi interface {
+	GetDetailedReport(string, ...map[string]string) (ssllabs.Host, error)
+}
+
 var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
 
 	contracts map[string]string
 
+	sslc Sapi
 	moz  Mapi
 	irml Capi
 
@@ -139,6 +144,8 @@ func Init(f Flags) {
 			return ""
 		}
 	}
+
+	sslc, _ = ssllabs.NewClient()
 }
 
 func New(site string) (TLSSite, error) {
@@ -146,14 +153,7 @@ func New(site string) (TLSSite, error) {
 		return TLSSite{}, errors.New("Empty site")
 	}
 
-	c, err := ssllabs.NewClient(ssllabs.Config{
-		Log: fLogLevel,
-	})
-	if err != nil {
-		return TLSSite{}, errors.Wrap(err, "New")
-	}
-
-	r, err := c.GetDetailedReport(site)
+	r, err := sslc.GetDetailedReport(site)
 	return NewFromHost(r), errors.Wrap(err, "New")
 }
 
