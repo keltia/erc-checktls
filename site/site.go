@@ -49,8 +49,6 @@ var (
 	fIgnoreImirhil bool
 	fVerbose       bool
 	fDebug         bool
-
-	fLogLevel int
 )
 
 func fixTimestamp(ts int64) (int64, int64) {
@@ -97,7 +95,6 @@ func Init(f Flags) {
 
 	fDebug = f.LogLevel >= 2
 	fVerbose = f.LogLevel >= 1
-	fLogLevel = f.LogLevel
 
 	fIgnoreImirhil = f.IgnoreImirhil
 	fIgnoreMozilla = f.IgnoreMozilla
