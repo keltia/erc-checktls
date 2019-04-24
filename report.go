@@ -88,8 +88,8 @@ type Types struct {
 func (r *TLSReport) ColourMap(criteria string) Types {
 	t := Types{Corrects: map[string]int{}}
 
-	for _, site := range r.Sites {
-		switch site.Type {
+	for _, s := range r.Sites {
+		switch s.Type {
 		case TypeHTTPSok:
 			t.Corrects[selectColours(criteria)]++
 		case TypeHTTPSnok:
