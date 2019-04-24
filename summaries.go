@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"strings"
 	"text/template"
 
 	tw "github.com/olekukonko/tablewriter"
@@ -131,4 +132,78 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 	}
 
 	return nil
+}
+
+var (
+	tlsKeys = []string{
+		"A+",
+		"A",
+		"A-",
+		"B",
+		"C",
+		"D",
+		"E",
+		"F",
+		"T",
+		"X",
+		"Z",
+		"Total",
+		"Issues",
+		"PFS",
+		"OCSPStapling",
+		"HSTS",
+		"Sweet32",
+	}
+	httpKeys = []string{
+		"A+",
+		"A",
+		"A-",
+		"B-",
+		"B",
+		"B-",
+		"C+",
+		"C",
+		"C-",
+		"D+",
+		"D",
+		"D-",
+		"E+",
+		"E",
+		"E-",
+		"F+",
+		"F",
+		"F-",
+		"T",
+		"X",
+		"Z",
+		"Total",
+		"Broken",
+	}
+)
+
+func displayCategories(cntrs map[string]int) string {
+	var str strings.Builder
+
+	for _, k := range tlsKeys {
+		str.WriteString(fmt.Sprintf("%s:%d ", k, cntrs[k]))
+	}
+	return str.String()
+}
+
+func selectColours(grade string) string {
+	switch grade {
+	case "A+":
+		fallthrough
+	case "A":
+		return "green"
+	case "A-":
+		fallthrough
+	case "B+":
+		fallthrough
+	case "B":
+		fallthrough
+	case "B-":
+		return "orange"
+	}
+	return "red"
 }
