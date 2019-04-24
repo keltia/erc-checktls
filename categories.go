@@ -22,7 +22,7 @@ var (
 		"Total",
 		"Issues",
 		"PFS",
-		"OCSP",
+		"OCSPStapling",
 		"HSTS",
 		"Sweet32",
 	}

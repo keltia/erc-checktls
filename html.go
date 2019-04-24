@@ -53,12 +53,12 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 			DefSig:    booleanT(s.DefSig),
 			DefCA:     certCA(s.DefCA),
 			IsExpired: booleanF(s.IsExpired),
-			Issues:    booleanF(s.PathIssues),
+			Issues:    booleanF(s.Issues),
 
 			Protocols: proto(s.Protocols),
 
 			PFS:     booleanT(s.PFS),
-			OCSP:    booleanT(s.OCSP),
+			OCSP:    booleanT(s.OCSPStapling),
 			HSTS:    hsts(s.HSTS),
 			Sweet32: booleanF(s.Sweet32),
 		}
