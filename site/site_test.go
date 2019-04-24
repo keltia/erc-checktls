@@ -210,3 +210,17 @@ func TestCheckIssuer_Self(t *testing.T) {
 	t.Logf("issues=%d", cert.Issues&0x40)
 	require.Equal(t, "SELF", checkIssuer(*cert, DefaultIssuer))
 }
+
+func TestCheckHSTS_Empty(t *testing.T) {
+	endp := &ssllabs.EndpointDetails{}
+
+	require.Equal(t, int64(-1), checkHSTS(*endp))
+}
+
+func TestCheckHSTS_Present(t *testing.T) {
+	endp := &ssllabs.EndpointDetails{
+		HstsPolicy: ssllabs.HstsPolicy{MaxAge: 666, Status: "present"},
+	}
+
+	require.Equal(t, int64(666), checkHSTS(*endp))
+}
