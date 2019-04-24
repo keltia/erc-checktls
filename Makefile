@@ -8,8 +8,9 @@ GO=		go
 GOBIN=   ${GOPATH}/bin
 
 SRCS= main.go categories.go cli.go html.go html_subr.go report.go \
-	resources.go site.go summaries.go utils.go types.go \
-	main-packr.go
+	resources.go summaries.go utils.go types.go \
+	main-packr.go \
+	site/site.go site/utils.go site/types.go
 
 OPTS=	-ldflags="-s -w" -v
 
