@@ -2,6 +2,7 @@ package site
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/keltia/ssllabs"
@@ -15,15 +16,19 @@ var f = Flags{
 	Contracts:     map[string]string{},
 }
 
-func Setup() {
+func Setup(t *testing.T) {
 	Init(f)
+
+	require.NoError(t, os.Unsetenv("http_proxy"))
+	require.NoError(t, os.Unsetenv("https_proxy"))
+	require.NoError(t, os.Unsetenv("all_proxy"))
 }
 
 func TestNew(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	Setup()
+	Setup(t)
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -40,7 +45,7 @@ func TestNew1(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	Setup()
+	Setup(t)
 
 	assert.Empty(t, fnMozilla(ssllabs.Host{}))
 	assert.Empty(t, fnImirhil(ssllabs.Host{}))
@@ -97,7 +102,7 @@ func TestSweet32(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/reallybad.json")
 	require.NoError(t, err)
 
-	Setup()
+	Setup(t)
 
 	bad, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -109,7 +114,7 @@ func TestCheckKey(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	Setup()
+	Setup(t)
 
 	good, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -126,7 +131,7 @@ func TestFindServerType(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	Setup()
+	Setup(t)
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -162,7 +167,7 @@ func TestFindServerType2(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/ectl.json")
 	require.NoError(t, err)
 
-	Setup()
+	Setup(t)
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
