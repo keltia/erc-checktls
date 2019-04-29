@@ -17,6 +17,5 @@
 .idea
 
 # my things
-main-packr.go
-a_main-packr.go
+TLS-packr.go
 packrd
