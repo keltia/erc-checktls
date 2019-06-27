@@ -7,23 +7,24 @@
 GO=		go
 GOBIN=   ${GOPATH}/bin
 
-SRCS= main.go cli.go html.go html_subr.go report.go \
+NAME=	erc-checktls
+SRCS= cmd/${NAME}/main.go cmd/${NAME}/cli.go html.go html_subr.go report.go \
 	resources.go summaries.go utils.go types.go \
-	main-packr.go \
+	TLS-packr.go \
 	site/site.go site/utils.go site/types.go
 
 OPTS=	-ldflags="-s -w" -v
 
-all: erc-checktls
+all: ${NAME}
 
-main-packr.go: main.go files/templ.html files/summaries.html files/sites-list.csv
+TLS-packr.go: report.go files/templ.html files/summaries.html files/sites-list.csv
 	packr2
 
-erc-checktls: ${SRCS}
-	${GO} build ${OPTS}
+${NAME}: ${SRCS}
+	${GO} build ${OPTS} ./cmd/...
 
 install: all test
-	${GO} install ${OPTS}
+	${GO} install ${OPTS} ./cmd/...
 
 test: all
 	${GO} test ./...
