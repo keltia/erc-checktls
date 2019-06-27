@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
@@ -33,6 +32,15 @@ type Sapi interface {
 	GetDetailedReport(string, ...map[string]string) (ssllabs.Host, error)
 }
 
+type Client struct {
+	sslc Sapi
+	moz  Mapi
+	irml Capi
+
+	fnImirhil func(site ssllabs.Host) string
+	fnMozilla func(site ssllabs.Host) string
+}
+
 var (
 	fnImirhil func(site ssllabs.Host) string
 	fnMozilla func(site ssllabs.Host) string
@@ -51,46 +59,8 @@ var (
 	fDebug         bool
 )
 
-func fixTimestamp(ts int64) (int64, int64) {
-	return ts / 1000, ts % 1000
-}
-
-func checkSweet32(det ssllabs.EndpointDetails) (yes bool) {
-	if len(det.Suites) != 0 {
-		ciphers := det.Suites[0].List
-		for _, cipher := range ciphers {
-			if strings.Contains(cipher.Name, "DES") {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func getGrade(site ssllabs.Host, fn func(site ssllabs.Host) string) string {
-	return fn(site)
-}
-
-func hasExpired(t int64) bool {
-	return time.Now().After(time.Unix(fixTimestamp(t)))
-}
-
-func findServerType(site ssllabs.Host) int {
-	// Should be obvious, 2nd field is only present if no valid cert is found
-	if len(site.Certs) == 0 || len(site.CertHostnames) != 0 {
-		return TypeHTTP
-	}
-
-	if !fIgnoreMozilla {
-		// Check the Mozilla report
-		if yes, _ := moz.IsHTTPSonly(site.Host); yes {
-			return TypeHTTPSok
-		}
-	}
-	return TypeHTTPSnok
-}
-
-func Init(f Flags) {
+func NewClient(f Flags) *Client {
+	c := &Client{}
 	contracts = f.Contracts
 
 	fDebug = f.LogLevel >= 2
@@ -105,18 +75,18 @@ func Init(f Flags) {
 			Refresh: true,
 			Timeout: 30,
 		}
-		irml = cryptcheck.NewClient(cnf)
+		c.irml = cryptcheck.NewClient(cnf)
 
-		fnImirhil = func(site ssllabs.Host) string {
+		c.fnImirhil = func(site ssllabs.Host) string {
 			debug("  imirhil\n")
-			score, err := irml.GetScore(site.Host)
+			score, err := c.irml.GetScore(site.Host)
 			if err != nil {
 				verbose("cryptcheck error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
 	} else {
-		fnImirhil = func(site ssllabs.Host) string {
+		c.fnImirhil = func(site ssllabs.Host) string {
 			return ""
 		}
 	}
@@ -126,37 +96,39 @@ func Init(f Flags) {
 			Log:     f.LogLevel,
 			Timeout: 30,
 		}
-		moz, _ = observatory.NewClient(cnf)
+		c.moz, _ = observatory.NewClient(cnf)
 
-		fnMozilla = func(site ssllabs.Host) string {
+		c.fnMozilla = func(site ssllabs.Host) string {
 			debug("  observatory\n")
-			score, err := moz.GetGrade(site.Host)
+			score, err := c.moz.GetGrade(site.Host)
 			if err != nil {
 				verbose("Mozilla error: %s (%s)\n", site.Host, err.Error())
 			}
 			return score
 		}
 	} else {
-		fnMozilla = func(site ssllabs.Host) string {
+		c.fnMozilla = func(site ssllabs.Host) string {
 			return ""
 		}
 	}
 
-	sslc, _ = ssllabs.NewClient()
+	c.sslc, _ = ssllabs.NewClient()
+	return c
 }
 
-func New(site string) (TLSSite, error) {
+func (c *Client) New(site string) (TLSSite, error) {
 	if site == "" {
 		return TLSSite{}, errors.New("Empty site")
 	}
 
-	r, err := sslc.GetDetailedReport(site)
-	return NewFromHost(r), errors.Wrap(err, "New")
+	r, err := c.sslc.GetDetailedReport(site)
+	return c.NewFromHost(r), errors.Wrap(err, "New")
 }
 
-func NewFromHost(site ssllabs.Host) TLSSite {
+func (c *Client) NewFromHost(site ssllabs.Host) TLSSite {
 	var current TLSSite
 
+	debug("NewFromHost")
 	if site.Endpoints == nil || len(site.Endpoints) == 0 {
 		verbose("Site %s has no endpoint\n", site.Host)
 		current = TLSSite{
@@ -168,7 +140,7 @@ func NewFromHost(site ssllabs.Host) TLSSite {
 		endp := site.Endpoints[0]
 		det := endp.Details
 
-		fmt.Printf("Host: %s\n", site.Host)
+		verbose("Host: %s\n", site.Host)
 
 		protos := []string{}
 		for _, p := range det.Protocols {
@@ -180,14 +152,14 @@ func NewFromHost(site ssllabs.Host) TLSSite {
 			Name:         site.Host,
 			Contract:     contracts[site.Host],
 			Grade:        endp.Grade,
-			CryptCheck:   getGrade(site, fnImirhil),
-			Mozilla:      getGrade(site, fnMozilla),
+			CryptCheck:   c.fnImirhil(site),
+			Mozilla:      c.fnMozilla(site),
 			Protocols:    strings.Join(protos, ","),
 			PFS:          det.ForwardSecrecy >= 2,
 			OCSPStapling: det.OcspStapling,
 			HSTS:         checkHSTS(det),
 			Sweet32:      checkSweet32(det),
-			Type:         findServerType(site),
+			Type:         c.findServerType(site),
 		}
 
 		// Handle case where we have a DNS entry but no connection
@@ -207,23 +179,17 @@ func NewFromHost(site ssllabs.Host) TLSSite {
 	return current
 }
 
-func checkKey(cert ssllabs.Cert) bool {
-	return (cert.KeySize == DefaultKeySize && cert.KeyAlg == DefaultAlg || cert.KeyAlg == DefaultECAlg)
-}
+func (c *Client) findServerType(site ssllabs.Host) int {
+	// Should be obvious, 2nd field is only present if no valid cert is found
+	if len(site.Certs) == 0 || len(site.CertHostnames) != 0 {
+		return TypeHTTP
+	}
 
-func checkIssuer(cert ssllabs.Cert, ours *regexp.Regexp) string {
-	if ours.MatchString(cert.IssuerSubject) {
-		return "TRUE"
+	if !fIgnoreMozilla {
+		// Check the Mozilla report
+		if yes, _ := c.moz.IsHTTPSonly(site.Host); yes {
+			return TypeHTTPSok
+		}
 	}
-	if (cert.Issues ^ 0x40) == 0 {
-		return "SELF"
-	}
-	return "FALSE"
-}
-
-func checkHSTS(det ssllabs.EndpointDetails) int64 {
-	if det.HstsPolicy.Status == "present" {
-		return det.HstsPolicy.MaxAge
-	}
-	return -1
+	return TypeHTTPSnok
 }

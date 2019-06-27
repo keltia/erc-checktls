@@ -16,40 +16,35 @@ var f = Flags{
 	Contracts:     map[string]string{},
 }
 
-func Setup(t *testing.T) {
-	Init(f)
+func Setup(t *testing.T) *Client {
+	c := NewClient(f)
 
 	require.NoError(t, os.Unsetenv("http_proxy"))
 	require.NoError(t, os.Unsetenv("https_proxy"))
 	require.NoError(t, os.Unsetenv("all_proxy"))
+
+	return c
 }
 
 func TestNewFromHost(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	Setup(t)
+	c := Setup(t)
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	tls := NewFromHost(all[0])
+	tls := c.NewFromHost(all[0])
 	require.NotEmpty(t, tls)
 }
 
 func TestNewFromHost2(t *testing.T) {
-	Setup(t)
+	c := Setup(t)
 
-	tls := NewFromHost(ssllabs.Host{})
+	tls := c.NewFromHost(ssllabs.Host{})
 	require.NotEmpty(t, tls)
 	require.True(t, tls.Empty)
-}
-
-func TestInit(t *testing.T) {
-	Setup(t)
-
-	assert.Empty(t, fnMozilla(ssllabs.Host{}))
-	assert.Empty(t, fnImirhil(ssllabs.Host{}))
 }
 
 type Fssl struct{}
@@ -59,64 +54,65 @@ func (f *Fssl) GetDetailedReport(site string, opts ...map[string]string) (ssllab
 }
 
 func TestNew(t *testing.T) {
-	Setup(t)
+	c := Setup(t)
 
 	var (
 		fssl *Fssl
 	)
 
 	// Save & swap
-	ossl := sslc
-	sslc = fssl
+	ossl := c.sslc
+	c.sslc = fssl
 
-	host, err := New("ssllabs.com")
+	host, err := c.New("ssllabs.com")
 	require.NoError(t, err)
 	require.NotEmpty(t, host)
 
 	assert.True(t, host.Empty)
 
-	sslc = ossl
+	c.sslc = ossl
 }
 
 func TestNew2(t *testing.T) {
-	host, err := New("")
+	c := Setup(t)
+	host, err := c.New("")
 	require.Error(t, err)
 	require.Empty(t, host)
 }
 
 func TestInit1(t *testing.T) {
-	Init(Flags{
+	c := NewClient(Flags{
 		IgnoreImirhil: false,
 		IgnoreMozilla: true,
 		Contracts:     map[string]string{},
 	})
 
-	assert.Empty(t, fnMozilla(ssllabs.Host{}))
-	g := fnImirhil(ssllabs.Host{})
+	assert.Empty(t, c.fnMozilla(ssllabs.Host{}))
+	g := c.fnImirhil(ssllabs.Host{})
 	assert.NotEmpty(t, g)
 	assert.Equal(t, "Z", g)
 }
 
 func TestInit2(t *testing.T) {
-	Init(Flags{
+	c := NewClient(Flags{
 		IgnoreImirhil: true,
 		IgnoreMozilla: false,
 		Contracts:     map[string]string{},
 	})
 
-	assert.Empty(t, fnMozilla(ssllabs.Host{}))
-	assert.Empty(t, fnImirhil(ssllabs.Host{}))
+	assert.Empty(t, c.fnMozilla(ssllabs.Host{}))
+	assert.Empty(t, c.fnImirhil(ssllabs.Host{}))
 }
 
 func TestInit3(t *testing.T) {
-	Init(Flags{
+	c := NewClient(Flags{
 		IgnoreImirhil: false,
 		IgnoreMozilla: false,
 		Contracts:     map[string]string{},
 	})
 
-	assert.Empty(t, fnMozilla(ssllabs.Host{}))
-	g := fnImirhil(ssllabs.Host{})
+	assert.Empty(t, c.fnMozilla(ssllabs.Host{}))
+	g := c.fnImirhil(ssllabs.Host{})
 	assert.NotEmpty(t, g)
 	assert.Equal(t, "Z", g)
 }
@@ -156,7 +152,8 @@ func TestCheckKey(t *testing.T) {
 }
 
 func TestFindServerTypeEmpty(t *testing.T) {
-	tt := findServerType(ssllabs.Host{})
+	c := Setup(t)
+	tt := c.findServerType(ssllabs.Host{})
 	require.Equal(t, TypeHTTP, tt)
 }
 
@@ -164,14 +161,14 @@ func TestFindServerType(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/site.json")
 	require.NoError(t, err)
 
-	Setup(t)
+	c := Setup(t)
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 	require.NotEmpty(t, all)
 	require.NotEmpty(t, all[0].CertHostnames)
 
-	tt := findServerType(all[0])
+	tt := c.findServerType(all[0])
 	require.Equal(t, TypeHTTP, tt)
 }
 
@@ -200,7 +197,7 @@ func TestFindServerType2(t *testing.T) {
 	ji, err := ioutil.ReadFile("../testdata/ectl.json")
 	require.NoError(t, err)
 
-	Setup(t)
+	c := Setup(t)
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
@@ -208,14 +205,14 @@ func TestFindServerType2(t *testing.T) {
 	fIgnoreMozilla = false
 
 	// Save & swap
-	omoz, oirml := moz, irml
-	moz, irml = fmoz, firml
+	omoz, oirml := c.moz, c.irml
+	c.moz, c.irml = fmoz, firml
 
-	tt := findServerType(all[0])
+	tt := c.findServerType(all[0])
 	require.Equal(t, TypeHTTPSok, tt)
 	fIgnoreImirhil = false
 
-	moz, irml = omoz, oirml
+	c.moz, c.irml = omoz, oirml
 }
 
 func TestCheckIssuer_Ok(t *testing.T) {
