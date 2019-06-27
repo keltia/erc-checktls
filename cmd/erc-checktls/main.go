@@ -30,7 +30,7 @@ var (
 
 const (
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.63.0"
+	MyVersion = "0.63.99"
 )
 
 // checkOutput checks whether we want to specify an output file
