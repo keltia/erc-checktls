@@ -1,4 +1,4 @@
-package main
+package TLS
 
 import (
 	"io/ioutil"
@@ -82,7 +82,7 @@ func TestLoadTemplates_Good(t *testing.T) {
 }
 
 func TestLoadTemplates_GoodDebug(t *testing.T) {
-	fDebug = true
+	logLevel = 2
 	box := packr.New("test", "./files")
 
 	tmpls, err := loadTemplates(box)
@@ -90,7 +90,7 @@ func TestLoadTemplates_GoodDebug(t *testing.T) {
 	assert.NotNil(t, tmpls)
 	assert.NotEmpty(t, tmpls)
 
-	fDebug = false
+	logLevel = 0
 }
 
 func TestLoadTemplates_Bad(t *testing.T) {
@@ -102,13 +102,13 @@ func TestLoadTemplates_Bad(t *testing.T) {
 }
 
 func TestLoadResources_GoodDebug(t *testing.T) {
-	fDebug = true
+	logLevel = 2
 	c, tt, err := loadResources()
 	assert.NoError(t, err)
 
 	assert.NotEmpty(t, tt)
 	assert.NotEmpty(t, c)
-	fDebug = false
+	logLevel = 0
 }
 
 func TestLoadResources_Good(t *testing.T) {

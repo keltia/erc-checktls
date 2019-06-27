@@ -1,4 +1,4 @@
-package main
+package TLS
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ type htmlvars struct {
 	Sweet32    string
 }
 
-func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
+func (r *Report) ToHTML(w io.Writer, tmpl string) error {
 	var (
 		err error
 	)
@@ -74,7 +74,7 @@ func (r *TLSReport) ToHTML(w io.Writer, tmpl string) error {
 	return errors.Wrap(err, "can not write HTML file")
 }
 
-func (r *TLSReport) WriteHTML(w io.Writer) error {
+func (r *Report) WriteHTML(w io.Writer) error {
 	var err error
 
 	debug("WriteHTML")
@@ -88,11 +88,5 @@ func (r *TLSReport) WriteHTML(w io.Writer) error {
 	}
 	// Generate colour map
 	//cm := final.ColourMap()
-	if fSummary != "" {
-		fn := fSummary + "-" + makeDate() + ".html"
-		verbose("HTML summary: %s\n", fn)
-		w = checkOutput(fn)
-		err = writeHTMLSummary(w, r.cntrs, r.https)
-	}
 	return err
 }

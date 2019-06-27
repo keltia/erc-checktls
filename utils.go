@@ -1,4 +1,4 @@
-package main
+package TLS
 
 import (
 	"fmt"
@@ -8,14 +8,14 @@ import (
 
 // debug displays only if fDebug is set
 func debug(str string, a ...interface{}) {
-	if fDebug {
+	if logLevel >= 2 {
 		fmt.Fprintf(os.Stderr, str, a...)
 	}
 }
 
 // verbose displays only if fVerbose is set
 func verbose(str string, a ...interface{}) {
-	if fVerbose {
+	if logLevel >= 1 {
 		fmt.Printf(str, a...)
 	}
 }
@@ -26,7 +26,7 @@ func makeDate() string {
 }
 
 // ByAlphabet is for sorting
-type ByAlphabet TLSReport
+type ByAlphabet Report
 
 func (a ByAlphabet) Len() int           { return len(a.Sites) }
 func (a ByAlphabet) Swap(i, j int)      { a.Sites[i], a.Sites[j] = a.Sites[j], a.Sites[i] }

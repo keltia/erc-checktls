@@ -1,4 +1,4 @@
-package main
+package TLS
 
 import (
 	"testing"
@@ -8,16 +8,16 @@ import (
 
 func TestDebug(t *testing.T) {
 	debug("false\n")
-	fDebug = true
+	logLevel = 2
 	debug("true\n")
-	fDebug = false
+	logLevel = 0
 }
 
 func TestVerbose(t *testing.T) {
 	verbose("false\n")
-	fVerbose = true
+	logLevel = 1
 	verbose("true\n")
-	fVerbose = false
+	logLevel = 0
 }
 
 func TestMakeDate(t *testing.T) {

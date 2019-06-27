@@ -1,6 +1,6 @@
 // types.go
 
-package main
+package TLS
 
 import (
 	"time"
@@ -8,8 +8,16 @@ import (
 	"github.com/keltia/erc-checktls/site"
 )
 
-// TLSReport is one single run for all sites
-type TLSReport struct {
+// Config is for setting internal flags
+type Config struct {
+	Jobs          int
+	LogLevel      int
+	IgnoreMozilla bool
+	IgnoreImirhil bool
+}
+
+// Report is one single run for all sites
+type Report struct {
 	SSLLabs string
 	Date    time.Time
 	Sites   []site.TLSSite

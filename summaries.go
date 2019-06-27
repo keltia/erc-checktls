@@ -1,4 +1,4 @@
-package main
+package TLS
 
 import (
 	"bytes"
@@ -101,7 +101,7 @@ func writeOneRow(keys []cmap, cntrs map[string]int) string {
 	return str.String()
 }
 
-func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
+func (r *Report) WriteHTMLSummary(w io.Writer) (err error) {
 	tm, ok := tmpls[summariesT]
 	if !ok {
 		debug("%s: %s", summariesT, tm)
@@ -110,7 +110,7 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 
 	t := template.Must(template.New(summariesT).Parse(tm))
 
-	if len(cntrs) == 0 || len(https) == 0 {
+	if len(r.cntrs) == 0 || len(r.https) == 0 {
 		return
 	}
 	date := makeDate()
@@ -122,8 +122,8 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 		ColoursHTTP string
 	}{
 		Date: date,
-		TLS:  writeOneRow(ctlsmap, cntrs),
-		HTTP: writeOneRow(httpmap, https),
+		TLS:  writeOneRow(ctlsmap, r.cntrs),
+		HTTP: writeOneRow(httpmap, r.https),
 		//	ColoursHTTP: writeOneRow(cltlsmap, all.Corrects),
 	}
 	err = t.ExecuteTemplate(w, summariesT, data)
