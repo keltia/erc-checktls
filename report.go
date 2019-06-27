@@ -3,67 +3,126 @@
 /*
 This file contains func for generating the report
 */
-package main
+package TLS
 
 import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"sort"
 	"sync"
 	"time"
 
 	"github.com/atotto/encoding/csv"
-	"github.com/ivpusic/grpool"
 	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
+
+	"github.com/keltia/erc-checktls/site"
 )
 
-// NewTLSReport generates everything we need for display/export
-func NewTLSReport(reports []ssllabs.Host) (r *TLSReport, err error) {
+var (
+	logLevel int
+
+	fJobs          int
+	fIgnoreImirhil bool
+	fIgnoreMozilla bool
+
 	// this is to protect the Sites array
-	var lock sync.Mutex
+	lock sync.Mutex
+
+	contracts map[string]string
+	tmpls     map[string]string
+)
+
+func Init(c Config) {
+	var err error
+
+	logLevel = c.LogLevel
+	fJobs = c.Jobs
+	fIgnoreImirhil = c.IgnoreImirhil
+	fIgnoreMozilla = c.IgnoreMozilla
+
+	contracts, tmpls, err = loadResources()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Can't load resources %s: %v\n", resourcesPath, err)
+	}
+}
+
+func getSSLablsVersion(site ssllabs.Host) string {
+	debug("%#v", site)
+	return fmt.Sprintf("%s/%s", site.EngineVersion, site.CriteriaVersion)
+}
+
+func worker(i int, queue chan ssllabs.Host, r *Report, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	// Setup our env.
+	c := site.NewClient(site.Flags{
+		LogLevel:      logLevel,
+		IgnoreMozilla: fIgnoreMozilla,
+		IgnoreImirhil: fIgnoreImirhil,
+		Contracts:     contracts,
+	})
+
+	for payload := range queue {
+		verbose("worker%d/starting %s\n", i, payload.Host)
+
+		s := c.NewFromHost(payload)
+
+		verbose("worker%d/inserting %s\n", i, payload.Host)
+
+		// Block on mutex
+		lock.Lock()
+		r.GatherStats(s)
+
+		r.Sites = append(r.Sites, s)
+		lock.Unlock()
+
+		verbose("worker%d/done %s\n", i, payload.Host)
+	}
+	verbose("worker%d finished\n", i)
+}
+
+// NewReport generates everything we need for display/export
+func NewReport(reports []ssllabs.Host) (r *Report, err error) {
 
 	if len(reports) == 0 {
 		return nil, fmt.Errorf("empty list")
 	}
 
-	r = &TLSReport{
+	numCPUs := runtime.NumCPU()
+
+	r = &Report{
 		Date:    time.Now(),
 		SSLLabs: getSSLablsVersion(reports[0]),
 		cntrs:   map[string]int{},
 		https:   map[string]int{},
 	}
 
-	verbose("%d sites found.\n", len(reports))
+	verbose("%d sites found, %d workers.\n", len(reports), numCPUs)
 
-	pool := grpool.NewPool(fJobs, len(reports))
+	queue := make(chan ssllabs.Host, len(reports))
 
-	// release resources used by pool
-	defer pool.Release()
+	wg := &sync.WaitGroup{}
 
-	pool.WaitCount(len(reports))
+	// Setup workers
+	for i := 0; i < numCPUs; i++ {
+		wg.Add(1)
+		go worker(i, queue, r, wg)
 
-	// Now analyze each site
-	for _, site := range reports {
-		debug("queueing %s\n", site.Host)
-
-		current := site
-		pool.JobQueue <- func() {
-			// Block on mutex
-			lock.Lock()
-			s := NewTLSSite(current)
-
-			r.categoryCounts(current)
-			r.httpCounts()
-			r.Sites = append(r.Sites, s)
-			lock.Unlock()
-
-			pool.JobDone()
-		}
 	}
 
-	pool.WaitAll()
+	// Now analyze each site
+	for _, s := range reports {
+		verbose("queueing %s\n", s.Host)
+
+		queue <- s
+	}
+
+	close(queue)
+	wg.Wait()
+
 	verbose("got all %d sites\n", len(r.Sites))
 	debug("all=%v\n", r.Sites)
 	sort.Sort(ByAlphabet(*r))
@@ -76,11 +135,11 @@ type Types struct {
 	ToFix    int
 }
 
-func (r *TLSReport) ColourMap(criteria string) Types {
+func (r *Report) ColourMap(criteria string) Types {
 	t := Types{Corrects: map[string]int{}}
 
-	for _, site := range r.Sites {
-		switch site.Type {
+	for _, s := range r.Sites {
+		switch s.Type {
 		case TypeHTTPSok:
 			t.Corrects[selectColours(criteria)]++
 		case TypeHTTPSnok:
@@ -93,7 +152,7 @@ func (r *TLSReport) ColourMap(criteria string) Types {
 }
 
 // ToCSV output a CSV file from a report
-func (r *TLSReport) ToCSV(w io.Writer) (err error) {
+func (r *Report) ToCSV(w io.Writer) (err error) {
 	wh := csv.NewWriter(w)
 	debug("%v\n", r.Sites)
 	if err = wh.WriteStructHeader(r.Sites[0]); err != nil {
@@ -104,7 +163,7 @@ func (r *TLSReport) ToCSV(w io.Writer) (err error) {
 	return errors.Wrap(err, "can not write csv file")
 }
 
-func (r *TLSReport) WriteCSV(w io.Writer) error {
+func (r *Report) WriteCSV(w io.Writer) error {
 	debug("WriteCSV\n")
 	debug("r=%#v\n", r)
 	if len(r.Sites) == 0 {
@@ -125,3 +184,41 @@ func (r *TLSReport) WriteCSV(w io.Writer) error {
 	return nil
 }
 
+func (r *Report) GatherStats(s site.TLSSite) {
+	if !s.Empty {
+		if s.Grade != "" && s.Grade != "Z" {
+			r.cntrs["Total"]++
+		} else {
+			r.cntrs["Z"]++
+		}
+		r.cntrs[s.Grade]++
+		if s.PFS {
+			r.cntrs["PFS"]++
+		}
+		if s.Sweet32 {
+			r.cntrs["Sweet32"]++
+		}
+		if s.Issues {
+			r.cntrs["Issues"]++
+		}
+		if s.OCSPStapling {
+			r.cntrs["OCSPStapling"]++
+		}
+		if s.HSTS > 0 {
+			r.cntrs["HSTS"]++
+		}
+
+		if s.Mozilla != "" {
+			if s.Mozilla >= "G" {
+				r.https["Bad"]++
+			} else {
+				r.https["Total"]++
+			}
+			r.https[s.Mozilla]++
+		} else {
+			r.https["Broken"]++
+		}
+	} else {
+		r.cntrs["X"]++
+	}
+}

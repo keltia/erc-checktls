@@ -1,4 +1,4 @@
-package main
+package TLS
 
 import (
 	"io/ioutil"
@@ -9,15 +9,17 @@ import (
 	"github.com/keltia/ssllabs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/keltia/erc-checktls/site"
 )
 
-func TestNewTLSReport(t *testing.T) {
-	rep, err := NewTLSReport([]ssllabs.Host{})
+func TestNewReport(t *testing.T) {
+	rep, err := NewReport([]ssllabs.Host{})
 	require.Error(t, err)
 	require.Nil(t, rep)
 }
 
-func TestNewTLSReport2(t *testing.T) {
+func TestNewReport2(t *testing.T) {
 	ji, err := ioutil.ReadFile("testdata/site.json")
 	require.NoError(t, err)
 
@@ -28,12 +30,12 @@ func TestNewTLSReport2(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	sites, err := NewTLSReport(all)
+	sites, err := NewReport(all)
 	require.NoError(t, err)
 	require.NotEmpty(t, sites)
 }
 
-func TestTLSReport_ToCSV(t *testing.T) {
+func TestReport_ToCSV(t *testing.T) {
 	var buf strings.Builder
 
 	ji, err := ioutil.ReadFile("testdata/site.json")
@@ -46,14 +48,14 @@ func TestTLSReport_ToCSV(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	sites, err := NewTLSReport(all)
+	sites, err := NewReport(all)
 	require.NoError(t, err)
 
 	err = sites.ToCSV(&buf)
 	assert.NoError(t, err)
 }
 
-func TestTLSReport_WriteCSV(t *testing.T) {
+func TestReport_WriteCSV(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
 		"B": 42,
@@ -66,7 +68,7 @@ func TestTLSReport_WriteCSV(t *testing.T) {
 		"F":  42,
 	}
 
-	r := &TLSReport{}
+	r := &Report{}
 	r.cntrs = cntrs
 	r.https = https
 
@@ -75,7 +77,7 @@ func TestTLSReport_WriteCSV(t *testing.T) {
 
 }
 
-func TestWriteCSV2(t *testing.T) {
+func TestReport_WriteCSV2(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
 		"B": 42,
@@ -88,7 +90,7 @@ func TestWriteCSV2(t *testing.T) {
 		"F":  42,
 	}
 
-	r := &TLSReport{}
+	r := &Report{}
 	r.cntrs = cntrs
 	r.https = https
 
@@ -96,7 +98,7 @@ func TestWriteCSV2(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestWriteCSV3(t *testing.T) {
+func TestReport_WriteCSV3(t *testing.T) {
 	cntrs := map[string]int{
 		"A": 666,
 		"B": 42,
@@ -110,7 +112,7 @@ func TestWriteCSV3(t *testing.T) {
 	}
 
 	file := "testdata/site.json"
-	raw, err := getResults(file)
+	raw, err := ioutil.ReadFile(file)
 	require.NoError(t, err)
 
 	allSites, err := ssllabs.ParseResults(raw)
@@ -119,7 +121,7 @@ func TestWriteCSV3(t *testing.T) {
 	fIgnoreImirhil = true
 	fIgnoreMozilla = true
 
-	final, err := NewTLSReport(allSites)
+	final, err := NewReport(allSites)
 	require.NoError(t, err)
 
 	final.cntrs = cntrs
@@ -131,16 +133,16 @@ func TestWriteCSV3(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestTLSReport_ColourMap(t *testing.T) {
-	r := &TLSReport{Sites: []TLSSite{}}
+func TestReport_ColourMap(t *testing.T) {
+	r := &Report{Sites: []site.TLSSite{}}
 	tt := r.ColourMap("A")
 	assert.NotEmpty(t, tt)
 	assert.Empty(t, tt.Corrects)
 }
 
-func TestTLSReport_ColourMap2(t *testing.T) {
-	r := &TLSReport{
-		Sites: []TLSSite{
+func TestReport_ColourMap2(t *testing.T) {
+	r := &Report{
+		Sites: []site.TLSSite{
 			{Type: TypeHTTPSok},
 			{Type: TypeHTTP},
 			{Type: TypeHTTPSnok},
@@ -154,3 +156,141 @@ func TestTLSReport_ColourMap2(t *testing.T) {
 	assert.Equal(t, 1, tt.ToFix)
 }
 
+func TestReport_GatherStats(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	r, err := NewReport(all)
+	require.NoError(t, err)
+	require.NotEmpty(t, r)
+
+	// Fake it
+	r.Sites[0].Mozilla = "A+"
+
+	t.Logf("r=%#v", r)
+	t.Logf("r=%#v", r)
+	assert.NotEmpty(t, r.cntrs)
+	assert.EqualValues(t, map[string]int{"": 1, "A+": 1, "HSTS": 1, "Issues": 1, "OCSPStapling": 1, "PFS": 1, "Total": 1, "Z": 1}, r.cntrs)
+}
+
+func TestReport_GatherStats_1(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	r, err := NewReport(all)
+	require.NoError(t, err)
+	require.NotEmpty(t, r)
+
+	// Fake it
+	r.Sites[0].Mozilla = "H"
+
+	assert.NotEmpty(t, r.cntrs)
+	assert.EqualValues(t, map[string]int{"": 1, "A+": 1, "HSTS": 1, "Issues": 1, "OCSPStapling": 1, "PFS": 1, "Total": 1, "Z": 1}, r.cntrs)
+}
+
+func TestReport_GatherStats_2(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/reallybad.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	r, err := NewReport(all)
+	require.NoError(t, err)
+	require.NotEmpty(t, r)
+
+	// Fake it
+	r.Sites[0].Mozilla = "H"
+
+	assert.NotEmpty(t, r.cntrs)
+	assert.EqualValues(t, map[string]int{"A+": 1, "HSTS": 1, "Issues": 1, "OCSPStapling": 1, "PFS": 1, "Sweet32": 1, "Total": 1}, r.cntrs)
+}
+
+func TestReport_GatherStats_Null(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/null.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	r, err := NewReport(all)
+	require.NoError(t, err)
+	assert.NotEmpty(t, r)
+
+	good := map[string]int{"X": 1}
+
+	assert.NotEmpty(t, r.cntrs)
+	assert.EqualValues(t, good, r.cntrs)
+}
+
+func TestTLSReport_GatherStats_Full(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	r, err := NewReport(all)
+	require.NoError(t, err)
+	require.NotEmpty(t, r)
+
+	r.Sites[0].Mozilla = "H"
+
+	r.GatherStats(r.Sites[0])
+
+	assert.NotEmpty(t, r.cntrs)
+	assert.EqualValues(t, map[string]int{"": 1, "A+": 2, "HSTS": 2, "Issues": 2, "OCSPStapling": 2, "PFS": 2, "Total": 2, "Z": 1}, r.cntrs)
+	assert.NotEmpty(t, r.https)
+	assert.EqualValues(t, 1, r.https["Bad"])
+}
+
+func TestTLSReport_GatherStats_Full1(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	// Simulate
+	fIgnoreMozilla = true
+	fIgnoreImirhil = true
+
+	all, err := ssllabs.ParseResults(ji)
+	require.NoError(t, err)
+
+	r, err := NewReport(all)
+	require.NoError(t, err)
+	require.NotEmpty(t, r)
+
+	r.Sites[0].Mozilla = "C+"
+
+	r.GatherStats(r.Sites[0])
+
+	assert.NotEmpty(t, r.cntrs)
+	assert.EqualValues(t, map[string]int{"": 1, "A+": 2, "HSTS": 2, "Issues": 2, "OCSPStapling": 2, "PFS": 2, "Total": 2, "Z": 1}, r.cntrs)
+	assert.NotEmpty(t, r.https)
+	assert.EqualValues(t, 1, r.https["Total"])
+}

@@ -9,6 +9,7 @@ package main // import "github.com/keltia/erc-checktls"
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -16,14 +17,13 @@ import (
 	"github.com/keltia/observatory"
 	"github.com/keltia/ssllabs"
 	"github.com/pkg/errors"
+
+	TLS "github.com/keltia/erc-checktls"
 )
 
 var (
 	// MyName is obvious
 	MyName = filepath.Base(os.Args[0])
-
-	contracts map[string]string
-	tmpls     map[string]string
 
 	logLevel = 0
 )
@@ -88,6 +88,18 @@ func checkInput(file string) error {
 	return errors.Wrap(err, "checkInput")
 }
 
+// getResults read the JSON array generated and gone through jq
+func getResults(file string) (res []byte, err error) {
+	fh, err := os.Open(file)
+	if err != nil {
+		return res, errors.Wrapf(err, "can not open %s", file)
+	}
+	defer fh.Close()
+
+	res, err = ioutil.ReadAll(fh)
+	return res, errors.Wrapf(err, "can not read json %s", file)
+}
+
 // Most of the work is here
 func realmain(args []string) int {
 	// Announce ourselves
@@ -99,6 +111,13 @@ func realmain(args []string) int {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err.Error())
 		return 1
 	}
+
+	// Initialise the library
+	TLS.Init(TLS.Config{
+		LogLevel:      logLevel,
+		IgnoreMozilla: fIgnoreMozilla,
+		IgnoreImirhil: fIgnoreImirhil,
+	})
 
 	file := args[0]
 	if err := checkInput(file); err != nil {
@@ -119,12 +138,6 @@ func realmain(args []string) int {
 		return 1
 	}
 
-	contracts, tmpls, err = loadResources()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Can't load resources %s: %v\n", resourcesPath, err)
-		return 1
-	}
-
 	// Open output file
 	OutputFH := checkOutput(fOutput)
 	if OutputFH == nil {
@@ -140,7 +153,7 @@ func realmain(args []string) int {
 	}
 
 	// generate the final report & summary
-	final, err := NewTLSReport(allSites)
+	final, err := TLS.NewReport(allSites)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error analyzing report: %v\n", err)
 		return 1
@@ -159,11 +172,21 @@ func realmain(args []string) int {
 			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
 			return 1
 		}
+		if fSummary != "" {
+			fn := fSummary + "-" + makeDate() + ".html"
+			verbose("HTML summary: %s\n", fn)
+			w := checkOutput(fn)
+			if err = final.WriteHTMLSummary(w); err != nil {
+				fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
+				return 1
+			}
+		}
+
 	default:
 		// XXX Early debugging
 		fmt.Printf("%#v\n", final)
-		fmt.Printf("%s\n", displayCategories(final.cntrs))
 	}
+
 	return 0
 }
 

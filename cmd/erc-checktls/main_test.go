@@ -166,3 +166,19 @@ func TestWild(t *testing.T) {
 	assert.Equal(t, 0, ret)
 	fCmdWild = false
 }
+
+func TestGetResults(t *testing.T) {
+	ji, err := ioutil.ReadFile("testdata/site.json")
+	require.NoError(t, err)
+
+	buf, err := getResults("testdata/site.json")
+	require.NoError(t, err)
+
+	assert.Equal(t, ji, buf)
+}
+
+func TestGetResultsNothing(t *testing.T) {
+	buf, err := getResults("testdata/site.nowhere")
+	require.Error(t, err)
+	require.Empty(t, buf)
+}
