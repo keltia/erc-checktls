@@ -1,4 +1,4 @@
-package main
+package TLS
 
 import (
 	"io/ioutil"
@@ -15,18 +15,22 @@ import (
 func TestTLSReport_ToHTML(t *testing.T) {
 	var buf strings.Builder
 
+	Init(Config{
+		IgnoreMozilla: true,
+		IgnoreImirhil: true,
+	})
+
 	ji, err := ioutil.ReadFile("testdata/site.json")
 	require.NoError(t, err)
-
-	// Simulate
-	fIgnoreMozilla = true
-	fIgnoreImirhil = true
 
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	sites, err := NewTLSReport(all)
+	fJobs = 1
+
+	sites, err := NewReport(all)
 	require.NoError(t, err)
+	require.NotEmpty(t, sites)
 
 	raw, err := ioutil.ReadFile("files/templ.html")
 	tmpl := string(raw)
@@ -50,7 +54,7 @@ func TestWriteHTML2(t *testing.T) {
 		"F":  42,
 	}
 
-	r := &TLSReport{}
+	r := &Report{}
 	r.cntrs = cntrs
 	r.https = https
 
@@ -72,7 +76,7 @@ func TestWriteHTML3(t *testing.T) {
 	}
 
 	file := "testdata/site.json"
-	raw, err := getResults(file)
+	raw, err := ioutil.ReadFile(file)
 	require.NoError(t, err)
 
 	allSites, err := ssllabs.ParseResults(raw)
@@ -85,7 +89,7 @@ func TestWriteHTML3(t *testing.T) {
 	fIgnoreImirhil = true
 	fIgnoreMozilla = true
 
-	final, err := NewTLSReport(allSites)
+	final, err := NewReport(allSites)
 	require.NoError(t, err)
 
 	final.cntrs = cntrs

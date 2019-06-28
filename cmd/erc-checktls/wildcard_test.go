@@ -10,7 +10,7 @@ import (
 )
 
 func TestDisplayWildcards(t *testing.T) {
-	ji, err := ioutil.ReadFile("testdata/site.json")
+	ji, err := ioutil.ReadFile("../../testdata/site.json")
 	require.NoError(t, err)
 
 	// Simulate

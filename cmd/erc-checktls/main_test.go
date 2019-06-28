@@ -79,12 +79,12 @@ func TestCheckInput2(t *testing.T) {
 }
 
 func TestCheckInput3(t *testing.T) {
-	err := checkInput("testdata/site.json")
+	err := checkInput("../../testdata/site.json")
 	assert.NoError(t, err)
 }
 
 func TestCheckInput4(t *testing.T) {
-	file := "testdata/site.json"
+	file := "../../testdata/site.json"
 	require.NoError(t, os.Chmod(file, 0600))
 	err := checkInput(file)
 	assert.NoError(t, err)
@@ -107,13 +107,13 @@ func TestRealmain3(t *testing.T) {
 }
 
 func TestRealmain4(t *testing.T) {
-	ret := realmain([]string{"testdata/site.json"})
+	ret := realmain([]string{"../../testdata/site.json"})
 	assert.Equal(t, 0, ret)
 }
 
 func TestRealmain5(t *testing.T) {
 	fType = "html"
-	ret := realmain([]string{"testdata/site.json"})
+	ret := realmain([]string{"../../testdata/site.json"})
 	assert.Equal(t, 0, ret)
 	fType = ""
 }
@@ -121,14 +121,14 @@ func TestRealmain5(t *testing.T) {
 func TestRealmain6(t *testing.T) {
 	fType = "html"
 	fOutput = "/nonexistent"
-	ret := realmain([]string{"testdata/site.json"})
+	ret := realmain([]string{"../../testdata/site.json"})
 	assert.Equal(t, 1, ret)
 	fType = ""
 	fOutput = ""
 }
 
 func TestRealmain7(t *testing.T) {
-	file := "testdata/site.json"
+	file := "../../testdata/site.json"
 	require.NoError(t, os.Chmod(file, 0600))
 	ret := realmain([]string{file})
 	assert.Equal(t, 0, ret)
@@ -137,7 +137,7 @@ func TestRealmain7(t *testing.T) {
 
 func TestRealmain8(t *testing.T) {
 	fType = "csv"
-	ret := realmain([]string{"testdata/site.json"})
+	ret := realmain([]string{"../../testdata/site.json"})
 	assert.Equal(t, 0, ret)
 	fType = ""
 }
@@ -145,7 +145,7 @@ func TestRealmain8(t *testing.T) {
 func TestRealmain9(t *testing.T) {
 	fType = "csv"
 	fOutput = "/nonexistent"
-	ret := realmain([]string{"testdata/site.json"})
+	ret := realmain([]string{"../../testdata/site.json"})
 	assert.Equal(t, 1, ret)
 	fType = ""
 	fOutput = ""
@@ -154,7 +154,7 @@ func TestRealmain9(t *testing.T) {
 func TestRealmain10(t *testing.T) {
 	fType = "csv"
 	fOutput = "/dev/null"
-	ret := realmain([]string{"testdata/emptysite.json"})
+	ret := realmain([]string{"../../testdata/emptysite.json"})
 	assert.Equal(t, 0, ret)
 	fType = ""
 	fOutput = ""
@@ -162,7 +162,23 @@ func TestRealmain10(t *testing.T) {
 
 func TestWild(t *testing.T) {
 	fCmdWild = true
-	ret := realmain([]string{"testdata/site.json"})
+	ret := realmain([]string{"../../testdata/site.json"})
 	assert.Equal(t, 0, ret)
 	fCmdWild = false
+}
+
+func TestGetResults(t *testing.T) {
+	ji, err := ioutil.ReadFile("../../testdata/site.json")
+	require.NoError(t, err)
+
+	buf, err := getResults("../../testdata/site.json")
+	require.NoError(t, err)
+
+	assert.Equal(t, ji, buf)
+}
+
+func TestGetResultsNothing(t *testing.T) {
+	buf, err := getResults("../../testdata/site.nowhere")
+	require.Error(t, err)
+	require.Empty(t, buf)
 }

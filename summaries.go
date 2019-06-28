@@ -1,9 +1,10 @@
-package main
+package TLS
 
 import (
 	"bytes"
 	"fmt"
 	"io"
+	"strings"
 	"text/template"
 
 	tw "github.com/olekukonko/tablewriter"
@@ -32,7 +33,7 @@ var ctlsmap = []cmap{
 	{"Total", white},
 	{"Issues", white},
 	{"PFS", white},
-	{"OCSP", white},
+	{"OCSPStapling", white},
 	{"HSTS", white},
 	{"Sweet32", white},
 }
@@ -100,7 +101,7 @@ func writeOneRow(keys []cmap, cntrs map[string]int) string {
 	return str.String()
 }
 
-func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
+func (r *Report) WriteHTMLSummary(w io.Writer) (err error) {
 	tm, ok := tmpls[summariesT]
 	if !ok {
 		debug("%s: %s", summariesT, tm)
@@ -109,7 +110,7 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 
 	t := template.Must(template.New(summariesT).Parse(tm))
 
-	if len(cntrs) == 0 || len(https) == 0 {
+	if len(r.cntrs) == 0 || len(r.https) == 0 {
 		return
 	}
 	date := makeDate()
@@ -121,8 +122,8 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 		ColoursHTTP string
 	}{
 		Date: date,
-		TLS:  writeOneRow(ctlsmap, cntrs),
-		HTTP: writeOneRow(httpmap, https),
+		TLS:  writeOneRow(ctlsmap, r.cntrs),
+		HTTP: writeOneRow(httpmap, r.https),
 		//	ColoursHTTP: writeOneRow(cltlsmap, all.Corrects),
 	}
 	err = t.ExecuteTemplate(w, summariesT, data)
@@ -131,4 +132,78 @@ func writeHTMLSummary(w io.Writer, cntrs, https map[string]int) (err error) {
 	}
 
 	return nil
+}
+
+var (
+	tlsKeys = []string{
+		"A+",
+		"A",
+		"A-",
+		"B",
+		"C",
+		"D",
+		"E",
+		"F",
+		"T",
+		"X",
+		"Z",
+		"Total",
+		"Issues",
+		"PFS",
+		"OCSPStapling",
+		"HSTS",
+		"Sweet32",
+	}
+	httpKeys = []string{
+		"A+",
+		"A",
+		"A-",
+		"B-",
+		"B",
+		"B-",
+		"C+",
+		"C",
+		"C-",
+		"D+",
+		"D",
+		"D-",
+		"E+",
+		"E",
+		"E-",
+		"F+",
+		"F",
+		"F-",
+		"T",
+		"X",
+		"Z",
+		"Total",
+		"Broken",
+	}
+)
+
+func displayCategories(cntrs map[string]int) string {
+	var str strings.Builder
+
+	for _, k := range tlsKeys {
+		str.WriteString(fmt.Sprintf("%s:%d ", k, cntrs[k]))
+	}
+	return str.String()
+}
+
+func selectColours(grade string) string {
+	switch grade {
+	case "A+":
+		fallthrough
+	case "A":
+		return "green"
+	case "A-":
+		fallthrough
+	case "B+":
+		fallthrough
+	case "B":
+		fallthrough
+	case "B-":
+		return "orange"
+	}
+	return "red"
 }

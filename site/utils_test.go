@@ -1,4 +1,4 @@
-package TLS
+package site
 
 import (
 	"testing"
@@ -8,16 +8,16 @@ import (
 
 func TestDebug(t *testing.T) {
 	debug("false\n")
-	logLevel = 2
+	fDebug = true
 	debug("true\n")
-	logLevel = 0
+	fDebug = false
 }
 
 func TestVerbose(t *testing.T) {
 	verbose("false\n")
-	logLevel = 1
+	fVerbose = true
 	verbose("true\n")
-	logLevel = 0
+	fVerbose = false
 }
 
 func TestMakeDate(t *testing.T) {
