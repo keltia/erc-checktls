@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/keltia/cryptcheck"
 	"github.com/keltia/observatory"
@@ -76,6 +77,13 @@ func checkFlags(a []string) error {
 		logLevel = 2
 		debug("debug mode\n")
 	}
+
+	// Expect less perf is fJobs is too high (contention)
+	if fJobs > runtime.NumCPU() {
+		fmt.Fprintf(os.Stderr, "Warning, '-j %d' higher than %d, possible perf issue\n",
+			fJobs, runtime.NumCPU())
+	}
+
 	return nil
 }
 
@@ -153,7 +161,7 @@ func realmain(args []string) int {
 	}
 
 	// generate the final report & summary
-	final, err := TLS.NewReport(allSites)
+	final, err := TLS.NewReport(allSites, fJobs)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error analyzing report: %v\n", err)
 		return 1
