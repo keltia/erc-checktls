@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"runtime"
 	"sort"
 	"sync"
 	"time"
@@ -85,13 +84,11 @@ func worker(i int, queue chan ssllabs.Host, r *Report, wg *sync.WaitGroup) {
 }
 
 // NewReport generates everything we need for display/export
-func NewReport(reports []ssllabs.Host) (r *Report, err error) {
+func NewReport(reports []ssllabs.Host, jobs int) (r *Report, err error) {
 
 	if len(reports) == 0 {
 		return nil, fmt.Errorf("empty list")
 	}
-
-	numCPUs := runtime.NumCPU()
 
 	r = &Report{
 		Date:    time.Now(),
@@ -100,14 +97,14 @@ func NewReport(reports []ssllabs.Host) (r *Report, err error) {
 		https:   map[string]int{},
 	}
 
-	verbose("%d sites found, %d workers.\n", len(reports), numCPUs)
+	verbose("%d sites found, %d workers.\n", len(reports), jobs)
 
 	queue := make(chan ssllabs.Host, len(reports))
 
 	wg := &sync.WaitGroup{}
 
 	// Setup workers
-	for i := 0; i < numCPUs; i++ {
+	for i := 0; i < jobs; i++ {
 		wg.Add(1)
 		go worker(i, queue, r, wg)
 
