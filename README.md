@@ -29,7 +29,6 @@ I also use a number of external modules:
 
 	github.com/atotto/encoding/csv
 	github.com/gobuffalo/packr2
-	github.com/ivpusic/grpool
 	github.com/pkg/errors
 	github.com/olekukonko/tablewriter
 
