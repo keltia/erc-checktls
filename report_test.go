@@ -14,7 +14,7 @@ import (
 )
 
 func TestNewReport(t *testing.T) {
-	rep, err := NewReport([]ssllabs.Host{})
+	rep, err := NewReport([]ssllabs.Host{}, 1)
 	require.Error(t, err)
 	require.Nil(t, rep)
 }
@@ -30,7 +30,7 @@ func TestNewReport2(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	sites, err := NewReport(all)
+	sites, err := NewReport(all, 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, sites)
 }
@@ -48,7 +48,7 @@ func TestReport_ToCSV(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	sites, err := NewReport(all)
+	sites, err := NewReport(all, 1)
 	require.NoError(t, err)
 
 	err = sites.ToCSV(&buf)
@@ -121,7 +121,7 @@ func TestReport_WriteCSV3(t *testing.T) {
 	fIgnoreImirhil = true
 	fIgnoreMozilla = true
 
-	final, err := NewReport(allSites)
+	final, err := NewReport(allSites, 1)
 	require.NoError(t, err)
 
 	final.cntrs = cntrs
@@ -167,7 +167,7 @@ func TestReport_GatherStats(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	r, err := NewReport(all)
+	r, err := NewReport(all, 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, r)
 
@@ -191,7 +191,7 @@ func TestReport_GatherStats_1(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	r, err := NewReport(all)
+	r, err := NewReport(all, 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, r)
 
@@ -213,7 +213,7 @@ func TestReport_GatherStats_2(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	r, err := NewReport(all)
+	r, err := NewReport(all, 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, r)
 
@@ -235,7 +235,7 @@ func TestReport_GatherStats_Null(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	r, err := NewReport(all)
+	r, err := NewReport(all, 1)
 	require.NoError(t, err)
 	assert.NotEmpty(t, r)
 
@@ -256,7 +256,7 @@ func TestTLSReport_GatherStats_Full(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	r, err := NewReport(all)
+	r, err := NewReport(all, 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, r)
 
@@ -281,7 +281,7 @@ func TestTLSReport_GatherStats_Full1(t *testing.T) {
 	all, err := ssllabs.ParseResults(ji)
 	require.NoError(t, err)
 
-	r, err := NewReport(all)
+	r, err := NewReport(all, 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, r)
 

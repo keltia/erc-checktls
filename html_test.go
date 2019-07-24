@@ -28,7 +28,7 @@ func TestTLSReport_ToHTML(t *testing.T) {
 
 	fJobs = 1
 
-	sites, err := NewReport(all)
+	sites, err := NewReport(all, 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, sites)
 
@@ -89,7 +89,7 @@ func TestWriteHTML3(t *testing.T) {
 	fIgnoreImirhil = true
 	fIgnoreMozilla = true
 
-	final, err := NewReport(allSites)
+	final, err := NewReport(allSites, 1)
 	require.NoError(t, err)
 
 	final.cntrs = cntrs
