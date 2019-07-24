@@ -42,14 +42,7 @@ type Client struct {
 }
 
 var (
-	fnImirhil func(site ssllabs.Host) string
-	fnMozilla func(site ssllabs.Host) string
-
 	contracts map[string]string
-
-	sslc Sapi
-	moz  Mapi
-	irml Capi
 
 	DefaultIssuer = regexp.MustCompile(`(?i:GlobalSign)`)
 
