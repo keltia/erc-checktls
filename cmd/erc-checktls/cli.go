@@ -28,7 +28,7 @@ var (
 )
 
 const (
-	cliUsage = `%s version %s - Imirhil/%s SSLLabs/%s Mozilla/%s
+	cliUsage = `%s version %s - Cryptcheck/%s SSLLabs/%s Mozilla/%s
 
 Usage: %s [-hvDIM] [-j n] [-t text|csv|html] [-s file] [-S site] [-o file] file[.json]
        %s [-vD] -wild file[.json]
