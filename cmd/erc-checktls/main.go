@@ -9,6 +9,7 @@ package main // import "github.com/keltia/erc-checktls"
 import (
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -31,23 +32,24 @@ var (
 
 const (
 	// MyVersion uses semantic versioning.
-	MyVersion = "0.63.99"
+	MyVersion = "0.69.99"
 )
 
 // checkOutput checks whether we want to specify an output file
-func checkOutput(fOutput string) *os.File {
+func checkOutput(fn string) *os.File {
 	var err error
 
 	OutputFH := os.Stdout
 
 	// Open output file
-	if fOutput != "" {
-		verbose("Output file is %s\n", fOutput)
+	if fn != "" {
+		verbose("Output file is %s\n", fn)
 
-		if fOutput != "-" && fOutput != "" {
-			OutputFH, err = os.Create(fOutput)
+		if fn != "-" {
+			fn = fn + "." + fType
+			OutputFH, err = os.Create(fn)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error creating %s\n", fOutput)
+				fmt.Fprintf(os.Stderr, "Error creating %s\n", fn)
 				return nil
 			}
 		}
@@ -146,17 +148,25 @@ func realmain(args []string) int {
 		return 1
 	}
 
-	// Open output file
-	OutputFH := checkOutput(fOutput)
-	if OutputFH == nil {
-		fmt.Fprintf(os.Stderr, "error output: %v\n", err)
-		return 1
+	// Open output
+	var fhBase, fhSumm io.Writer
+
+	if fOutput == "-" || fOutput == "" {
+		fhBase, fhSumm = os.Stdout, os.Stdout
+	} else {
+		var tag string
+
+		if fAddDate {
+			tag = "-" + makeDate()
+		}
+		fhBase = checkOutput(fOutput + tag)
+		fhSumm = checkOutput(fOutput + "-summary" + tag)
 	}
 
 	if fCmdWild {
 		str := displayWildcards(allSites)
 		debug("str=%s\n", str)
-		fmt.Fprintf(OutputFH, "All wildcards certs:\n%s", str)
+		fmt.Fprintf(fhBase, "All wildcards certs:\n%s", str)
 		return 0
 	}
 
@@ -171,23 +181,22 @@ func realmain(args []string) int {
 
 	switch fType {
 	case "csv":
-		if err := final.WriteCSV(OutputFH); err != nil {
+		if err := final.WriteCSV(fhBase); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteCSV failed: %v\n", err)
 			return 1
 		}
+		if err := final.WriteCSVSummary(fhSumm); err != nil {
+			fmt.Fprintf(os.Stderr, "WriteCSVSummary failed: %v\n", err)
+			return 1
+		}
 	case "html":
-		if err := final.WriteHTML(OutputFH); err != nil {
+		if err := final.WriteHTML(fhBase); err != nil {
 			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
 			return 1
 		}
-		if fSummary != "" {
-			fn := fSummary + "-" + makeDate() + ".html"
-			verbose("HTML summary: %s\n", fn)
-			w := checkOutput(fn)
-			if err = final.WriteHTMLSummary(w); err != nil {
-				fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
-				return 1
-			}
+		if err = final.WriteHTMLSummary(fhSumm); err != nil {
+			fmt.Fprintf(os.Stderr, "WriteHTML failed: %v\n", err)
+			return 1
 		}
 
 	default:

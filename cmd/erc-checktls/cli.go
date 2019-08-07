@@ -14,11 +14,11 @@ import (
 )
 
 var (
+	fAddDate       bool
 	fDebug         bool
 	fJobs          int
 	fType          string
 	fOutput        string
-	fSummary       string
 	fSiteName      string
 	fIgnoreImirhil bool
 	fIgnoreMozilla bool
@@ -30,9 +30,11 @@ var (
 const (
 	cliUsage = `%s version %s - Cryptcheck/%s SSLLabs/%s Mozilla/%s
 
-Usage: %s [-hvDIM] [-j n] [-t text|csv|html] [-s file] [-S site] [-o file] file[.json]
+Usage: %s [-dhvDIM] [-j n] [-t text|csv|html] [-S site] [-o file] file.json
        %s [-vD] -wild file[.json]
 
+Default output: stdout for both complete & summary.
+Use -o file to get file.<fmt> and file-summary.<fmt>.
 `
 )
 
@@ -45,9 +47,9 @@ var Usage = func() {
 }
 
 func init() {
+	flag.BoolVar(&fAddDate, "date", false, "Add date to output filename")
 	flag.IntVar(&fJobs, "j", runtime.NumCPU(), "# of parallel jobs")
-	flag.StringVar(&fOutput, "o", "-", "Save into file (default stdout)")
-	flag.StringVar(&fSummary, "s", "summaries", "Save summary there")
+	flag.StringVar(&fOutput, "o", "-", "Save into files (default stdout)")
 	flag.StringVar(&fType, "t", "csv", "Type of report")
 	flag.StringVar(&fSiteName, "S", "", "Display that site")
 	flag.BoolVar(&fIgnoreImirhil, "I", false, "Do not fetch tls.imirhil.fr grade")
