@@ -163,6 +163,12 @@ func realmain(args []string) int {
 		fhSumm = checkOutput(fOutput + "-summary" + tag)
 	}
 
+	// Check for output errors
+	if fhBase == nil || fhSumm == nil {
+		fmt.Fprintf(os.Stderr, "Can not open files.\n")
+		return 1
+	}
+
 	if fCmdWild {
 		str := displayWildcards(allSites)
 		debug("str=%s\n", str)
