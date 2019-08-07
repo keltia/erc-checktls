@@ -26,7 +26,7 @@ func TestCheckOutput_1(t *testing.T) {
 	fh := checkOutput(fn)
 	assert.NotEmpty(t, fh)
 
-	fi, err := os.Stat(fn)
+	fi, err := os.Stat(fn + ".csv")
 	assert.NoError(t, err)
 	assert.NotNil(t, fi)
 	assert.NotEmpty(t, fi)
