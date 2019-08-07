@@ -170,6 +170,15 @@ func (r *Report) WriteCSV(w io.Writer) error {
 	if err := r.ToCSV(w); err != nil {
 		return errors.Wrap(err, "Error can not generate CSV")
 	}
+	return nil
+}
+
+func (r *Report) WriteCSVSummary(w io.Writer) error {
+	debug("WriteCSVSummary\n")
+	if len(r.Sites) == 0 {
+		return fmt.Errorf("empty r")
+	}
+
 	fmt.Fprintf(w, "\nTLS Summary\n")
 	if err := writeSummary(w, tlsKeys, r.cntrs); err != nil {
 		fmt.Fprintf(os.Stderr, "can not generate TLS summary: %v", err)
