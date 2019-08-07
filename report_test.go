@@ -133,6 +133,88 @@ func TestReport_WriteCSV3(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestReport_WriteCSVSummary(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	r := &Report{}
+	r.cntrs = cntrs
+	r.https = https
+
+	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
+
+	err = r.WriteCSVSummary(null)
+	assert.Error(t, err)
+
+}
+
+func TestReport_WriteCSVSummary2(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	r := &Report{}
+	r.cntrs = cntrs
+	r.https = https
+
+	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
+
+	err = r.WriteCSVSummary(null)
+	assert.Error(t, err)
+}
+
+func TestReport_WriteCSVSummary3(t *testing.T) {
+	cntrs := map[string]int{
+		"A": 666,
+		"B": 42,
+		"F": 1,
+	}
+
+	https := map[string]int{
+		"A":  666,
+		"B+": 37,
+		"F":  42,
+	}
+
+	file := "testdata/site.json"
+	raw, err := ioutil.ReadFile(file)
+	require.NoError(t, err)
+
+	allSites, err := ssllabs.ParseResults(raw)
+	require.NoError(t, err)
+
+	fIgnoreImirhil = true
+	fIgnoreMozilla = true
+
+	final, err := NewReport(allSites, 1)
+	require.NoError(t, err)
+
+	final.cntrs = cntrs
+	final.https = https
+
+	null, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
+
+	err = final.WriteCSVSummary(null)
+	assert.NoError(t, err)
+}
+
 func TestReport_ColourMap(t *testing.T) {
 	r := &Report{Sites: []site.TLSSite{}}
 	tt := r.ColourMap("A")
