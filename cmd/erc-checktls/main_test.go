@@ -155,7 +155,7 @@ func TestRealmain10(t *testing.T) {
 	fType = "csv"
 	fOutput = "/dev/null"
 	ret := realmain([]string{"../../testdata/emptysite.json"})
-	assert.Equal(t, 0, ret)
+	assert.Equal(t, 1, ret)
 	fType = ""
 	fOutput = ""
 }
