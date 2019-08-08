@@ -9,7 +9,6 @@ package main // import "github.com/keltia/erc-checktls"
 import (
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -122,6 +121,27 @@ func realmain(args []string) int {
 		return 1
 	}
 
+	// Open output
+	var fhBase, fhSumm *os.File
+
+	if fOutput == "-" || fOutput == "" {
+		fhBase, fhSumm = os.Stdout, os.Stdout
+	} else {
+		var tag string
+
+		if fAddDate {
+			tag = "-" + makeDate()
+		}
+		fhBase = checkOutput(fOutput + tag)
+		fhSumm = checkOutput(fOutput + "-summary" + tag)
+	}
+
+	// Check for output errors
+	if fhBase == nil || fhSumm == nil {
+		fmt.Fprintf(os.Stderr, "Can not open files.\n")
+		return 1
+	}
+
 	// Initialise the library
 	TLS.Init(TLS.Config{
 		LogLevel:      logLevel,
@@ -145,27 +165,6 @@ func realmain(args []string) int {
 	allSites, err := ssllabs.ParseResults(raw)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Can't parse %s: %v\n", file, err)
-		return 1
-	}
-
-	// Open output
-	var fhBase, fhSumm io.Writer
-
-	if fOutput == "-" || fOutput == "" {
-		fhBase, fhSumm = os.Stdout, os.Stdout
-	} else {
-		var tag string
-
-		if fAddDate {
-			tag = "-" + makeDate()
-		}
-		fhBase = checkOutput(fOutput + tag)
-		fhSumm = checkOutput(fOutput + "-summary" + tag)
-	}
-
-	// Check for output errors
-	if fhBase == nil || fhSumm == nil {
-		fmt.Fprintf(os.Stderr, "Can not open files.\n")
 		return 1
 	}
 
