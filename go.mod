@@ -5,7 +5,7 @@ require (
 	github.com/gobuffalo/logger v1.0.1 // indirect
 	github.com/gobuffalo/packr/v2 v2.6.0
 	github.com/keltia/cryptcheck v1.5.2
-	github.com/keltia/observatory v1.3.0
+	github.com/keltia/observatory v1.3.1
 	github.com/keltia/proxy v0.9.5 // indirect
 	github.com/keltia/ssllabs v0.14.1
 	github.com/mattn/go-runewidth v0.0.4 // indirect

@@ -29,8 +29,8 @@ github.com/karrick/godirwalk v1.10.12 h1:BqUm+LuJcXjGv1d2mj3gBiQyrQ57a0rYoAmhvJQ
 github.com/karrick/godirwalk v1.10.12/go.mod h1:RoGL9dQei4vP9ilrpETWE8CLOZ1kiN0LhBygSwrAsHA=
 github.com/keltia/cryptcheck v1.5.2 h1:iTs3VE2ItE1mA3h2mPxjLhzZuKwG7uKYxNhvmv47fwY=
 github.com/keltia/cryptcheck v1.5.2/go.mod h1:j9cn6Vy62qGKb2AsqaW9OuB3m/ICGoCQFARg0ftIjmU=
-github.com/keltia/observatory v1.3.0 h1:iCN///kwg23QXuiFeeYAzL907TDKQAG7Z8r3Iy8Ho1k=
-github.com/keltia/observatory v1.3.0/go.mod h1:1ilMlhuTYuFCyV50mQIrs8lwvks+3Ednxvi8A3p772Y=
+github.com/keltia/observatory v1.3.1 h1:5pTRI7LNyK4XdRDQVE41L/2OMckbNrcAEQBtYUCcCaA=
+github.com/keltia/observatory v1.3.1/go.mod h1:1ilMlhuTYuFCyV50mQIrs8lwvks+3Ednxvi8A3p772Y=
 github.com/keltia/proxy v0.9.2 h1:C+blw6v9ENOVPWoMxceqjoPq3PPQbVvIVEn5IqhsrQ4=
 github.com/keltia/proxy v0.9.2/go.mod h1:nOa+W/1aVASsgmftatmV095z6kbIPLrB8/xWwF2deGI=
 github.com/keltia/proxy v0.9.3 h1:Cpv6VA50SXSY+JxQ6q+BHpPMNAfWGZU4Qb5kdwUR1TY=
