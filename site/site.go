@@ -96,6 +96,7 @@ func NewClient(f Flags) *Client {
 			score, err := c.moz.GetGrade(site.Host)
 			if err != nil {
 				verbose("Mozilla error: %s (%s)\n", site.Host, err.Error())
+				return "X"
 			}
 			return score
 		}

@@ -100,7 +100,7 @@ func TestInit2(t *testing.T) {
 		Contracts:     map[string]string{},
 	})
 
-	assert.Empty(t, c.fnMozilla(ssllabs.Host{}))
+	assert.Equal(t, "X", c.fnMozilla(ssllabs.Host{}))
 	assert.Empty(t, c.fnImirhil(ssllabs.Host{}))
 }
 
@@ -111,7 +111,7 @@ func TestInit3(t *testing.T) {
 		Contracts:     map[string]string{},
 	})
 
-	assert.Empty(t, c.fnMozilla(ssllabs.Host{}))
+	assert.Equal(t, "X", c.fnMozilla(ssllabs.Host{}))
 	g := c.fnImirhil(ssllabs.Host{})
 	assert.NotEmpty(t, g)
 	assert.Equal(t, "Z", g)
