@@ -68,6 +68,8 @@ func proto(val string) string {
 		return yellow(val)
 	case "SSLv3.0,TLSv1.0":
 		return red(val)
+	case "SSLv3.0,TLSv1.0,TLSv1.1,TLSv1.2":
+		return red(val)
 	}
 	return white(val)
 }
