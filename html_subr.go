@@ -60,6 +60,8 @@ func booleanF(val bool) string {
 
 func proto(val string) string {
 	switch val {
+	case "TLSv1.2,TLSv1.3":
+		fallthrough
 	case "TLSv1.2":
 		return green(val)
 	case "TLSv1.1,TLSv1.2":
