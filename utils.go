@@ -30,6 +30,14 @@ func makeDate() string {
 // ByAlphabet is for sorting
 type ByAlphabet []site.TLSSite
 
-func (a ByAlphabet) Len() int           { return len(a) }
-func (a ByAlphabet) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByAlphabet) Less(i, j int) bool { return a[i].Name < a[j].Name }
+func (a ByAlphabet) Len() int      { return len(a) }
+func (a ByAlphabet) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByAlphabet) Less(i, j int) bool {
+	if !a[i].Connect {
+		return false
+	}
+	if !a[j].Connect {
+		return true
+	}
+	return a[i].Name < a[j].Name
+}
