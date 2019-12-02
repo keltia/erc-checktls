@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/keltia/erc-checktls/site"
 )
 
 // debug displays only if fDebug is set
@@ -26,8 +28,8 @@ func makeDate() string {
 }
 
 // ByAlphabet is for sorting
-type ByAlphabet Report
+type ByAlphabet []site.TLSSite
 
-func (a ByAlphabet) Len() int           { return len(a.Sites) }
-func (a ByAlphabet) Swap(i, j int)      { a.Sites[i], a.Sites[j] = a.Sites[j], a.Sites[i] }
-func (a ByAlphabet) Less(i, j int) bool { return a.Sites[i].Name < a.Sites[j].Name }
+func (a ByAlphabet) Len() int           { return len(a) }
+func (a ByAlphabet) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByAlphabet) Less(i, j int) bool { return a[i].Name < a[j].Name }
