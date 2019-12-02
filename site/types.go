@@ -43,6 +43,9 @@ type TLSSite struct {
 	Type    int
 	CatHTTP int
 	CatTLS  int
+
+	// Could we connect at all?
+	Connect bool
 }
 
 type Flags struct {

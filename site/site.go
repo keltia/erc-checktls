@@ -154,6 +154,7 @@ func (c *Client) NewFromHost(site ssllabs.Host) TLSSite {
 			HSTS:         checkHSTS(det),
 			Sweet32:      checkSweet32(det),
 			Type:         c.findServerType(site),
+			Connect:      true,
 		}
 
 		// Handle case where we have a DNS entry but no connection
@@ -164,6 +165,8 @@ func (c *Client) NewFromHost(site ssllabs.Host) TLSSite {
 			current.DefCA = checkIssuer(cert, DefaultIssuer)
 			current.DefSig = cert.SigAlg == DefaultSig
 			current.IsExpired = hasExpired(cert.NotAfter)
+		} else {
+			current.Connect = false
 		}
 
 		if len(det.CertChains) != 0 {
