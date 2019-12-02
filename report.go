@@ -122,7 +122,7 @@ func NewReport(reports []ssllabs.Host, jobs int) (r *Report, err error) {
 
 	verbose("got all %d sites\n", len(r.Sites))
 	debug("all=%v\n", r.Sites)
-	sort.Sort(ByAlphabet(*r))
+	sort.Sort(ByAlphabet(r.Sites))
 	return r, nil
 }
 
