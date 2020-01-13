@@ -36,5 +36,3 @@ clean:
 push:
 	git push --all
 	git push --tags
-	git push --all backup
-	git push --tags backup
